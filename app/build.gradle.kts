@@ -29,22 +29,30 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
+
     buildFeatures {
         compose = true
+        mlModelBinding = true
+    }
+
+    aaptOptions {
+        noCompress += "tflite"
     }
 }
 
-
 dependencies {
-
     implementation(libs.firebase.ai)
+    implementation(libs.litert)
+
     val composeBom = platform("androidx.compose:compose-bom:2025.05.00")
     implementation(composeBom)
     androidTestImplementation(composeBom)
@@ -65,10 +73,14 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // TensorFlow Lite
+    implementation("org.tensorflow:tensorflow-lite:2.13.0")
+    implementation("org.tensorflow:tensorflow-lite-support:0.4.3")
+
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.5")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material3:material3:1.3.2")
-    implementation ("androidx.compose.material:material-icons-extended")
+    implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.navigation:navigation-compose:2.9.1")
     implementation("io.github.afreakyelf:Pdf-Viewer:2.3.7")
     implementation("io.coil-kt:coil-compose:2.5.0")
@@ -84,12 +96,10 @@ dependencies {
     // JSON
     implementation("com.google.code.gson:gson:2.10.1")
 
-
+    // Env + Serialization
     implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
     implementation("io.coil-kt.coil3:coil-compose:3.2.0")
-
     implementation("io.coil-kt:coil-gif:2.5.0")
-
 }
