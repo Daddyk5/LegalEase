@@ -3,12 +3,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.hcdc.legalease">
 
-
+    <!-- Network for Firebase/HTTP calls -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+
+    <!-- Modern media read (Android 13+/API 33+) — include only what you actually use -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"
+        tools:ignore="SelectedPhotoAccess" />
+    <!-- <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" /> -->
+    <!-- <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" /> -->
+
+    <!-- Legacy external storage permissions for older targets only -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
+
+    <!-- OPTIONAL: Uncomment only if used -->
+    <!-- <uses-permission android:name="android.permission.CAMERA" /> -->
+    <!-- <uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> -->
 
     <application
         android:allowBackup="true"
@@ -19,9 +33,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LegalEase"
-        tools:targetApi="31">
+        tools:targetApi="34">
 
-        <!-- FileProvider for sharing cache files as URI -->
+        <!-- FileProvider: share files via content:// URIs -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -36,13 +50,18 @@
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.LegalEase">
+            android:theme="@style/Theme.LegalEase"
+            tools:ignore="RedundantLabel">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <!-- OPTIONAL Firebase Analytics toggle
+        <meta-data
+            android:name="firebase_analytics_collection_enabled"
+            android:value="true" />
+        -->
     </application>
-
 </manifest>

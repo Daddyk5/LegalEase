@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "901383878380",
+    "project_id": "legalease-de247",
+    "storage_bucket": "legalease-de247.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:901383878380:android:eb194d7f2c9d90db81d7c9",
+        "android_client_info": {
+          "package_name": "com.hcdc.legalease"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "901383878380-187r9t7uem1ln5q3tm9pof96c9bom20v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdAJlcyjtpklO2pYyOVrIXLtm0yhSML5c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "901383878380-187r9t7uem1ln5q3tm9pof96c9bom20v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

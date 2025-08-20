@@ -9,7 +9,7 @@ import android.os.ParcelFileDescriptor
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hcdc.legalease.ui.screens.upload_pdf.await
+import kotlinx.coroutines.tasks.await
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
@@ -38,24 +38,20 @@ class PdfViewModel : ViewModel() {
 
     private var lastProcessedUri: Uri? = null
 
-    fun setPdfUri(uri: Uri?) {
-        _pdfUri.value = uri
-    }
-
-    fun setPdfName(name: String?) {
-        _fileName.value = name
-    }
-
-    fun clearOcrResults() {
-        _ocrResults.value = emptyList()
-    }
+    fun setPdfUri(uri: Uri?) { _pdfUri.value = uri }
+    fun setPdfName(name: String?) { _fileName.value = name }
+    fun clearOcrResults() { _ocrResults.value = emptyList() }
 
     fun processPdfAndRunOcr(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
             _scanCompleted.value = false
             val uri = _pdfUri.value ?: return@launch
 
-            if (uri == lastProcessedUri && _ocrResults.value.isNotEmpty()) return@launch
+            if (uri == lastProcessedUri && _ocrResults.value.isNotEmpty()) {
+                Log.d("PdfViewModel", "Same URI and OCR already present; skipping reprocess.")
+                _scanCompleted.value = true
+                return@launch
+            }
             lastProcessedUri = uri
 
             _pdfBitmaps.value = emptyList()
@@ -64,48 +60,60 @@ class PdfViewModel : ViewModel() {
             val bitmaps = mutableListOf<Bitmap>()
 
             try {
-                val fileDescriptor = context.contentResolver.openFileDescriptor(uri, "r")?.fileDescriptor
-                    ?: return@launch
+                val pfd = context.contentResolver.openFileDescriptor(uri, "r") ?: return@launch
+                PdfRenderer(pfd).use { pdfRenderer ->
+                    for (i in 0 until pdfRenderer.pageCount) {
+                        pdfRenderer.openPage(i).use { page ->
+                            // Increase scale for better OCR (5–8x depending on device)
+                            val scale = 8
+                            val width = page.width * scale
+                            val height = page.height * scale
 
-                val pdfRenderer = PdfRenderer(ParcelFileDescriptor.dup(fileDescriptor))
-                for (i in 0 until pdfRenderer.pageCount) {
-                    val page = pdfRenderer.openPage(i)
+                            val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+                            val canvas = Canvas(bitmap)
+                            canvas.drawColor(android.graphics.Color.WHITE)
 
-                    val width = page.width * 5
-                    val height = page.height * 5
-                    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-                    val canvas = Canvas(bitmap)
-                    canvas.drawColor(android.graphics.Color.WHITE)
-
-                    page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-                    page.close()
-
-                    bitmaps.add(bitmap)
+                            page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+                            bitmaps.add(bitmap)
+                        }
+                    }
                 }
-                pdfRenderer.close()
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e("PdfViewModel", "PDF render error: ${e.localizedMessage}")
             }
 
             _pdfBitmaps.value = bitmaps
 
-            val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-            val stringBuilder = StringBuilder()
-
-            for (bitmap in bitmaps) {
-                try {
-                    val image = InputImage.fromBitmap(bitmap, 0)
-                    val visionText = recognizer.process(image).await()
-                    val text = visionText.text.trim()
-                    if (text.isNotBlank()) {
-                        stringBuilder.appendLine(text)
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+            if (bitmaps.isEmpty()) {
+                Log.w("PdfViewModel", "No pages rendered; OCR skipped.")
+                _ocrResults.value = listOf("")
+                _scanCompleted.value = true
+                return@launch
             }
 
-            val fullText = stringBuilder.toString().trim()
+            val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+            val sb = StringBuilder()
+
+            try {
+                for ((idx, bitmap) in bitmaps.withIndex()) {
+                    try {
+                        val image = InputImage.fromBitmap(bitmap, 0)
+                        val visionText = recognizer.process(image).await()
+                        val text = visionText.text.trim()
+                        Log.d("PdfViewModel", "OCR page $idx chars=${text.length}")
+                        if (text.isNotBlank()) {
+                            sb.appendLine(text)
+                            sb.appendLine() // page break spacing
+                        }
+                    } catch (e: Exception) {
+                        Log.e("PdfViewModel", "OCR error on page $idx: ${e.localizedMessage}")
+                    }
+                }
+            } finally {
+                recognizer.close()
+            }
+
+            val fullText = sb.toString().trim()
             _ocrResults.value = listOf(fullText)
             _scanCompleted.value = true
         }

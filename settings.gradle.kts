@@ -23,6 +23,7 @@ dependencyResolutionManagement {
     }
 }
 
+
 rootProject.name = "LegalEase"
 include(":app")
  
