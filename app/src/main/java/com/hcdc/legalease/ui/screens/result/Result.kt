@@ -1,6 +1,7 @@
 package com.hcdc.legalease.ui.screens.result
 
 import android.annotation.SuppressLint
+import android.app.Application
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,23 +12,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.hcdc.legalease.R
+import com.hcdc.legalease.data.ClausesModel
 import com.hcdc.legalease.ui.components.CustomLoading
 import com.hcdc.legalease.ui.components.cards.SummaryCard
 import com.hcdc.legalease.ui.components.spacers.VerticalSpacer
-import com.hcdc.legalease.data.ClausesModel
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun ResultScreen(
     navController: NavController,
     ocrText: String,
-    resultViewmodel: ResultViewmodel = viewModel()
+    apiKey: String? = null
 ) {
+    val context = LocalContext.current
+    val resultViewmodel: ResultViewmodel = viewModel(
+        factory = ResultViewmodelFactory(context.applicationContext as Application, apiKey)
+    )
+
     val clauses by resultViewmodel.clauses
     val scanCompleted by resultViewmodel.scanCompleted.collectAsState()
     var launched by remember { mutableStateOf(false) }
@@ -35,8 +42,7 @@ fun ResultScreen(
     LaunchedEffect(Unit) {
         if (!launched) {
             launched = true
-            // 🔥 If you refactor to TFLite, replace this with analyzeText()
-            resultViewmodel.analyzePrompt(ocrText)
+            resultViewmodel.analyze(ocrText)
         }
     }
 
