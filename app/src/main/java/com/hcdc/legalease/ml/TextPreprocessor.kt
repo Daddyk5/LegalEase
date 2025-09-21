@@ -1,15 +1,16 @@
 package com.hcdc.legalease.ml
 
-fun preprocessTextToFloatArray(text: String): FloatArray {
-    val maxLength = 100
-    val normalizedAscii = text
-        .take(maxLength)
-        .map { it.code.coerceIn(32, 126).toFloat() / 126f }
+fun preprocessTextToIds(
+    text: String,
+    vocab: Map<String, Int>,
+    maxLength: Int = 100
+): IntArray {
+    val tokens = text.lowercase().split("\\s+".toRegex())
+    val ids = IntArray(maxLength) { 0 }
 
-    val result = FloatArray(maxLength) { 0f }
-    for (i in normalizedAscii.indices) {
-        result[i] = normalizedAscii[i]
+    for (i in 0 until minOf(tokens.size, maxLength)) {
+        ids[i] = vocab[tokens[i]] ?: 1 // 1 = OOV token
     }
 
-    return result
+    return ids
 }

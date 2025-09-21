@@ -18,12 +18,9 @@ import androidx.navigation.NavController
 import com.hcdc.legalease.R
 import com.hcdc.legalease.prompt.PromptProvider.buildPrompt
 import com.hcdc.legalease.ui.components.CustomLoading
-import com.hcdc.legalease.ui.components.cards.ResultCard.RiskCard
 import com.hcdc.legalease.ui.components.cards.SummaryCard
 import com.hcdc.legalease.ui.components.spacers.VerticalSpacer
-import com.legalease.ui.theme.RiskColorHigh
-import com.legalease.ui.theme.RiskColorLow
-import com.legalease.ui.theme.RiskColorMedium
+import com.hcdc.legalease.data.ClausesModel
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -62,7 +59,7 @@ fun ResultScreen(
 }
 
 @Composable
-private fun ResultContent(clauseData: com.hcdc.legalease.data.ClausesModel) {
+private fun ResultContent(clauseData: ClausesModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -94,28 +91,29 @@ private fun ResultContent(clauseData: com.hcdc.legalease.data.ClausesModel) {
                     text = clauseData.summary
                 )
 
-                if (clauseData.acceptable.isNotEmpty()) {
-                    RiskCard(
-                        riskLevel = "Acceptable",
-                        riskColor = RiskColorLow,
-                        points = clauseData.acceptable
+                // ✅ Show classification result
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = when (clauseData.classification) {
+                            "Void" -> Color.Red.copy(alpha = 0.2f)
+                            "Voidable" -> Color.Yellow.copy(alpha = 0.2f)
+                            "Unenforceable" -> Color.Gray.copy(alpha = 0.2f)
+                            "Rescissible" -> Color.Magenta.copy(alpha = 0.2f)
+                            else -> Color.Green.copy(alpha = 0.2f) // Enforceable
+                        }
                     )
-                }
-
-                if (clauseData.moderateConcern.isNotEmpty()) {
-                    RiskCard(
-                        riskLevel = "Moderate Concern",
-                        riskColor = RiskColorMedium,
-                        points = clauseData.moderateConcern
-                    )
-                }
-
-                if (clauseData.highRisk.isNotEmpty()) {
-                    RiskCard(
-                        riskLevel = "High Risk",
-                        riskColor = RiskColorHigh,
-                        points = clauseData.highRisk
-                    )
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = "Classification: ${clauseData.classification}",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            text = "Confidence: ${(clauseData.confidence * 100).toInt()}%",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
                 }
             }
         }
@@ -125,8 +123,7 @@ private fun ResultContent(clauseData: com.hcdc.legalease.data.ClausesModel) {
 @Composable
 private fun Header() {
     Row(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
