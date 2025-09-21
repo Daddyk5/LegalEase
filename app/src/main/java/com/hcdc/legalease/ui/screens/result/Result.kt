@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.hcdc.legalease.R
-import com.hcdc.legalease.prompt.PromptProvider.buildPrompt
 import com.hcdc.legalease.ui.components.CustomLoading
 import com.hcdc.legalease.ui.components.cards.SummaryCard
 import com.hcdc.legalease.ui.components.spacers.VerticalSpacer
@@ -36,7 +35,7 @@ fun ResultScreen(
     LaunchedEffect(Unit) {
         if (!launched) {
             launched = true
-            resultViewmodel.analyzePrompt(buildPrompt(ocrText))
+            resultViewmodel.analyzePrompt(ocrText)
         }
     }
 
