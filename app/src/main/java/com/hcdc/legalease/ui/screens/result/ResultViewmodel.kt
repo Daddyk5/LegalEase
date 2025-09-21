@@ -1,28 +1,25 @@
 package com.hcdc.legalease.ui.screens.result
 
+import android.app.Application
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.ai.client.generativeai.GenerativeModel
 import com.hcdc.legalease.data.ClausesModel
+import com.hcdc.legalease.ml.TFLiteClassifier
+import com.hcdc.legalease.ml.preprocessTextToIds
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.serialization.SerializationException
-import kotlinx.serialization.json.Json
 
-class ResultViewmodel(private val apiKey: String) : ViewModel() {
+class ResultViewmodel(application: Application) : AndroidViewModel(application) {
 
     companion object {
         private const val TAG = "ResultViewmodel"
-        private const val MODEL_NAME = "gemini-2.0-flash-lite"
     }
 
-    private val model: GenerativeModel by lazy {
-        GenerativeModel(modelName = MODEL_NAME, apiKey = apiKey)
-    }
+    private val classifier = TFLiteClassifier(application.applicationContext)
 
     private val _clauses = mutableStateOf<ClausesModel?>(null)
     val clauses: State<ClausesModel?> = _clauses
@@ -30,59 +27,43 @@ class ResultViewmodel(private val apiKey: String) : ViewModel() {
     private val _scanCompleted = MutableStateFlow(false)
     val scanCompleted: StateFlow<Boolean> = _scanCompleted
 
-    private val json = Json {
-        ignoreUnknownKeys = true
-        isLenient = true
-        explicitNulls = false
-    }
-
-    fun analyzePrompt(rawOcrText: String) {
+    /**
+     * Analyze OCR text using on-device TFLite model
+     */
+    fun analyzeText(rawOcrText: String) {
         viewModelScope.launch {
             _scanCompleted.value = false
+
             try {
                 if (rawOcrText.isBlank()) {
                     Log.w(TAG, "OCR text is blank; nothing to analyze.")
-                    _clauses.value = null
-                    return@launch
-                }
-
-                val instruction = """
-                    You are an information extraction engine.
-                    From the following legal document text, extract fields for this JSON schema, and RETURN ONLY a single JSON object with no extra text, no markdown, and no code fences.
-
-                    Schema (keys must exist; use empty strings/arrays if missing):
-                    { ... schema ... }
-                    
-                    Document text:
-                """.trimIndent()
-
-                val prompt = buildString {
-                    append(instruction)
-                    append('\n')
-                    append(rawOcrText.take(6000))
-                }
-
-                val response = model.generateContent(prompt)
-                val rawText = response.text?.trim().orEmpty()
-                Log.d(TAG, "Raw Gemini response:\n$rawText")
-
-                val jsonText = extractJsonObject(rawText) ?: run {
-                    Log.w(TAG, "No JSON object found in response.")
                     _clauses.value = null
                     _scanCompleted.value = true
                     return@launch
                 }
 
-                val parsed = try {
-                    json.decodeFromString<ClausesModel>(jsonText)
-                } catch (e: SerializationException) {
-                    Log.e(TAG, "JSON decode error: ${e.message}\nPayload:\n$jsonText")
-                    null
-                }
+                // 🔹 Preprocess: convert text → token IDs
+                // TODO: load your vocab map from assets/resources
+                val vocab = emptyMap<String, Int>() // replace with real vocab
+                val inputIds = preprocessTextToIds(rawOcrText, vocab)
+                val inputBuffer = classifier.convertToByteBuffer(inputIds)
 
-                _clauses.value = parsed
+                // 🔹 Run classification
+                val result = classifier.classify(inputBuffer)
+                if (result != null) {
+                    val (label, confidence) = result
+                    _clauses.value = ClausesModel(
+                        contractName = "Uploaded Contract",
+                        summary = rawOcrText.take(300),
+                        classification = label,
+                        confidence = confidence
+                    )
+                } else {
+                    Log.e(TAG, "Model returned null result.")
+                    _clauses.value = null
+                }
             } catch (e: Exception) {
-                Log.e(TAG, "Error parsing Gemini output: ${e.message}", e)
+                Log.e(TAG, "Error running TFLite model: ${e.message}", e)
                 _clauses.value = null
             } finally {
                 _scanCompleted.value = true
@@ -95,17 +76,8 @@ class ResultViewmodel(private val apiKey: String) : ViewModel() {
         _scanCompleted.value = false
     }
 
-    private fun extractJsonObject(text: String): String? {
-        var cleaned = text
-            .removePrefix("```json").removeSuffix("```").trim()
-            .removePrefix("```").removeSuffix("```").trim()
-
-        val start = cleaned.indexOf('{')
-        val end = cleaned.lastIndexOf('}')
-        if (start == -1 || end <= start) return null
-
-        cleaned = cleaned.substring(start, end + 1)
-        cleaned = cleaned.replace(Regex(",\\s*([}\\]])"), "$1")
-        return cleaned
+    override fun onCleared() {
+        super.onCleared()
+        classifier.close()
     }
 }

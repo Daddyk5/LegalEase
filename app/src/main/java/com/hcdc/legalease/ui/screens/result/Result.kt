@@ -35,6 +35,7 @@ fun ResultScreen(
     LaunchedEffect(Unit) {
         if (!launched) {
             launched = true
+            // 🔥 If you refactor to TFLite, replace this with analyzeText()
             resultViewmodel.analyzePrompt(ocrText)
         }
     }
@@ -44,15 +45,12 @@ fun ResultScreen(
         contentAlignment = Alignment.Center
     ) {
         when {
-            scanCompleted && clauses != null -> {
-                ResultContent(clauses!!)
-            }
-            scanCompleted && clauses == null -> {
-                Text("⚠️ No results parsed. Please try again.", color = Color.Red)
-            }
-            else -> {
-                CustomLoading()
-            }
+            scanCompleted && clauses != null -> ResultContent(clauses!!)
+            scanCompleted && clauses == null -> Text(
+                "⚠️ No results parsed. Please try again.",
+                color = Color.Red
+            )
+            else -> CustomLoading()
         }
     }
 }
@@ -90,31 +88,38 @@ private fun ResultContent(clauseData: ClausesModel) {
                     text = clauseData.summary
                 )
 
-                // ✅ Show classification result
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = when (clauseData.classification) {
-                            "Void" -> Color.Red.copy(alpha = 0.2f)
-                            "Voidable" -> Color.Yellow.copy(alpha = 0.2f)
-                            "Unenforceable" -> Color.Gray.copy(alpha = 0.2f)
-                            "Rescissible" -> Color.Magenta.copy(alpha = 0.2f)
-                            else -> Color.Green.copy(alpha = 0.2f) // Enforceable
-                        }
-                    )
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = "Classification: ${clauseData.classification}",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Text(
-                            text = "Confidence: ${(clauseData.confidence * 100).toInt()}%",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
+                ClassificationCard(
+                    classification = clauseData.classification,
+                    confidence = clauseData.confidence
+                )
             }
+        }
+    }
+}
+
+@Composable
+private fun ClassificationCard(classification: String, confidence: Float) {
+    val bgColor = when (classification) {
+        "Void" -> Color.Red.copy(alpha = 0.2f)
+        "Voidable" -> Color.Yellow.copy(alpha = 0.2f)
+        "Unenforceable" -> Color.Gray.copy(alpha = 0.2f)
+        "Rescissible" -> Color.Magenta.copy(alpha = 0.2f)
+        else -> Color.Green.copy(alpha = 0.2f) // Enforceable
+    }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = bgColor)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = "Classification: $classification",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = "Confidence: ${(confidence * 100).toString().take(5)}%",
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }
