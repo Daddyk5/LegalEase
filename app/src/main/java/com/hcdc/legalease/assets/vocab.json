@@ -1,0 +1,13 @@
+{
+  "oral": 1,
+  "lease": 2,
+  "contract": 3,
+  "void": 4,
+  "voidable": 5,
+  "unenforceable": 6,
+  "rescissible": 7,
+  "enforceable": 8,
+  "sale": 9,
+  "loan": 10,
+  "agreement": 11
+}

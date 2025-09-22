@@ -18,9 +18,10 @@ android {
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // Pull from gradle.properties (recommended). No more hardcoding.
-        val geminiKey: String = (project.findProperty("GEMINI_API_KEY") as String?) ?: ""
-
+        // inside android { defaultConfig { ... } }
+        val geminiKey = project.findProperty("GEMINI_API_KEY") as String? ?: ""
+        // Keep empty when missing; never ship real keys.
+        resValue("string", "gemini_api_key", geminiKey.ifBlank { "" })
         // BuildConfig → com.hcdc.legalease.BuildConfig.GEMINI_API_KEY
         buildConfigField("String", "GEMINI_API_KEY", "\"$geminiKey\"")
 
@@ -69,7 +70,7 @@ configurations.all {
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.2.0"))
     implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-ml-modeldownloader:24.1.0")
+    implementation("com.google.firebase:firebase-ml-modeldownloader")
 
     implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
 

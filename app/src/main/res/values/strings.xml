@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">LegalEase</string>
+    <string name="label_classification">Classification:</string>
+    <string name="label_confidence">Confidence:</string>
 </resources>
