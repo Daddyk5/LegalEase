@@ -11,6 +11,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.ai.client.generativeai.GenerativeModel
 import com.hcdc.legalease.data.ClausesModel
+import com.hcdc.legalease.data.Classification
 import com.hcdc.legalease.ml.TFLiteClassifier
 import com.hcdc.legalease.ml.preprocessTextToIds
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +19,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
+
+// DTO for parsing Gemini’s JSON (classification comes as String)
+@kotlinx.serialization.Serializable
+data class RawClauses(
+    val contractName: String,
+    val summary: String,
+    val classification: String,
+    val confidence: Float
+)
 
 class ResultViewmodel(
     application: Application,
@@ -72,7 +82,6 @@ class ResultViewmodel(
                     return@launch
                 }
 
-                // 🔹 vocab + preprocessing + classification
                 val vocab = loadVocab(getApplication())
                 val inputIds = preprocessTextToIds(rawText, vocab)
                 val buffer = classifier.convertToByteBuffer(inputIds)
@@ -83,7 +92,7 @@ class ResultViewmodel(
                     _clauses.value = ClausesModel(
                         contractName = "Uploaded Contract",
                         summary = rawText.take(300),
-                        classification = label,
+                        classification = Classification.fromLabel(label), // ✅ convert String → Enum
                         confidence = confidence
                     )
                 }
@@ -121,7 +130,13 @@ class ResultViewmodel(
 
                 val jsonText = extractJsonObject(raw)
                 val parsed = try {
-                    json.decodeFromString<ClausesModel>(jsonText!!)
+                    val rawClauses = json.decodeFromString<RawClauses>(jsonText!!)
+                    ClausesModel(
+                        contractName = rawClauses.contractName,
+                        summary = rawClauses.summary,
+                        classification = Classification.fromLabel(rawClauses.classification),
+                        confidence = rawClauses.confidence
+                    )
                 } catch (e: SerializationException) {
                     Log.e(TAG, "JSON decode error: ${e.message}\nPayload:\n$jsonText")
                     null
@@ -162,9 +177,6 @@ class ResultViewmodel(
         return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 
-    /**
-     * Load vocab.json from assets
-     */
     private fun loadVocab(context: Context): Map<String, Int> {
         return try {
             val jsonStr = context.assets.open("vocab.json").bufferedReader().use { it.readText() }

@@ -14,14 +14,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.hcdc.legalease.R
 import com.hcdc.legalease.data.ClausesModel
+import com.hcdc.legalease.data.Classification
 import com.hcdc.legalease.ui.components.CustomLoading
 import com.hcdc.legalease.ui.components.cards.SummaryCard
 import com.hcdc.legalease.ui.components.spacers.VerticalSpacer
+import kotlin.math.roundToInt
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -104,29 +107,34 @@ private fun ResultContent(clauseData: ClausesModel) {
 }
 
 @Composable
-private fun ClassificationCard(classification: String, confidence: Float) {
-    val bgColor = when (classification) {
-        "Void" -> Color.Red.copy(alpha = 0.2f)
-        "Voidable" -> Color.Yellow.copy(alpha = 0.2f)
-        "Unenforceable" -> Color.Gray.copy(alpha = 0.2f)
-        "Rescissible" -> Color.Magenta.copy(alpha = 0.2f)
-        else -> Color.Green.copy(alpha = 0.2f) // Enforceable
-    }
-
+private fun ClassificationCard(classification: Classification, confidence: Float) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = bgColor)
+        colors = CardDefaults.cardColors(containerColor = classificationColor(classification))
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(Modifier.padding(16.dp)) {
             Text(
-                text = "Classification: $classification",
+                text = "${stringResource(R.string.label_classification)} ${classification.label}",
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = "Confidence: ${(confidence * 100).toString().take(5)}%",
+                text = "${stringResource(R.string.label_confidence)} ${(confidence * 100f).roundToInt()}%",
                 style = MaterialTheme.typography.bodyMedium
             )
         }
+    }
+}
+
+/** Must be @Composable so we can read MaterialTheme.colorScheme safely. */
+@Composable
+private fun classificationColor(c: Classification): Color {
+    val colors = MaterialTheme.colorScheme
+    return when (c) {
+        Classification.VOID -> colors.errorContainer
+        Classification.VOIDABLE -> Color(0xFFFFE08A)
+        Classification.UNENFORCEABLE -> colors.surfaceVariant
+        Classification.RESCISSIBLE -> Color(0xFFE0BBFF)
+        Classification.ENFORCEABLE -> colors.tertiaryContainer
     }
 }
 
