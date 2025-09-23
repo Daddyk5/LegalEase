@@ -1,4 +1,5 @@
-package com.legalease.ui.theme
+package com.hcdc.legalease.ui.theme
+
 
 import androidx.compose.ui.graphics.Color
 
