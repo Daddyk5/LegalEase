@@ -1,6 +1,6 @@
 package com.hcdc.legalease.ui.components.bottomSheet.LoginSheet
 
-import PrimaryTextField
+import com.hcdc.legalease.ui.components.textfield.PrimaryTextField
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.hcdc.legalease.R
+import com.hcdc.legalease.ui.navigation.DashboardRoute
 import com.hcdc.legalease.ui.components.bottomSheet.MainBottomSheets.BottomSheetContent
 import com.hcdc.legalease.ui.components.buttons.PrimaryButton
 import com.hcdc.legalease.ui.components.spacers.VerticalSpacer
@@ -90,7 +91,7 @@ fun LoginSheetContent(
             text = "Login",
             onClick = {
                 onLoginSuccess()
-                navController.navigate("dashboard")
+                navController.navigate(DashboardRoute)
             }
         )
         VerticalSpacer(height = 30.dp)

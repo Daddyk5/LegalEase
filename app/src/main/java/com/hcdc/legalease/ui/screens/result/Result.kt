@@ -1,7 +1,5 @@
 package com.hcdc.legalease.ui.screens.result
 
-import android.annotation.SuppressLint
-import android.app.Application
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,9 +14,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.hcdc.legalease.R
+import com.hcdc.legalease.appContainer
 import com.hcdc.legalease.data.ClausesModel
 import com.hcdc.legalease.data.Classification
 import com.hcdc.legalease.ui.components.CustomLoading
@@ -26,42 +25,34 @@ import com.hcdc.legalease.ui.components.cards.SummaryCard
 import com.hcdc.legalease.ui.components.spacers.VerticalSpacer
 import kotlin.math.roundToInt
 
-@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun ResultScreen(
-    navController: NavController,
-    ocrText: String,
-    apiKey: String? = null
-) {
-    val context = LocalContext.current
+fun ResultScreen(analysisId: String) {
+    val container = LocalContext.current.appContainer
     val resultViewmodel: ResultViewmodel = viewModel(
-        factory = ResultViewmodelFactory(context.applicationContext as Application, apiKey)
+        factory = ResultViewmodelFactory(container, analysisId)
     )
-
-    val clauses by resultViewmodel.clauses
-    val scanCompleted by resultViewmodel.scanCompleted.collectAsState()
-    var launched by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        if (!launched) {
-            launched = true
-            resultViewmodel.analyze(ocrText)
-        }
-    }
+    val uiState by resultViewmodel.uiState.collectAsStateWithLifecycle()
 
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        when {
-            scanCompleted && clauses != null -> ResultContent(clauses!!)
-            scanCompleted && clauses == null -> Text(
-                "⚠️ No results parsed. Please try again.",
-                color = Color.Red
+        when (val state = uiState) {
+            is ResultUiState.Success -> ResultContent(state.clauses)
+            is ResultUiState.Error -> Text(
+                text = stringResource(state.error.messageRes()),
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(horizontal = 20.dp)
             )
-            else -> CustomLoading()
+            ResultUiState.Loading -> CustomLoading(message = stringResource(R.string.result_analyzing))
         }
     }
+}
+
+private fun ResultError.messageRes(): Int = when (this) {
+    ResultError.DOCUMENT_NOT_FOUND -> R.string.result_error_not_found
+    ResultError.MODEL_UNAVAILABLE -> R.string.result_error_model_unavailable
+    ResultError.MODEL_INCOMPATIBLE -> R.string.result_error_model_incompatible
 }
 
 @Composable

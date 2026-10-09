@@ -1,0 +1,45 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>EmptyClassBlock:HistoryViewModel.kt$HistoryViewModel${ }</ID>
+    <ID>InvalidPackageDeclaration:dashboardCard.kt$package com.hcdc.legalease.ui.components.cards</ID>
+    <ID>MatchingDeclarationName:PageOcr.kt$OcrPages</ID>
+    <ID>MaxLineLength:PrimaryTextField.kt$visualTransformation = if (isPassword &amp;&amp; !passwordVisible) PasswordVisualTransformation() else VisualTransformation.None</ID>
+    <ID>PackageNaming:BottomSheet.kt$package com.hcdc.legalease.ui.components.bottomSheet.MainBottomSheets</ID>
+    <ID>PackageNaming:BottomSheetContent.kt$package com.hcdc.legalease.ui.components.bottomSheet.MainBottomSheets</ID>
+    <ID>PackageNaming:BottomSheetViewModel.kt$package com.hcdc.legalease.ui.components.bottomSheet.MainBottomSheets</ID>
+    <ID>PackageNaming:ForgotPasswordSheetContent.kt$package com.hcdc.legalease.ui.components.bottomSheet.ForgotPasswordSheet</ID>
+    <ID>PackageNaming:ForgotPasswordViewModel.kt$package com.hcdc.legalease.ui.components.bottomSheet.ForgotPasswordSheet</ID>
+    <ID>PackageNaming:ImageScreen.kt$package com.hcdc.legalease.ui.screens.upload_image</ID>
+    <ID>PackageNaming:ImageViewModel.kt$package com.hcdc.legalease.ui.screens.upload_image</ID>
+    <ID>PackageNaming:LoginSheetContent.kt$package com.hcdc.legalease.ui.components.bottomSheet.LoginSheet</ID>
+    <ID>PackageNaming:LoginSheetViewModel.kt$package com.hcdc.legalease.ui.components.bottomSheet.LoginSheet</ID>
+    <ID>PackageNaming:PDFScreen.kt$package com.hcdc.legalease.ui.screens.upload_pdf</ID>
+    <ID>PackageNaming:PdfViewModel.kt$package com.hcdc.legalease.ui.screens.upload_pdf</ID>
+    <ID>PackageNaming:RegisterSheetContent.kt$package com.hcdc.legalease.ui.components.bottomSheet.RegisterSheet</ID>
+    <ID>PackageNaming:RegisterSheetViewModel.kt$package com.hcdc.legalease.ui.components.bottomSheet.RegisterSheet</ID>
+    <ID>PackageNaming:RiskCard.kt$package com.hcdc.legalease.ui.components.cards.ResultCard</ID>
+    <ID>PackageNaming:historyCard.kt$package com.hcdc.legalease.ui.components.cards.HistoryCard</ID>
+    <ID>UnusedParameter:HistoryScreen.kt$navController: NavController</ID>
+    <ID>WildcardImport:BottomSheet.kt$import androidx.compose.material3.*</ID>
+    <ID>WildcardImport:BottomSheet.kt$import androidx.compose.runtime.*</ID>
+    <ID>WildcardImport:ExampleUnitTest.kt$import org.junit.Assert.*</ID>
+    <ID>WildcardImport:PrimaryButton.kt$import androidx.compose.foundation.layout.*</ID>
+    <ID>WildcardImport:PrimaryButton.kt$import androidx.compose.material3.*</ID>
+    <ID>WildcardImport:PrimaryTextField.kt$import androidx.compose.material3.*</ID>
+    <ID>WildcardImport:PrimaryTextField.kt$import androidx.compose.runtime.*</ID>
+    <ID>WildcardImport:PrimaryTextField.kt$import androidx.compose.ui.text.input.*</ID>
+    <ID>WildcardImport:Result.kt$import androidx.compose.foundation.layout.*</ID>
+    <ID>WildcardImport:Result.kt$import androidx.compose.material3.*</ID>
+    <ID>WildcardImport:Result.kt$import androidx.compose.runtime.*</ID>
+    <ID>WildcardImport:SecondaryButton.kt$import androidx.compose.foundation.layout.*</ID>
+    <ID>WildcardImport:SecondaryButton.kt$import androidx.compose.material3.*</ID>
+    <ID>WildcardImport:Theme.kt$import androidx.compose.material3.*</ID>
+    <ID>WildcardImport:Type.kt$import androidx.compose.ui.text.font.*</ID>
+    <ID>WildcardImport:dashboardCard.kt$import androidx.compose.foundation.layout.*</ID>
+    <ID>WildcardImport:dashboardCard.kt$import androidx.compose.material3.*</ID>
+    <ID>WildcardImport:historyCard.kt$import androidx.compose.foundation.layout.*</ID>
+    <ID>WildcardImport:historyCard.kt$import androidx.compose.material3.*</ID>
+  </CurrentIssues>
+</SmellBaseline>

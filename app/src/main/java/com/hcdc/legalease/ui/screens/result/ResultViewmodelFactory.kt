@@ -1,18 +1,16 @@
 package com.hcdc.legalease.ui.screens.result
 
-import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.hcdc.legalease.AppContainer
 
 class ResultViewmodelFactory(
-    private val application: Application,
-    private val apiKey: String? = null
+    private val container: AppContainer,
+    private val analysisId: String,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(ResultViewmodel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return ResultViewmodel(application, apiKey) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
+        require(modelClass.isAssignableFrom(ResultViewmodel::class.java)) { "Unknown ViewModel class $modelClass" }
+        @Suppress("UNCHECKED_CAST")
+        return ResultViewmodel(analysisId, container.documentRepository, container.classifier) as T
     }
 }

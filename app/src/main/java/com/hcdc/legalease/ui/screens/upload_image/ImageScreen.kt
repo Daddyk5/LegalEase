@@ -1,6 +1,5 @@
 package com.hcdc.legalease.ui.screens.upload_image
 
-import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,42 +21,41 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.hcdc.legalease.R
 import com.hcdc.legalease.ui.components.CustomLoading
 import com.hcdc.legalease.ui.components.buttons.PrimaryButton
 import com.hcdc.legalease.ui.components.buttons.SecondaryButton
 import com.hcdc.legalease.ui.components.spacers.VerticalSpacer
+import com.hcdc.legalease.ui.navigation.ResultRoute
+import com.hcdc.legalease.ui.screens.ScanState
+import com.hcdc.legalease.ui.screens.messageRes
+import com.hcdc.legalease.ui.screens.progressMessage
 import kotlinx.coroutines.launch
 
 
-@SuppressLint("NewApi")
 @Composable
 fun ImageScreen(
     navController: NavController,
     viewModel: ImageViewModel = viewModel()
 ) {
 
-    val images by viewModel.selectedImages.collectAsState()
-    val context = LocalContext.current
-    val texts = viewModel.ocrResults.collectAsState()
-    val scanCompleted by viewModel.scanCompleted.collectAsState()
-    var hasNavigated = remember { false }
+    val images by viewModel.selectedImages.collectAsStateWithLifecycle()
+    val scanState by viewModel.scanState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val isLoading = remember { mutableStateOf(false) }
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetMultipleContents()
@@ -65,17 +63,25 @@ fun ImageScreen(
         viewModel.setSelectedImages(uris)
     }
 
-    LaunchedEffect(scanCompleted) {
-        if (scanCompleted && !hasNavigated) {
-            hasNavigated = true
-            val scannedText = texts.value.firstOrNull() ?: ""
-            val encodedText = Uri.encode(scannedText)
-            navController.navigate("result/$encodedText")
+    LaunchedEffect(viewModel) {
+        viewModel.navigateToResult.collect { analysisId ->
+            navController.navigate(ResultRoute(analysisId))
         }
     }
 
-    if (isLoading.value) {
-        CustomLoading()
+    val failure = (scanState as? ScanState.Failed)?.reason
+    val failureMessage = failure?.let { stringResource(it.messageRes()) }
+    val okLabel = stringResource(R.string.action_ok)
+    LaunchedEffect(failure) {
+        if (failureMessage != null) {
+            snackbarHostState.showSnackbar(message = failureMessage, actionLabel = okLabel)
+            viewModel.dismissError()
+        }
+    }
+
+    val scanning = scanState as? ScanState.Scanning
+    if (scanning != null) {
+        CustomLoading(message = scanning.progressMessage())
     } else{
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -142,14 +148,12 @@ fun ImageScreen(
                     text = "Proceed to Scan",
                     onClick = {
                         if (images.isNotEmpty()){
-                            isLoading.value = true
-                            viewModel.clearOcrResults()
-                            viewModel.runTextRecognition(context, images)
+                            viewModel.scan()
                         }else{
                             scope.launch {
                                 snackbarHostState.showSnackbar(
                                     message = "Please select images",
-                                    actionLabel = "OK"
+                                    actionLabel = okLabel
                                 )
                             }
                         }

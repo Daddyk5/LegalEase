@@ -100,7 +100,8 @@ fun HistoryScreen(
             items(filteredItems) { item ->
                 HistoryCard(
                     title = item,
-                    onClick = { navController.navigate("result") }
+                    // Placeholder rows have no analysis ID to open yet.
+                    onClick = {}
                 )
             }
         }

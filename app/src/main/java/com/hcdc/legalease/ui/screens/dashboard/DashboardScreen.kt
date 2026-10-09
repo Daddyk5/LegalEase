@@ -27,6 +27,10 @@ import androidx.navigation.NavController
 import com.hcdc.legalease.R
 import com.hcdc.legalease.ui.components.cards.DashboardCard
 import com.hcdc.legalease.ui.components.spacers.VerticalSpacer
+import com.hcdc.legalease.ui.navigation.HistoryRoute
+import com.hcdc.legalease.ui.navigation.HomeRoute
+import com.hcdc.legalease.ui.navigation.ImageRoute
+import com.hcdc.legalease.ui.navigation.PdfRoute
 
 @Composable
 fun DashboardScreen(navController: NavController){
@@ -52,7 +56,7 @@ fun DashboardScreen(navController: NavController){
                     .clip(CircleShape)
             )
 
-            IconButton(onClick = { navController.navigate("home")}) {
+            IconButton(onClick = { navController.navigate(HomeRoute)}) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.Logout,
                     contentDescription = "Logout",
@@ -89,7 +93,7 @@ fun DashboardScreen(navController: NavController){
                 title = "Upload PDF",
                 subtitle = "Scan and analyze legal documents",
                 imageRes = R.drawable.upload_pdf,
-                onClick = { navController.navigate("pdf") },
+                onClick = { navController.navigate(PdfRoute) },
                 modifier = Modifier.weight(.5f)
             )
             VerticalSpacer(height = 0.dp)
@@ -97,7 +101,7 @@ fun DashboardScreen(navController: NavController){
                 title = "Upload Image",
                 subtitle = "Snap, upload, and understand",
                 imageRes = R.drawable.upload_image,
-                onClick = { navController.navigate("image") },
+                onClick = { navController.navigate(ImageRoute) },
                 modifier = Modifier.weight(.5f)
             )
             VerticalSpacer(height = 5.dp)
@@ -110,7 +114,7 @@ fun DashboardScreen(navController: NavController){
                 title = "My Scans",
                 subtitle = "History of your scanned files and reviews.",
                 imageRes = R.drawable.history,
-                onClick = { navController.navigate("history") },
+                onClick = { navController.navigate(HistoryRoute) },
                 modifier = Modifier.weight(.5f)
             )
         }

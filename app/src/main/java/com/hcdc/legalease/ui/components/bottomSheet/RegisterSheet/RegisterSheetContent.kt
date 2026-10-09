@@ -1,6 +1,6 @@
 package com.hcdc.legalease.ui.components.bottomSheet.RegisterSheet
 
-import PrimaryTextField
+import com.hcdc.legalease.ui.components.textfield.PrimaryTextField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column

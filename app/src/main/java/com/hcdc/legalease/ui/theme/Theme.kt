@@ -1,16 +1,12 @@
 package com.hcdc.legalease.ui.theme
 
 import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalView
-import androidx.core.view.ViewCompat
-import com.legalease.ui.theme.LegalEaseTypography
+import androidx.core.view.WindowCompat
 
 private val LightColorScheme = lightColorScheme(
     primary = md_theme_light_primary,
@@ -49,9 +45,10 @@ fun LegalEaseTheme(
 
     val view = LocalView.current
     if (!view.isInEditMode) {
-        val window = (view.context as Activity).window
-        window.statusBarColor = Color.Transparent.toArgb()
-        ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = !useDarkTheme
+        SideEffect {
+            val window = (view.context as Activity).window
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !useDarkTheme
+        }
     }
 
     MaterialTheme(

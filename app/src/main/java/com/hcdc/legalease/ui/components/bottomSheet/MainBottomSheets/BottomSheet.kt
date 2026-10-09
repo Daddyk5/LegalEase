@@ -21,7 +21,6 @@ fun BottomSheet(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val isVisible by viewModel.isSheetVisible.collectAsState()
     val content by viewModel.sheetContent.collectAsState()
-    val scope = rememberCoroutineScope()
 
     if (isVisible && content != null) {
         ModalBottomSheet(

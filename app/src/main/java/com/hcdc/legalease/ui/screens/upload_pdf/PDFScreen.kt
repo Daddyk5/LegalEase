@@ -1,6 +1,5 @@
 package com.hcdc.legalease.ui.screens.upload_pdf
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -23,31 +22,33 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.hcdc.legalease.R
 import com.hcdc.legalease.ui.components.CustomLoading
 import com.hcdc.legalease.ui.components.buttons.PrimaryButton
 import com.hcdc.legalease.ui.components.buttons.SecondaryButton
 import com.hcdc.legalease.ui.components.spacers.VerticalSpacer
-import com.hcdc.legalease.viewmodel.PdfViewModel
+import com.hcdc.legalease.ui.navigation.ResultRoute
+import com.hcdc.legalease.ui.screens.ScanState
+import com.hcdc.legalease.ui.screens.messageRes
+import com.hcdc.legalease.ui.screens.progressMessage
 import com.rajat.pdfviewer.PdfRendererView
 import com.rajat.pdfviewer.compose.PdfRendererViewCompose
 import com.rajat.pdfviewer.util.PdfSource
 import kotlinx.coroutines.launch
 
-
-@SuppressLint("NewApi")
 @Composable
 fun PDFScreen(
     navController: NavController,
@@ -55,35 +56,27 @@ fun PDFScreen(
 ) {
 
     val context = LocalContext.current
-    val pdfUri by viewModel.pdfUri.collectAsState()
-    val fileName by viewModel.fileName.collectAsState()
-    val texts = viewModel.ocrResults.collectAsState()
-    val scanCompleted by viewModel.scanCompleted.collectAsState()
-    var hasNavigated = remember { false }
+    val pdfUri by viewModel.pdfUri.collectAsStateWithLifecycle()
+    val fileName by viewModel.fileName.collectAsStateWithLifecycle()
+    val scanState by viewModel.scanState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val isLoading = remember { mutableStateOf(false) }
 
-    LaunchedEffect(scanCompleted) {
-        if (scanCompleted && !hasNavigated) {
-            hasNavigated = true
-            val scannedText = texts.value.firstOrNull() ?: ""
-            val encodedText = Uri.encode(scannedText)
-            navController.navigate("result/$encodedText")
+    LaunchedEffect(viewModel) {
+        viewModel.navigateToResult.collect { analysisId ->
+            navController.navigate(ResultRoute(analysisId))
         }
     }
 
-    fun getFileNameFromUri(context: Context, uri: Uri): String? {
-        val returnCursor = context.contentResolver.query(uri, null, null, null, null)
-        returnCursor?.use { cursor ->
-            val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-            if (nameIndex != -1 && cursor.moveToFirst()) {
-                return cursor.getString(nameIndex)
-            }
+    val failure = (scanState as? ScanState.Failed)?.reason
+    val failureMessage = failure?.let { stringResource(it.messageRes()) }
+    val okLabel = stringResource(R.string.action_ok)
+    LaunchedEffect(failure) {
+        if (failureMessage != null) {
+            snackbarHostState.showSnackbar(message = failureMessage, actionLabel = okLabel)
+            viewModel.dismissError()
         }
-        return null
     }
-
 
     val pdfPickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         uri?.let {
@@ -96,9 +89,10 @@ fun PDFScreen(
         }
     }
 
-    if (isLoading.value) {
-        CustomLoading()
-    } else{
+    val scanning = scanState as? ScanState.Scanning
+    if (scanning != null) {
+        CustomLoading(message = scanning.progressMessage())
+    } else {
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
@@ -141,9 +135,7 @@ fun PDFScreen(
                         lifecycleOwner = LocalLifecycleOwner.current,
                         modifier = Modifier.fillMaxSize(),
                         zoomListener = object : PdfRendererView.ZoomListener {
-                            override fun onZoomChanged(isZoomedIn: Boolean, scale: Float) {
-
-                            }
+                            override fun onZoomChanged(isZoomedIn: Boolean, scale: Float) = Unit
                         }
                     )
                 }
@@ -161,15 +153,13 @@ fun PDFScreen(
         PrimaryButton(
             text = "Proceed to Scan",
             onClick = {
-                if (fileName?.endsWith(".pdf") == true && pdfUri != null){
-                    isLoading.value = true
-                    viewModel.clearOcrResults()
-                    viewModel.processPdfAndRunOcr(context)
-                }else{
+                if (fileName?.endsWith(".pdf", ignoreCase = true) == true && pdfUri != null) {
+                    viewModel.scan()
+                } else {
                     scope.launch {
                         snackbarHostState.showSnackbar(
                             message = "Please select a valid PDF file",
-                            actionLabel = "OK"
+                            actionLabel = okLabel
                         )
                     }
                 }
@@ -177,3 +167,13 @@ fun PDFScreen(
         )
     }}
 }}
+
+private fun getFileNameFromUri(context: Context, uri: Uri): String? {
+    context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+        val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+        if (nameIndex != -1 && cursor.moveToFirst()) {
+            return cursor.getString(nameIndex)
+        }
+    }
+    return null
+}

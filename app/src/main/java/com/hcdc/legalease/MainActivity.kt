@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.legalease.ui.theme.LegalEaseTheme
+import com.hcdc.legalease.ui.theme.LegalEaseTheme
 import com.hcdc.legalease.ui.navigation.AppNavHost
 
 class MainActivity : ComponentActivity() {

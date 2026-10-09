@@ -1,25 +1,33 @@
-package com.hcdc.legalease.viewmodel
+package com.hcdc.legalease.ui.screens.upload_pdf
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
+import android.app.Application
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
-import android.os.ParcelFileDescriptor
-import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.tasks.await
-import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.text.TextRecognition
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import com.hcdc.legalease.R
+import com.hcdc.legalease.appContainer
+import com.hcdc.legalease.ml.OcrEngine
+import com.hcdc.legalease.ml.OcrPages
+import com.hcdc.legalease.ml.ocrPages
+import com.hcdc.legalease.ml.renderPage
+import com.hcdc.legalease.ui.screens.ScanFailure
+import com.hcdc.legalease.ui.screens.ScanState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.IOException
 
-class PdfViewModel : ViewModel() {
+class PdfViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val documentRepository = application.appContainer.documentRepository
 
     private val _pdfUri = MutableStateFlow<Uri?>(null)
     val pdfUri: StateFlow<Uri?> = _pdfUri.asStateFlow()
@@ -27,95 +35,68 @@ class PdfViewModel : ViewModel() {
     private val _fileName = MutableStateFlow<String?>(null)
     val fileName: StateFlow<String?> = _fileName.asStateFlow()
 
-    private val _pdfBitmaps = MutableStateFlow<List<Bitmap>>(emptyList())
-    val pdfBitmaps: StateFlow<List<Bitmap>> = _pdfBitmaps.asStateFlow()
+    private val _scanState = MutableStateFlow<ScanState>(ScanState.Idle)
+    val scanState: StateFlow<ScanState> = _scanState.asStateFlow()
 
-    private val _ocrResults = MutableStateFlow<List<String>>(emptyList())
-    val ocrResults: StateFlow<List<String>> = _ocrResults.asStateFlow()
+    private val _navigateToResult = Channel<String>(Channel.BUFFERED)
 
-    private val _scanCompleted = MutableStateFlow(false)
-    val scanCompleted: StateFlow<Boolean> = _scanCompleted
+    /** Emits the analysis ID once a scan finishes. */
+    val navigateToResult: Flow<String> = _navigateToResult.receiveAsFlow()
 
-    private var lastProcessedUri: Uri? = null
+    private var scanJob: Job? = null
 
     fun setPdfUri(uri: Uri?) { _pdfUri.value = uri }
     fun setPdfName(name: String?) { _fileName.value = name }
-    fun clearOcrResults() { _ocrResults.value = emptyList() }
 
-    fun processPdfAndRunOcr(context: Context) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _scanCompleted.value = false
-            val uri = _pdfUri.value ?: return@launch
+    fun dismissError() {
+        if (_scanState.value is ScanState.Failed) _scanState.value = ScanState.Idle
+    }
 
-            if (uri == lastProcessedUri && _ocrResults.value.isNotEmpty()) {
-                Log.d("PdfViewModel", "Same URI and OCR already present; skipping reprocess.")
-                _scanCompleted.value = true
-                return@launch
+    fun scan() {
+        val uri = _pdfUri.value ?: return
+        if (scanJob?.isActive == true) return
+        scanJob = viewModelScope.launch {
+            _scanState.value = ScanState.Scanning(currentPage = 0, totalPages = 0)
+            val result = try {
+                withContext(Dispatchers.IO) { ocrPdf(uri) }
+            } catch (_: IOException) {
+                null
+            } catch (_: SecurityException) {
+                null
             }
-            lastProcessedUri = uri
+            when {
+                result == null -> _scanState.value = ScanState.Failed(ScanFailure.UNREADABLE_FILE)
+                !result.hasText -> _scanState.value = ScanState.Failed(ScanFailure.NO_TEXT_FOUND)
+                else -> {
+                    val name = _fileName.value
+                        ?: getApplication<Application>().getString(R.string.scan_default_pdf_name)
+                    val id = documentRepository.save(name, result.pages, result.unreadablePages)
+                    _navigateToResult.send(id)
+                    _scanState.value = ScanState.Idle
+                }
+            }
+        }
+    }
 
-            _pdfBitmaps.value = emptyList()
-            _ocrResults.value = emptyList()
-
-            val bitmaps = mutableListOf<Bitmap>()
-
-            try {
-                val pfd = context.contentResolver.openFileDescriptor(uri, "r") ?: return@launch
-                PdfRenderer(pfd).use { pdfRenderer ->
-                    for (i in 0 until pdfRenderer.pageCount) {
-                        pdfRenderer.openPage(i).use { page ->
-                            // Increase scale for better OCR (5–8x depending on device)
-                            val scale = 8
-                            val width = page.width * scale
-                            val height = page.height * scale
-
-                            val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-                            val canvas = Canvas(bitmap)
-                            canvas.drawColor(android.graphics.Color.WHITE)
-
-                            page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-                            bitmaps.add(bitmap)
+    /** Renders and reads one page at a time, recycling each bitmap before the next is created. */
+    private suspend fun ocrPdf(uri: Uri): OcrPages? {
+        val descriptor = getApplication<Application>().contentResolver.openFileDescriptor(uri, "r") ?: return null
+        return descriptor.use {
+            PdfRenderer(descriptor).use { renderer ->
+                OcrEngine().use { ocr ->
+                    ocrPages(
+                        pageCount = renderer.pageCount,
+                        onPage = { _scanState.value = ScanState.Scanning(it, renderer.pageCount) },
+                    ) { index ->
+                        val bitmap = renderer.renderPage(index)
+                        try {
+                            ocr.recognize(bitmap)
+                        } finally {
+                            bitmap.recycle()
                         }
                     }
                 }
-            } catch (e: Exception) {
-                Log.e("PdfViewModel", "PDF render error: ${e.localizedMessage}")
             }
-
-            _pdfBitmaps.value = bitmaps
-
-            if (bitmaps.isEmpty()) {
-                Log.w("PdfViewModel", "No pages rendered; OCR skipped.")
-                _ocrResults.value = listOf("")
-                _scanCompleted.value = true
-                return@launch
-            }
-
-            val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-            val sb = StringBuilder()
-
-            try {
-                for ((idx, bitmap) in bitmaps.withIndex()) {
-                    try {
-                        val image = InputImage.fromBitmap(bitmap, 0)
-                        val visionText = recognizer.process(image).await()
-                        val text = visionText.text.trim()
-                        Log.d("PdfViewModel", "OCR page $idx chars=${text.length}")
-                        if (text.isNotBlank()) {
-                            sb.appendLine(text)
-                            sb.appendLine() // page break spacing
-                        }
-                    } catch (e: Exception) {
-                        Log.e("PdfViewModel", "OCR error on page $idx: ${e.localizedMessage}")
-                    }
-                }
-            } finally {
-                recognizer.close()
-            }
-
-            val fullText = sb.toString().trim()
-            _ocrResults.value = listOf(fullText)
-            _scanCompleted.value = true
         }
     }
 }

@@ -9,10 +9,6 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
-        maven {
-            url = uri("https://repo.itextsupport.com/android")
-        }
-
     }
 }
 dependencyResolutionManagement {
@@ -23,7 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-
 rootProject.name = "LegalEase"
 include(":app")
- 
