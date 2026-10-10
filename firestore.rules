@@ -1,0 +1,100 @@
+rules_version = '2';
+
+// LegalEase Firestore rules.
+// - Only the signed-in owner, with a verified email, can read or write their data.
+// - Every write is schema-checked: known keys only, correct types, bounded sizes.
+// - OCR page text and uploaded documents are never stored here (the app syncs results only),
+//   and the schema below has no field that could hold them.
+// App Check enforcement is enabled in the Firebase console, not in these rules.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOwner(uid) {
+      return request.auth != null
+        && request.auth.uid == uid
+        && request.auth.token.email_verified == true;
+    }
+
+    function optionalString(data, key, maxLen) {
+      return !(key in data) || data[key] == null
+        || (data[key] is string && data[key].size() <= maxLen);
+    }
+
+    function optionalInt(data, key, min, max) {
+      return !(key in data) || data[key] == null
+        || (data[key] is int && data[key] >= min && data[key] <= max);
+    }
+
+    // users/{uid}: a small profile document; no email or other personal data is stored.
+    function validUser(d) {
+      return d.keys().hasOnly(['schemaVersion', 'lastSignInAt'])
+        && d.schemaVersion == 1
+        && d.lastSignInAt is int;
+    }
+
+    // Deleted analyses sync as content-free tombstones.
+    function validTombstone(d) {
+      return d.keys().hasOnly(['schemaVersion', 'updatedAt', 'deleted'])
+        && d.deleted == true;
+    }
+
+    function validLiveAnalysis(d) {
+      return d.keys().hasOnly([
+          'schemaVersion', 'documentName', 'sourceKind', 'status', 'createdAt', 'updatedAt',
+          'pageCount', 'unreadablePages', 'classification', 'confidence', 'summary',
+          'errorCode', 'deleted'])
+        && d.keys().hasAll(['documentName', 'sourceKind', 'status', 'createdAt', 'deleted'])
+        && d.deleted == false
+        && d.documentName is string && d.documentName.size() <= 300
+        && d.sourceKind in ['PDF', 'IMAGES']
+        && d.status in ['COMPLETED', 'FAILED']
+        && d.createdAt is int
+        && optionalInt(d, 'pageCount', 0, 2000)
+        && (!('unreadablePages' in d) || (d.unreadablePages is list && d.unreadablePages.size() <= 2000))
+        && (!('classification' in d) || d.classification == null
+            || d.classification in ['Void', 'Voidable', 'Unenforceable', 'Rescissible', 'Enforceable'])
+        && (!('confidence' in d) || d.confidence == null
+            || (d.confidence is number && d.confidence >= 0 && d.confidence <= 1))
+        && optionalString(d, 'summary', 2000)
+        && optionalString(d, 'errorCode', 64);
+    }
+
+    function validAnalysis(d) {
+      return d.schemaVersion == 1
+        && d.updatedAt is int
+        && (validTombstone(d) || validLiveAnalysis(d));
+    }
+
+    // Generated contracts are immutable versions; an edit is a new document.
+    function validContract(d) {
+      return d.keys().hasOnly([
+          'schemaVersion', 'contractId', 'version', 'type', 'title', 'body', 'createdAt', 'updatedAt'])
+        && d.schemaVersion == 1
+        && d.contractId is string && d.contractId.size() <= 64
+        && d.version is int && d.version >= 1
+        && d.type in ['LEASE', 'LOAN', 'SALE', 'LEASE_OF_PERSONAL_PROPERTY']
+        && d.title is string && d.title.size() <= 300
+        && d.body is string && d.body.size() <= 200000
+        && d.createdAt is int
+        && d.updatedAt is int;
+    }
+
+    match /users/{uid} {
+      allow read, delete: if isOwner(uid);
+      allow create, update: if isOwner(uid) && validUser(request.resource.data);
+
+      match /analyses/{analysisId} {
+        allow read, delete: if isOwner(uid);
+        allow create, update: if isOwner(uid) && validAnalysis(request.resource.data);
+      }
+
+      match /contracts/{versionId} {
+        allow read, delete: if isOwner(uid);
+        allow create: if isOwner(uid) && validContract(request.resource.data);
+        // Re-uploading the identical version (a retried sync) is allowed; changing it is not.
+        allow update: if isOwner(uid) && validContract(request.resource.data)
+          && request.resource.data.diff(resource.data).affectedKeys().size() == 0;
+      }
+    }
+  }
+}

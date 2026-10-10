@@ -1,6 +1,8 @@
 package com.hcdc.legalease.feature.auth.sheet
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.*
@@ -31,7 +33,9 @@ fun BottomSheet(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(460.dp),
+                    .height(460.dp)
+                    // Inline errors and large font scales must scroll, not clip.
+                    .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 when (content) {

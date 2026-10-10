@@ -5,3 +5,9 @@ plugins {
 android {
     namespace = "com.hcdc.legalease.feature.auth"
 }
+
+dependencies {
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services)
+    implementation(libs.googleid)
+}

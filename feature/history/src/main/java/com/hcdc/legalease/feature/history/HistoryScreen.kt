@@ -1,6 +1,26 @@
 package com.hcdc.legalease.feature.history
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.rememberSwipeToDismissBoxState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.semantics
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,7 +30,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,7 +56,28 @@ fun HistoryScreen(
 ) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val items = viewModel.items.collectAsLazyPagingItems()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val deletedMessage = stringResource(R.string.history_deleted)
+    val undoLabel = stringResource(R.string.history_undo)
 
+    LaunchedEffect(viewModel) {
+        viewModel.events.collect { event ->
+            when (event) {
+                HistoryEvent.ShowUndo -> {
+                    snackbarHostState.currentSnackbarData?.dismiss()
+                    val result = snackbarHostState.showSnackbar(
+                        message = deletedMessage,
+                        actionLabel = undoLabel,
+                        duration = SnackbarDuration.Short,
+                    )
+                    if (result == SnackbarResult.ActionPerformed) viewModel.onUndo() else viewModel.onUndoExpired()
+                }
+            }
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -84,7 +124,8 @@ fun HistoryScreen(
         )
         VerticalSpacer(height = 15.dp)
 
-        if (!uiState.isLoading && uiState.items.isEmpty()) {
+        val loaded = items.loadState.refresh is LoadState.NotLoading
+        if (loaded && items.itemCount == 0) {
             Text(
                 text = if (uiState.query.isBlank()) {
                     stringResource(R.string.history_empty)
@@ -103,12 +144,51 @@ fun HistoryScreen(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(15.dp),
         ) {
-            items(uiState.items, key = { it.analysisId }) { item ->
-                HistoryCard(
-                    title = item.title,
-                    onClick = { onOpenAnalysis(item.analysisId) }
+            items(count = items.itemCount, key = items.itemKey { it.analysisId }) { index ->
+                val item = items[index] ?: return@items
+                DeletableHistoryCard(
+                    item = item,
+                    onClick = { onOpenAnalysis(item.analysisId) },
+                    onDelete = { viewModel.onDelete(item.analysisId) },
                 )
             }
         }
+    }
+        SnackbarHost(snackbarHostState, modifier = Modifier.align(Alignment.BottomCenter))
+    }
+}
+
+/**
+ * The existing [HistoryCard], swipeable right-to-left to delete. TalkBack users get the same
+ * action as a custom accessibility action, since swipe gestures are not available to them.
+ */
+@Composable
+private fun DeletableHistoryCard(item: HistoryItem, onClick: () -> Unit, onDelete: () -> Unit) {
+    val deleteLabel = stringResource(R.string.history_delete)
+    val dismissState = rememberSwipeToDismissBoxState()
+    SwipeToDismissBox(
+        state = dismissState,
+        enableDismissFromStartToEnd = false,
+        onDismiss = { if (it == SwipeToDismissBoxValue.EndToStart) onDelete() },
+        backgroundContent = {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.errorContainer, RoundedCornerShape(16.dp))
+                    .padding(horizontal = 20.dp),
+                contentAlignment = Alignment.CenterEnd,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onErrorContainer,
+                )
+            }
+        },
+        modifier = Modifier.semantics {
+            customActions = listOf(CustomAccessibilityAction(deleteLabel) { onDelete(); true })
+        },
+    ) {
+        HistoryCard(title = item.title, onClick = onClick)
     }
 }

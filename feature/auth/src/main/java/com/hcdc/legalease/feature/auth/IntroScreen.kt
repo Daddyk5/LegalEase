@@ -16,6 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.getValue
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hcdc.legalease.core.designsystem.R as DesignR
 import com.hcdc.legalease.feature.auth.sheet.BottomSheetContent
@@ -31,6 +34,8 @@ fun IntroScreen(
     onLoginSuccess: () -> Unit
 ) {
     val sheetViewModel: BottomSheetViewModel = viewModel()
+    val introViewModel: IntroViewModel = hiltViewModel()
+    val isSignedIn by introViewModel.isSignedIn.collectAsStateWithLifecycle()
 
     BottomSheet(
         viewModel = sheetViewModel,
@@ -40,8 +45,8 @@ fun IntroScreen(
                 onLoginSuccess = { sheetViewModel.hide() }
             )
         },
-        registerContent = { RegisterSheetContent { sheetViewModel.hide() } },
-        forgotPasswordContent = { ForgotPasswordSheetContent { sheetViewModel.hide() } }
+        registerContent = { RegisterSheetContent() },
+        forgotPasswordContent = { ForgotPasswordSheetContent() }
     )
 
     Column(
@@ -81,7 +86,8 @@ fun IntroScreen(
             VerticalSpacer(height = 35.dp)
             PrimaryButton(
                 text = "Begin",
-                onClick = {sheetViewModel.show(BottomSheetContent.Login)}
+                // A verified, signed-in user goes straight in; everyone else logs in first.
+                onClick = { if (isSignedIn) onLoginSuccess() else sheetViewModel.show(BottomSheetContent.Login) }
                 )
         }
     }

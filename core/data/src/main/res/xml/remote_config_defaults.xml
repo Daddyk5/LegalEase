@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bundled Remote Config defaults. Keep in sync with FeatureFlags.DEFAULT and SETUP.md. -->
+<defaultsMap>
+    <entry>
+        <key>enable_generator</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>enable_llm</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>confidence_threshold_text</key>
+        <value>A classification is shown only when LegalEase is at least 80% confident.</value>
+    </entry>
+</defaultsMap>

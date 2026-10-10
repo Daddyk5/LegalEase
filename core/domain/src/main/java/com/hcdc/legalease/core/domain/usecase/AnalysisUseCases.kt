@@ -6,6 +6,9 @@ import com.hcdc.legalease.core.domain.model.Analysis
 import com.hcdc.legalease.core.domain.model.SourceKind
 import com.hcdc.legalease.core.domain.repository.AnalysisRepository
 import com.hcdc.legalease.core.domain.result.AppResult
+import androidx.paging.PagingData
+import com.hcdc.legalease.core.domain.telemetry.AnalyticsEvent
+import com.hcdc.legalease.core.domain.telemetry.AnalyticsTracker
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -13,10 +16,14 @@ import javax.inject.Inject
 class StartAnalysisUseCase @Inject constructor(
     private val repository: AnalysisRepository,
     private val scheduler: AnalysisScheduler,
+    private val analytics: AnalyticsTracker,
 ) {
     suspend operator fun invoke(documentName: String, kind: SourceKind, sourceUris: List<String>): AppResult<String> {
         val created = repository.create(documentName, kind, sourceUris)
-        if (created is AppResult.Success) scheduler.enqueue(created.value)
+        if (created is AppResult.Success) {
+            scheduler.enqueue(created.value)
+            analytics.log(AnalyticsEvent.ScanStarted(kind.name))
+        }
         return created
     }
 }
@@ -36,15 +43,17 @@ class CancelAnalysisUseCase @Inject constructor(
 }
 
 class GetHistoryUseCase @Inject constructor(private val repository: AnalysisRepository) {
-    operator fun invoke(query: String): Flow<List<Analysis>> = repository.observeHistory(query.trim())
+    operator fun invoke(query: String): Flow<PagingData<Analysis>> = repository.history(query.trim())
 }
 
 class DeleteAnalysisUseCase @Inject constructor(
     private val repository: AnalysisRepository,
     private val syncScheduler: SyncScheduler,
+    private val analytics: AnalyticsTracker,
 ) {
     suspend operator fun invoke(analysisId: String) {
         repository.delete(analysisId)
         syncScheduler.requestSync()
+        analytics.log(AnalyticsEvent.AnalysisDeleted)
     }
 }

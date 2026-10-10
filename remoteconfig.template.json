@@ -1,0 +1,19 @@
+{
+  "parameters": {
+    "enable_generator": {
+      "defaultValue": { "value": "true" },
+      "valueType": "BOOLEAN",
+      "description": "Kill switch for the contract generator (Dashboard > Create Contract)."
+    },
+    "enable_llm": {
+      "defaultValue": { "value": "true" },
+      "valueType": "BOOLEAN",
+      "description": "Kill switch for the on-device LLM explanation. When false, the TFLite classifier with rule-based explanations is used."
+    },
+    "confidence_threshold_text": {
+      "defaultValue": { "value": "A classification is shown only when LegalEase is at least 80% confident." },
+      "valueType": "STRING",
+      "description": "Text shown next to the confidence band. Display only: it does not change the 0.80 threshold."
+    }
+  }
+}

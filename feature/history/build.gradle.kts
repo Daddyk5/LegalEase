@@ -5,3 +5,8 @@ plugins {
 android {
     namespace = "com.hcdc.legalease.feature.history"
 }
+
+dependencies {
+    implementation(libs.androidx.paging.compose)
+    testImplementation(libs.androidx.paging.testing)
+}

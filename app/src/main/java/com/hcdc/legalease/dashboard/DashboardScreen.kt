@@ -23,17 +23,27 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hcdc.legalease.R
 import com.hcdc.legalease.core.designsystem.component.cards.DashboardCard
 import com.hcdc.legalease.core.designsystem.component.spacers.VerticalSpacer
 
 @Composable
 fun DashboardScreen(
-    onLogout: () -> Unit,
+    onLoggedOut: () -> Unit,
     onUploadPdf: () -> Unit,
     onUploadImage: () -> Unit,
     onOpenHistory: () -> Unit,
+    viewModel: DashboardViewModel = hiltViewModel(),
 ) {
+    val greetingName by viewModel.greetingName.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewModel) {
+        viewModel.signedOut.collect { onLoggedOut() }
+    }
 
     Column(
         modifier = Modifier
@@ -56,7 +66,7 @@ fun DashboardScreen(
                     .clip(CircleShape)
             )
 
-            IconButton(onClick = { onLogout()}) {
+            IconButton(onClick = viewModel::logout) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.Logout,
                     contentDescription = "Logout",
@@ -67,7 +77,7 @@ fun DashboardScreen(
         }
         VerticalSpacer(height = 15.dp)
         Text(
-            text = "Ana Beech",
+            text = greetingName.orEmpty(),
             style = MaterialTheme.typography.displayLarge.copy(
                 color = MaterialTheme.colorScheme.primary
             )

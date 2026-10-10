@@ -10,6 +10,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.hcdc.legalease.core.domain.repository.AnalysisRepository
 import com.hcdc.legalease.core.domain.result.AppError
+import com.hcdc.legalease.core.domain.telemetry.CrashReporter
 import com.hcdc.legalease.core.domain.usecase.AnalyzeContractUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -28,6 +29,7 @@ class AnalysisWorker @AssistedInject constructor(
     private val analyze: AnalyzeContractUseCase,
     private val repository: AnalysisRepository,
     private val notifications: AnalysisNotifications,
+    private val crashReporter: CrashReporter,
 ) : CoroutineWorker(context, params) {
 
     private val analysisId: String get() = checkNotNull(inputData.getString(KEY_ANALYSIS_ID))
@@ -49,6 +51,7 @@ class AnalysisWorker @AssistedInject constructor(
         } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
             // Last-resort boundary: record the failure so the UI never waits on a dead analysis.
             Log.e(TAG, "Analysis failed unexpectedly", e)
+            crashReporter.recordNonFatal(e)
             repository.fail(analysisId, AppError.Unexpected(e.javaClass.simpleName))
             Result.failure()
         }

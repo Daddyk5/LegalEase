@@ -1,0 +1,25 @@
+rules_version = '2';
+
+// LegalEase Cloud Storage rules. App Check enforcement is enabled in the Firebase console.
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function verifiedUser() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    // Model files (fallback download). Read-only for verified users; uploaded from the console.
+    match /models/{file} {
+      allow read: if verifiedUser();
+      allow write: if false;
+    }
+
+    // Optional, opt-in PDF backups: owner only, PDFs only, at most 20 MB.
+    match /users/{uid}/backups/{file} {
+      allow read, delete: if verifiedUser() && request.auth.uid == uid;
+      allow create, update: if verifiedUser() && request.auth.uid == uid
+        && request.resource.size <= 20 * 1024 * 1024
+        && request.resource.contentType == 'application/pdf';
+    }
+  }
+}

@@ -10,7 +10,8 @@ class AppErrorTest {
         listOf(
             AppError.DocumentNotFound, AppError.UnreadableFile, AppError.NoTextFound, AppError.ModelUnavailable,
             AppError.ModelIncompatible, AppError.StorageFull, AppError.Cancelled, AppError.Network,
-            AppError.NotSignedIn,
+            AppError.NotSignedIn, AppError.InvalidCredentials, AppError.EmailNotVerified, AppError.EmailInUse,
+            AppError.WeakPassword, AppError.TooManyRequests,
         ).forEach { assertEquals(it, AppError.fromCode(it.code)) }
     }
 

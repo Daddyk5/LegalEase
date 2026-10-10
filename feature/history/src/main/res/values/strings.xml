@@ -1,4 +1,7 @@
 <resources>
     <string name="history_empty">No scans yet. Upload a PDF or image to get started.</string>
     <string name="history_no_matches">No scans match “%1$s”.</string>
+    <string name="history_delete">Delete</string>
+    <string name="history_deleted">Scan deleted</string>
+    <string name="history_undo">Undo</string>
 </resources>

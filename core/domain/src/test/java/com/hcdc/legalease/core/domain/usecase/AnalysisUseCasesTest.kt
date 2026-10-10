@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.first
 import com.hcdc.legalease.core.domain.testing.FakeAnalysisRepository
 import com.hcdc.legalease.core.domain.testing.FakeAnalysisScheduler
 import com.hcdc.legalease.core.domain.testing.FakeSyncScheduler
+import com.hcdc.legalease.core.domain.testing.FakeAnalytics
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -18,21 +19,25 @@ class AnalysisUseCasesTest {
     private val repository = FakeAnalysisRepository()
     private val scheduler = FakeAnalysisScheduler()
     private val sync = FakeSyncScheduler()
+    private val analytics = FakeAnalytics()
 
     @Test
     fun `start records the analysis and schedules it`() = runTest {
-        val result = StartAnalysisUseCase(repository, scheduler)("lease.pdf", SourceKind.PDF, listOf("content://x"))
+        val start = StartAnalysisUseCase(repository, scheduler, analytics)
+        val result = start("lease.pdf", SourceKind.PDF, listOf("content://x"))
 
         val id = (result as AppResult.Success).value
         assertEquals(listOf(id), scheduler.enqueued)
         assertEquals(AnalysisStatus.QUEUED, repository.get(id)?.status)
+        assertEquals(listOf("scan_started"), analytics.events.map { it.name })
     }
 
     @Test
     fun `start does not schedule when the copy fails`() = runTest {
         repository.createResult = AppResult.Failure(AppError.StorageFull)
 
-        val result = StartAnalysisUseCase(repository, scheduler)("lease.pdf", SourceKind.PDF, listOf("content://x"))
+        val start = StartAnalysisUseCase(repository, scheduler, analytics)
+        val result = start("lease.pdf", SourceKind.PDF, listOf("content://x"))
 
         assertEquals(AppResult.Failure(AppError.StorageFull), result)
         assertTrue(scheduler.enqueued.isEmpty())
@@ -53,16 +58,16 @@ class AnalysisUseCasesTest {
         val id = (repository.create("Lease Contract", SourceKind.PDF, listOf("x")) as AppResult.Success).value
         repository.fail(id, AppError.NoTextFound)
 
-        val history = GetHistoryUseCase(repository)("  lease ").first()
+        GetHistoryUseCase(repository)("  lease ").first()
 
-        assertEquals(listOf(id), history.map { it.id })
+        assertEquals(listOf(id), repository.historySnapshot("lease").map { it.id })
     }
 
     @Test
     fun `delete requests a sync so the deletion reaches the cloud copy`() = runTest {
         val id = (repository.create("a", SourceKind.PDF, listOf("x")) as AppResult.Success).value
 
-        DeleteAnalysisUseCase(repository, sync)(id)
+        DeleteAnalysisUseCase(repository, sync, analytics)(id)
 
         assertEquals(null, repository.get(id))
         assertEquals(1, sync.requests)

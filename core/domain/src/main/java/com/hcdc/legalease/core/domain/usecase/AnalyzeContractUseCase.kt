@@ -9,6 +9,12 @@ import com.hcdc.legalease.core.domain.model.Verdict
 import com.hcdc.legalease.core.domain.repository.AnalysisRepository
 import com.hcdc.legalease.core.domain.result.AppError
 import com.hcdc.legalease.core.domain.result.AppResult
+import com.hcdc.legalease.core.domain.telemetry.AnalyticsEvent
+import com.hcdc.legalease.core.domain.telemetry.AnalyticsTracker
+import com.hcdc.legalease.core.domain.telemetry.PerformanceTracer
+import com.hcdc.legalease.core.domain.telemetry.TraceNames
+import com.hcdc.legalease.core.domain.telemetry.trace
+import java.time.Clock
 import javax.inject.Inject
 
 /** Progress reported while [AnalyzeContractUseCase] runs. */
@@ -28,12 +34,37 @@ class AnalyzeContractUseCase @Inject constructor(
     private val extractor: TextExtractor,
     private val classifier: ContractClassifier,
     private val syncScheduler: SyncScheduler,
+    private val tracer: PerformanceTracer,
+    private val analytics: AnalyticsTracker,
+    private val clock: Clock,
 ) {
 
     suspend operator fun invoke(
         analysisId: String,
         onProgress: suspend (AnalysisProgress) -> Unit = {},
-    ): AppResult<Verdict> {
+    ): AppResult<Verdict> = tracer.trace(TraceNames.ANALYSIS_END_TO_END) { trace ->
+        val startedAt = clock.millis()
+        val result = run(analysisId, onProgress)
+        trace.putAttribute("outcome", if (result is AppResult.Success) "success" else "failure")
+        when (result) {
+            is AppResult.Success -> {
+                val pageCount = repository.extractedText(analysisId)?.pages?.size ?: 0
+                trace.putMetric("page_count", pageCount.toLong())
+                analytics.log(
+                    AnalyticsEvent.AnalysisCompleted(
+                        classification = result.value.classification,
+                        confidenceBand = AnalyticsEvent.confidenceBand(result.value.confidence),
+                        pageCount = pageCount,
+                        durationMs = clock.millis() - startedAt,
+                    )
+                )
+            }
+            is AppResult.Failure -> analytics.log(AnalyticsEvent.AnalysisFailed(result.error.code))
+        }
+        result
+    }
+
+    private suspend fun run(analysisId: String, onProgress: suspend (AnalysisProgress) -> Unit): AppResult<Verdict> {
         val analysis = repository.get(analysisId) ?: return AppResult.Failure(AppError.DocumentNotFound)
 
         val text = repository.extractedText(analysisId)
@@ -46,7 +77,8 @@ class AnalyzeContractUseCase @Inject constructor(
         repository.markClassifying(analysisId)
         onProgress(AnalysisProgress.Classifying)
         val fullText = text.fullText
-        return when (val prediction = classifier.classify(fullText)) {
+        val classified = tracer.trace(TraceNames.CLASSIFY) { classifier.classify(fullText) }
+        return when (val prediction = classified) {
             is AppResult.Failure -> fail(analysisId, prediction.error)
             is AppResult.Success -> {
                 val verdict = Verdict(

@@ -1,5 +1,6 @@
 package com.hcdc.legalease.core.data.local
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -52,7 +53,7 @@ interface AnalysisDao {
             "documentName LIKE '%' || :query || '%' ESCAPE '\\' OR " +
             "classification LIKE '%' || :query || '%' ESCAPE '\\') ORDER BY createdAt DESC"
     )
-    fun observeHistory(query: String): Flow<List<AnalysisEntity>>
+    fun history(query: String): PagingSource<Int, AnalysisEntity>
 
     @Query(
         "UPDATE analyses SET deleted = 1, needsSync = 1, summary = NULL, documentName = '', " +

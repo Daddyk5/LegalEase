@@ -7,6 +7,7 @@ import com.hcdc.legalease.core.domain.result.AppError
 import com.hcdc.legalease.core.domain.result.AppResult
 import com.hcdc.legalease.core.domain.testing.FakeAnalysisRepository
 import com.hcdc.legalease.core.domain.testing.FakeAnalysisScheduler
+import com.hcdc.legalease.core.domain.testing.FakeAnalytics
 import com.hcdc.legalease.core.domain.testing.MainDispatcherRule
 import com.hcdc.legalease.core.domain.usecase.CancelAnalysisUseCase
 import com.hcdc.legalease.core.domain.usecase.ObserveAnalysisUseCase
@@ -29,7 +30,7 @@ class ScanViewModelTest {
 
     private fun viewModel() = ScanViewModel(
         savedState,
-        StartAnalysisUseCase(repository, scheduler),
+        StartAnalysisUseCase(repository, scheduler, FakeAnalytics()),
         ObserveAnalysisUseCase(repository),
         CancelAnalysisUseCase(repository, scheduler),
     )

@@ -1,6 +1,7 @@
 package com.hcdc.legalease.core.designsystem.component.textfield
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,17 +23,22 @@ fun PrimaryTextField(
     label: String,
     isPassword: Boolean = false,
     validator: ((String) -> Boolean)? = null,
-    errorMessage: String = ""
+    errorMessage: String = "",
+    /** Error set by the caller, e.g. after a submit; shown regardless of [validator]. */
+    error: String? = null,
+    keyboardType: KeyboardType = KeyboardType.Text,
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
-    var isError by remember { mutableStateOf(false) }
+    var isValidatorError by remember { mutableStateOf(false) }
+    val isError = error != null || isValidatorError
+    val shownError = error ?: errorMessage.takeIf { isValidatorError }
 
     Column {
         OutlinedTextField(
             value = value,
             onValueChange = {
                 onValueChange(it)
-                isError = validator?.invoke(it)?.not() ?: false
+                isValidatorError = validator?.invoke(it)?.not() ?: false
             },
             modifier = Modifier.fillMaxWidth(),
             label = { Text(label) },
@@ -49,6 +55,7 @@ fun PrimaryTextField(
                 }
             },
             singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = if (isPassword) KeyboardType.Password else keyboardType),
             isError = isError,
             colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = MaterialTheme.colorScheme.primary,
@@ -65,9 +72,9 @@ fun PrimaryTextField(
             )
         )
 
-        if (isError && errorMessage.isNotBlank()) {
+        if (!shownError.isNullOrBlank()) {
             Text(
-                text = errorMessage,
+                text = shownError,
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(start = 16.dp, top = 4.dp)

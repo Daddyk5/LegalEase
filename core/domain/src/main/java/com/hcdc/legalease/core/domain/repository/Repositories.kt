@@ -8,6 +8,7 @@ import com.hcdc.legalease.core.domain.model.SourceKind
 import com.hcdc.legalease.core.domain.model.Verdict
 import com.hcdc.legalease.core.domain.result.AppError
 import com.hcdc.legalease.core.domain.result.AppResult
+import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 
 /** Local-first store of analyses. The local database is the source of truth. */
@@ -41,8 +42,8 @@ interface AnalysisRepository {
 
     suspend fun markCancelled(id: String)
 
-    /** Completed and failed analyses, newest first, filtered by name or classification. */
-    fun observeHistory(query: String): Flow<List<Analysis>>
+    /** Completed and failed analyses, newest first, filtered by name or classification, paged. */
+    fun history(query: String): Flow<PagingData<Analysis>>
 
     suspend fun delete(id: String)
 }

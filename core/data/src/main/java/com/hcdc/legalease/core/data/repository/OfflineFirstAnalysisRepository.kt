@@ -1,5 +1,9 @@
 package com.hcdc.legalease.core.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
 import androidx.room.withTransaction
 import com.hcdc.legalease.core.data.local.AnalysisDao
 import com.hcdc.legalease.core.data.local.AnalysisEntity
@@ -98,8 +102,10 @@ internal class OfflineFirstAnalysisRepository @Inject constructor(
         withContext(ioDispatcher) { sources.delete(id) }
     }
 
-    override fun observeHistory(query: String): Flow<List<Analysis>> =
-        analysisDao.observeHistory(escapeLike(query)).map { rows -> rows.map { it.toDomain() } }
+    override fun history(query: String): Flow<PagingData<Analysis>> =
+        Pager(PagingConfig(pageSize = HISTORY_PAGE_SIZE)) { analysisDao.history(escapeLike(query)) }
+            .flow
+            .map { page -> page.map { it.toDomain() } }
 
     /**
      * Removes the document text and files immediately. If the analysis was ever uploaded, a
@@ -116,5 +122,9 @@ internal class OfflineFirstAnalysisRepository @Inject constructor(
             }
         }
         withContext(ioDispatcher) { sources.delete(id) }
+    }
+
+    private companion object {
+        const val HISTORY_PAGE_SIZE = 20
     }
 }

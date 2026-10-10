@@ -8,8 +8,15 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import androidx.work.WorkManager
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.perf.FirebasePerformance
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.google.firebase.firestore.FirebaseFirestore
+import com.hcdc.legalease.core.data.auth.FirebaseAuthRepository
+import com.hcdc.legalease.core.data.config.RemoteConfigFeatureFlags
 import com.hcdc.legalease.core.data.local.AnalysisDao
 import com.hcdc.legalease.core.data.local.DatabaseKeyProvider
 import com.hcdc.legalease.core.data.local.DocumentPageDao
@@ -19,14 +26,22 @@ import com.hcdc.legalease.core.data.repository.DataStorePreferencesRepository
 import com.hcdc.legalease.core.data.repository.FirebaseUserSession
 import com.hcdc.legalease.core.data.repository.OfflineFirstAnalysisRepository
 import com.hcdc.legalease.core.data.repository.OfflineFirstContractRepository
+import com.hcdc.legalease.core.data.telemetry.FirebaseAnalyticsTracker
+import com.hcdc.legalease.core.data.telemetry.FirebaseCrashReporter
+import com.hcdc.legalease.core.data.telemetry.FirebasePerformanceTracer
 import com.hcdc.legalease.core.data.work.WorkManagerAnalysisScheduler
 import com.hcdc.legalease.core.data.work.WorkManagerSyncScheduler
 import com.hcdc.legalease.core.domain.engine.AnalysisScheduler
 import com.hcdc.legalease.core.domain.engine.SyncScheduler
 import com.hcdc.legalease.core.domain.repository.AnalysisRepository
+import com.hcdc.legalease.core.domain.repository.AuthRepository
+import com.hcdc.legalease.core.domain.repository.FeatureFlagsRepository
 import com.hcdc.legalease.core.domain.repository.ContractRepository
 import com.hcdc.legalease.core.domain.repository.PreferencesRepository
 import com.hcdc.legalease.core.domain.repository.UserSession
+import com.hcdc.legalease.core.domain.telemetry.AnalyticsTracker
+import com.hcdc.legalease.core.domain.telemetry.CrashReporter
+import com.hcdc.legalease.core.domain.telemetry.PerformanceTracer
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -46,6 +61,11 @@ internal abstract class DataBindsModule {
     @Binds abstract fun userSession(impl: FirebaseUserSession): UserSession
     @Binds abstract fun analysisScheduler(impl: WorkManagerAnalysisScheduler): AnalysisScheduler
     @Binds abstract fun syncScheduler(impl: WorkManagerSyncScheduler): SyncScheduler
+    @Binds abstract fun authRepository(impl: FirebaseAuthRepository): AuthRepository
+    @Binds abstract fun featureFlags(impl: RemoteConfigFeatureFlags): FeatureFlagsRepository
+    @Binds abstract fun analytics(impl: FirebaseAnalyticsTracker): AnalyticsTracker
+    @Binds abstract fun tracer(impl: FirebasePerformanceTracer): PerformanceTracer
+    @Binds abstract fun crashReporter(impl: FirebaseCrashReporter): CrashReporter
 }
 
 @Module
@@ -86,6 +106,27 @@ internal object DataProvidesModule {
         PreferenceDataStoreFactory.create { context.preferencesDataStoreFile("settings") }
 
     @Provides fun workManager(@ApplicationContext context: Context): WorkManager = WorkManager.getInstance(context)
+}
+
+/** Firebase SDK entry points. */
+@Module
+@InstallIn(SingletonComponent::class)
+internal object FirebaseModule {
     @Provides fun firebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
     @Provides fun firestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
+    @Provides
+    fun analytics(@ApplicationContext context: Context): FirebaseAnalytics = FirebaseAnalytics.getInstance(context)
+    @Provides fun performance(): FirebasePerformance = FirebasePerformance.getInstance()
+    @Provides fun crashlytics(): FirebaseCrashlytics = FirebaseCrashlytics.getInstance()
+
+    @Provides
+    fun remoteConfig(): FirebaseRemoteConfig = FirebaseRemoteConfig.getInstance().apply {
+        setConfigSettingsAsync(
+            FirebaseRemoteConfigSettings.Builder()
+                .setMinimumFetchIntervalInSeconds(REMOTE_CONFIG_FETCH_INTERVAL_SECONDS)
+                .build()
+        )
+    }
+
+    private const val REMOTE_CONFIG_FETCH_INTERVAL_SECONDS = 3_600L
 }

@@ -35,6 +35,21 @@ sealed class AppError(val code: String) {
     /** A cloud operation was attempted without a signed-in user. */
     data object NotSignedIn : AppError("not_signed_in")
 
+    /** Wrong email or password. Deliberately does not say which, to avoid account enumeration. */
+    data object InvalidCredentials : AppError("invalid_credentials")
+
+    /** The account exists but its email address has not been verified yet. */
+    data object EmailNotVerified : AppError("email_not_verified")
+
+    /** Registration with an email that already has an account. */
+    data object EmailInUse : AppError("email_in_use")
+
+    /** The auth provider rejected the password as too weak. */
+    data object WeakPassword : AppError("weak_password")
+
+    /** Too many attempts; the user should wait before retrying. */
+    data object TooManyRequests : AppError("too_many_requests")
+
     /** A failure with no specific handling. [detail] is for logs only, never document content. */
     data class Unexpected(val detail: String) : AppError(UNEXPECTED_CODE)
 
@@ -45,6 +60,7 @@ sealed class AppError(val code: String) {
             listOf(
                 DocumentNotFound, UnreadableFile, NoTextFound, ModelUnavailable,
                 ModelIncompatible, StorageFull, Cancelled, Network, NotSignedIn,
+                InvalidCredentials, EmailNotVerified, EmailInUse, WeakPassword, TooManyRequests,
             ).associateBy { it.code }
         }
 

@@ -21,7 +21,9 @@ fun AppNavHost(navController: NavHostController) {
         introScreen(onLoginSuccess = { navController.navigate(DashboardRoute) })
         composable<DashboardRoute> {
             DashboardScreen(
-                onLogout = { navController.navigate(IntroRoute) },
+                onLoggedOut = {
+                    navController.navigate(IntroRoute) { popUpTo(navController.graph.id) { inclusive = true } }
+                },
                 onUploadPdf = { navController.navigate(PdfRoute) },
                 onUploadImage = { navController.navigate(ImageRoute) },
                 onOpenHistory = { navController.navigate(HistoryRoute) },

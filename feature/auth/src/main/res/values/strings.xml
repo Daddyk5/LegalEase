@@ -1,0 +1,18 @@
+<resources>
+    <string name="auth_error_email_invalid">Invalid email format</string>
+    <string name="auth_error_password_short">Password must be at least 8 characters</string>
+    <string name="auth_error_passwords_differ">Passwords do not match</string>
+    <string name="auth_error_invalid_credentials">Incorrect email or password.</string>
+    <string name="auth_error_email_not_verified">Please verify your email first. Check your inbox for the link.</string>
+    <string name="auth_error_email_in_use">An account with this email already exists. Log in instead.</string>
+    <string name="auth_error_weak_password">Choose a stronger password.</string>
+    <string name="auth_error_too_many_requests">Too many attempts. Please wait a moment and try again.</string>
+    <string name="auth_error_network">No internet connection. Please try again.</string>
+    <string name="auth_error_generic">Something went wrong. Please try again.</string>
+    <string name="auth_error_google_unavailable">Google sign-in isn\'t available on this device.</string>
+    <string name="auth_action_resend_verification">Resend verification email</string>
+    <string name="auth_notice_verification_sent">Verification email sent. Check your inbox.</string>
+    <string name="auth_notice_registered">We sent a verification link to %1$s. Verify your email, then log in.</string>
+    <string name="auth_notice_reset_sent">If an account exists for %1$s, a password reset link is on its way.</string>
+    <string name="auth_google_sign_in">Sign in with Google</string>
+</resources>

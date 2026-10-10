@@ -13,7 +13,10 @@ internal class FirebaseUserSession @Inject constructor(
 ) : UserSession {
 
     override val currentUserId: Flow<String?> = callbackFlow {
-        val listener = FirebaseAuth.AuthStateListener { trySend(it.currentUser?.uid) }
+        // Unverified users cannot pass the Firestore rules, so they are not a sync target.
+        val listener = FirebaseAuth.AuthStateListener { auth ->
+            trySend(auth.currentUser?.takeIf { it.isEmailVerified }?.uid)
+        }
         auth.addAuthStateListener(listener)
         awaitClose { auth.removeAuthStateListener(listener) }
     }.distinctUntilChanged()

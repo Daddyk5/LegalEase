@@ -11,7 +11,12 @@ import com.hcdc.legalease.core.domain.testing.FakeAnalysisRepository
 import com.hcdc.legalease.core.domain.testing.FakeClassifier
 import com.hcdc.legalease.core.domain.testing.FakeSyncScheduler
 import com.hcdc.legalease.core.domain.testing.FakeTextExtractor
+import com.hcdc.legalease.core.domain.testing.FakeAnalytics
+import com.hcdc.legalease.core.domain.testing.FakeTracer
 import kotlinx.coroutines.test.runTest
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneOffset
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -24,7 +29,11 @@ class AnalyzeContractUseCaseTest {
     private val extractor = FakeTextExtractor(AppResult.Success(threePages))
     private val classifier = FakeClassifier(AppResult.Success(prediction))
     private val sync = FakeSyncScheduler()
-    private val analyze = AnalyzeContractUseCase(repository, extractor, classifier, sync)
+    private val tracer = FakeTracer()
+    private val analytics = FakeAnalytics()
+    private val analyze = AnalyzeContractUseCase(
+        repository, extractor, classifier, sync, tracer, analytics, Clock.fixed(Instant.EPOCH, ZoneOffset.UTC),
+    )
 
     private suspend fun queued(pages: Int = 3): String {
         val id = (repository.create("lease.pdf", SourceKind.PDF, List(pages) { "file$it" }) as AppResult.Success).value
@@ -111,5 +120,30 @@ class AnalyzeContractUseCaseTest {
     @Test
     fun `unknown analysis id fails`() = runTest {
         assertEquals(AppResult.Failure(AppError.DocumentNotFound), analyze("missing"))
+    }
+
+    @Test
+    fun `traces the run and logs only labels and counts`() = runTest {
+        analyze(queued())
+
+        assertEquals(listOf("analysis_end_to_end", "classify"), tracer.started.sorted())
+        assertEquals(tracer.started.sorted(), tracer.stopped.sorted())
+        val event = analytics.events.single()
+        assertEquals("analysis_completed", event.name)
+        assertEquals(
+            mapOf(
+                "classification" to "VOIDABLE", "confidence_band" to "confident",
+                "page_count" to 3L, "duration_ms" to 0L,
+            ),
+            event.params,
+        )
+    }
+
+    @Test
+    fun `failures are logged by error code only`() = runTest {
+        classifier.result = AppResult.Failure(AppError.ModelIncompatible)
+        analyze(queued())
+        assertEquals(mapOf("error_code" to "model_incompatible"), analytics.events.single().params)
+        assertEquals("failure", tracer.attributes["outcome"])
     }
 }

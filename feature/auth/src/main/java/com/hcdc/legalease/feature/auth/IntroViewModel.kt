@@ -1,23 +1,22 @@
 package com.hcdc.legalease.feature.auth
 
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
+import androidx.lifecycle.viewModelScope
+import com.hcdc.legalease.core.domain.usecase.ObserveUserUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
-class IntroViewModel : ViewModel() {
+@HiltViewModel
+class IntroViewModel @Inject constructor(
+    observeUser: ObserveUserUseCase,
+) : ViewModel() {
 
-    private val _email = MutableStateFlow("")
-    val email: StateFlow<String> = _email.asStateFlow()
-
-    private val _password = MutableStateFlow("")
-    val password: StateFlow<String> = _password.asStateFlow()
-
-    fun onEmailChanged(newValue: String) {
-        _email.value = newValue
-    }
-
-    fun onPasswordChanged(newValue: String) {
-        _password.value = newValue
-    }
+    /** True only for a signed-in user with a verified email; unverified accounts must log in again. */
+    val isSignedIn: StateFlow<Boolean> = observeUser()
+        .map { it?.isEmailVerified == true }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 }

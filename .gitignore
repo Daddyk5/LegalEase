@@ -29,3 +29,7 @@ secrets.properties
 *.jks
 *.keystore
 google-services.json
+
+# Firebase rules tests
+firebase-tests/node_modules/
+*-debug.log

@@ -13,9 +13,20 @@ import com.hcdc.legalease.core.domain.model.Verdict
 import com.hcdc.legalease.core.domain.repository.AnalysisRepository
 import com.hcdc.legalease.core.domain.result.AppError
 import com.hcdc.legalease.core.domain.result.AppResult
+import androidx.paging.LoadState
+import androidx.paging.LoadStates
+import androidx.paging.PagingData
+import com.hcdc.legalease.core.domain.model.AuthUser
+import com.hcdc.legalease.core.domain.repository.AuthRepository
+import com.hcdc.legalease.core.domain.telemetry.AnalyticsEvent
+import com.hcdc.legalease.core.domain.telemetry.AnalyticsTracker
+import com.hcdc.legalease.core.domain.telemetry.PerformanceTrace
+import com.hcdc.legalease.core.domain.telemetry.PerformanceTracer
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
+
+private val COMPLETE = LoadStates(LoadState.NotLoading(true), LoadState.NotLoading(true), LoadState.NotLoading(true))
 
 class FakeAnalysisRepository : AnalysisRepository {
     val analyses = MutableStateFlow<Map<String, Analysis>>(emptyMap())
@@ -63,9 +74,16 @@ class FakeAnalysisRepository : AnalysisRepository {
 
     override suspend fun markCancelled(id: String) = update(id) { it.copy(status = AnalysisStatus.CANCELLED) }
 
-    override fun observeHistory(query: String): Flow<List<Analysis>> = analyses.map { all ->
-        all.values.filter { it.status.isTerminal && it.documentName.contains(query, ignoreCase = true) }
-    }
+    /** Mirrors the DAO: finished, non-cancelled analyses matching name or classification. */
+    fun historySnapshot(query: String): List<Analysis> = analyses.value.values.filter {
+        (it.status == AnalysisStatus.COMPLETED || it.status == AnalysisStatus.FAILED) &&
+            (it.documentName.contains(query, ignoreCase = true) ||
+                it.verdict?.classification?.label?.contains(query, ignoreCase = true) == true)
+    }.sortedByDescending { it.createdAtMillis }
+
+    override fun history(query: String): Flow<PagingData<Analysis>> =
+        // Fully loaded, like a finished PagingSource; without this, paging-testing's asSnapshot waits forever.
+        analyses.map { PagingData.from(historySnapshot(query), COMPLETE) }
 
     override suspend fun delete(id: String) {
         analyses.value -= id
@@ -104,4 +122,66 @@ class FakeAnalysisScheduler : AnalysisScheduler {
 class FakeSyncScheduler : SyncScheduler {
     var requests = 0
     override fun requestSync() { requests++ }
+}
+
+class FakeAnalytics : AnalyticsTracker {
+    val events = mutableListOf<AnalyticsEvent>()
+    override fun log(event: AnalyticsEvent) { events += event }
+}
+
+class FakeTracer : PerformanceTracer {
+    val started = mutableListOf<String>()
+    val stopped = mutableListOf<String>()
+    val attributes = mutableMapOf<String, String>()
+    val metrics = mutableMapOf<String, Long>()
+
+    override fun start(name: String): PerformanceTrace {
+        started += name
+        return object : PerformanceTrace {
+            override fun putAttribute(name: String, value: String) { attributes[name] = value }
+            override fun putMetric(name: String, value: Long) { metrics[name] = value }
+            override fun stop() { stopped += name }
+        }
+    }
+}
+
+class FakeAuthRepository : AuthRepository {
+    val user = MutableStateFlow<AuthUser?>(null)
+    var signInResult: AppResult<AuthUser> = AppResult.Failure(AppError.InvalidCredentials)
+    var registerResult: AppResult<Unit> = AppResult.Success(Unit)
+    var resetResult: AppResult<Unit> = AppResult.Success(Unit)
+    var resendResult: AppResult<Unit> = AppResult.Success(Unit)
+    val calls = mutableListOf<String>()
+
+    override val currentUser: Flow<AuthUser?> = user
+
+    override suspend fun signIn(email: String, password: String): AppResult<AuthUser> {
+        calls += "signIn:$email"
+        return signInResult.also { if (it is AppResult.Success) user.value = it.value }
+    }
+
+    override suspend fun register(email: String, password: String): AppResult<Unit> {
+        calls += "register:$email"
+        return registerResult
+    }
+
+    override suspend fun sendPasswordReset(email: String): AppResult<Unit> {
+        calls += "reset:$email"
+        return resetResult
+    }
+
+    override suspend fun signInWithGoogle(idToken: String): AppResult<AuthUser> {
+        calls += "google"
+        return signInResult.also { if (it is AppResult.Success) user.value = it.value }
+    }
+
+    override suspend fun resendVerification(): AppResult<Unit> {
+        calls += "resend"
+        return resendResult
+    }
+
+    override suspend fun signOut() {
+        calls += "signOut"
+        user.value = null
+    }
 }

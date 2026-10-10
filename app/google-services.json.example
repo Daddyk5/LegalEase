@@ -12,7 +12,12 @@
           "package_name": "com.hcdc.legalease"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "YOUR_PROJECT_NUMBER-YOUR_WEB_CLIENT.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "YOUR_ANDROID_API_KEY"
