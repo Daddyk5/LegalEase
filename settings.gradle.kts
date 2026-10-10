@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -20,4 +21,13 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "LegalEase"
+
 include(":app")
+include(":core:designsystem")
+include(":core:domain")
+include(":core:data")
+include(":core:ml")
+include(":feature:auth")
+include(":feature:scan")
+include(":feature:result")
+include(":feature:history")

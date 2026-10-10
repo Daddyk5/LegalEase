@@ -1,0 +1,8 @@
+<resources>
+    <string name="analysis_notification_channel">Contract analysis</string>
+    <string name="analysis_notification_title">Analyzing your contract</string>
+    <string name="analysis_notification_preparing">Preparing…</string>
+    <string name="analysis_notification_reading">Reading page %1$d of %2$d</string>
+    <string name="analysis_notification_classifying">Checking classification…</string>
+    <string name="analysis_notification_cancel">Cancel</string>
+</resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MaxLineLength:PrimaryTextField.kt$visualTransformation = if (isPassword &amp;&amp; !passwordVisible) PasswordVisualTransformation() else VisualTransformation.None</ID>
+    <ID>WildcardImport:DashboardCard.kt$import androidx.compose.foundation.layout.*</ID>
+    <ID>WildcardImport:DashboardCard.kt$import androidx.compose.material3.*</ID>
+    <ID>WildcardImport:HistoryCard.kt$import androidx.compose.foundation.layout.*</ID>
+    <ID>WildcardImport:HistoryCard.kt$import androidx.compose.material3.*</ID>
+    <ID>WildcardImport:PrimaryButton.kt$import androidx.compose.foundation.layout.*</ID>
+    <ID>WildcardImport:PrimaryButton.kt$import androidx.compose.material3.*</ID>
+    <ID>WildcardImport:PrimaryTextField.kt$import androidx.compose.material3.*</ID>
+    <ID>WildcardImport:PrimaryTextField.kt$import androidx.compose.runtime.*</ID>
+    <ID>WildcardImport:PrimaryTextField.kt$import androidx.compose.ui.text.input.*</ID>
+    <ID>WildcardImport:SecondaryButton.kt$import androidx.compose.foundation.layout.*</ID>
+    <ID>WildcardImport:SecondaryButton.kt$import androidx.compose.material3.*</ID>
+    <ID>WildcardImport:Theme.kt$import androidx.compose.material3.*</ID>
+    <ID>WildcardImport:Type.kt$import androidx.compose.ui.text.font.*</ID>
+  </CurrentIssues>
+</SmellBaseline>

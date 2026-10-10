@@ -1,0 +1,4 @@
+<resources>
+    <string name="history_empty">No scans yet. Upload a PDF or image to get started.</string>
+    <string name="history_no_matches">No scans match “%1$s”.</string>
+</resources>

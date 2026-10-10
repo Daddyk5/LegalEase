@@ -5,23 +5,8 @@
     <!-- Network for Firebase/HTTP calls -->
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- Modern media read (Android 13+/API 33+) — include only what you actually use -->
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"
-        tools:ignore="SelectedPhotoAccess" />
-    <!-- <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" /> -->
-    <!-- <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" /> -->
-
-    <!-- Legacy external storage permissions for older targets only -->
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
-
-    <!-- OPTIONAL: Uncomment only if used -->
-    <!-- <uses-permission android:name="android.permission.CAMERA" /> -->
-    <!-- <uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> -->
+    <!-- No storage or media permissions: documents arrive through the system pickers,
+         which grant access to the chosen files only. -->
 
     <application
         android:name=".LegalEaseApplication"
@@ -57,6 +42,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- WorkManager is initialised by LegalEaseApplication with Hilt's worker factory. -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
 
         <!-- OPTIONAL Firebase Analytics toggle
         <meta-data

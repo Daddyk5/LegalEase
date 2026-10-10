@@ -7,13 +7,21 @@ naming:
     ignoreAnnotated: ['Composable']
   TopLevelPropertyNaming:
     constantPattern: '[A-Z][_A-Za-z0-9]*'
+  # Navigation files group a feature's @Serializable route with its NavGraphBuilder extension.
+  MatchingDeclarationName:
+    active: false
 
 complexity:
   LongMethod:
     ignoreAnnotated: ['Composable']
   LongParameterList:
     ignoreDefaultParameters: true
-    ignoreAnnotated: ['Composable']
+    # Composables take many defaulted parameters; DI constructors list their dependencies.
+    ignoreAnnotated: ['Composable', 'Inject', 'AssistedInject']
+  # Repository and DAO interfaces mirror the operations of one aggregate.
+  TooManyFunctions:
+    thresholdInInterfaces: 15
+    thresholdInClasses: 15
 
 style:
   MagicNumber:
@@ -22,3 +30,6 @@ style:
     ignoreAnnotated: ['Composable', 'Preview']
   UnusedPrivateMember:
     ignoreAnnotated: ['Preview']
+  ReturnCount:
+    max: 3
+    excludeGuardClauses: true

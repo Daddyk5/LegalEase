@@ -25,3 +25,18 @@ Removing them from the current tree does **not** remove them from git history.
 Optionally purge both from history with `git filter-repo` and force-push. This rewrites every
 commit hash and requires all collaborators to re-clone, so coordinate before doing it.
 Rotation is required either way: anyone who cloned the repo already has the old values.
+
+## Data at rest
+
+- **Local database.** Analyses, OCR page text, and generated contracts live in a Room database
+  encrypted with SQLCipher. Its 256-bit passphrase is random, generated on first launch, and stored
+  in `noBackupFilesDir` sealed with AES-256-GCM under a non-exportable Android Keystore key
+  (StrongBox-backed where the device supports it). If the Keystore key is lost or invalidated, the
+  unreadable database is discarded and recreated rather than crashing the app.
+- **Uploaded files.** Copied to `filesDir/scans/{id}/` only until OCR finishes, then deleted.
+- **Backups.** The database, document copies, and DataStore settings are excluded from cloud
+  backup and device transfer (`backup_rules.xml`, `data_extraction_rules.xml`); the database could
+  not be decrypted on another device anyway.
+- **Cloud sync.** Off by default and only runs for a signed-in user who opted in. Only analysis
+  results (name, classification, confidence, summary, page counts) go to Firestore; OCR page text
+  and uploaded files never leave the device. Deleted analyses sync as content-free tombstones.

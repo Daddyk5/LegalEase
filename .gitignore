@@ -7,6 +7,8 @@
 .cxx
 .kotlin/
 **/build/
+# IDE language-server output (VS Code Java/Kotlin extensions)
+**/bin/
 
 # IDE
 /.idea/caches
