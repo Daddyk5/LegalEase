@@ -84,7 +84,6 @@ class HistoryViewModel @Inject constructor(
 
     override fun onCleared() {
         commitPendingDeletion()
-        super.onCleared()
     }
 
     /** Runs in the application scope so leaving the screen cannot cancel a confirmed deletion. */

@@ -1,7 +1,7 @@
 package com.hcdc.legalease.core.data.storage
 
 import android.content.Context
-import android.net.Uri
+import androidx.core.net.toUri
 import com.hcdc.legalease.core.domain.result.AppError
 import com.hcdc.legalease.core.domain.result.AppResult
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -30,7 +30,7 @@ class ScanSourceStore @Inject constructor(
             AppResult.Success(
                 uris.mapIndexed { index, uri ->
                     val target = File(dir, "page_%03d".format(index))
-                    val input = context.contentResolver.openInputStream(Uri.parse(uri))
+                    val input = context.contentResolver.openInputStream(uri.toUri())
                         ?: throw FileNotFoundException("No content for source $index")
                     input.use { source -> target.outputStream().use { source.copyTo(it) } }
                     target.absolutePath

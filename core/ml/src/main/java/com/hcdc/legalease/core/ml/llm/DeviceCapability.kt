@@ -2,7 +2,9 @@ package com.hcdc.legalease.core.ml.llm
 
 import android.app.ActivityManager
 import android.content.Context
+import android.os.storage.StorageManager
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -17,7 +19,13 @@ class DeviceCapability @Inject constructor(
         return tierFor(info.totalMem)
     }
 
-    fun freeStorageBytes(): Long = context.filesDir.usableSpace
+    /** Space the system can make available, including cached data it may clear for us. */
+    fun freeStorageBytes(): Long = try {
+        val storage = context.getSystemService(StorageManager::class.java)
+        storage.getAllocatableBytes(storage.getUuidForPath(context.filesDir))
+    } catch (_: IOException) {
+        context.filesDir.usableSpace
+    }
 
     companion object {
         private const val GIB = 1L shl 30

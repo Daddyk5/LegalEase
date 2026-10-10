@@ -86,6 +86,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.ml.modeldownloader)
     implementation(libs.firebase.storage)
+    implementation(libs.androidx.core.ktx)
     implementation(libs.litert)
     implementation(libs.litert.lm)
     implementation(libs.play.asset.delivery)

@@ -3,6 +3,7 @@ package com.hcdc.legalease.core.ml
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.pdf.PdfRenderer
+import androidx.core.graphics.createBitmap
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -28,7 +29,7 @@ fun renderSizeFor(pageWidth: Int, pageHeight: Int, maxLongSide: Int = MAX_RENDER
 /** Renders one page onto a white bitmap. The caller owns the bitmap and must recycle it. */
 fun PdfRenderer.renderPage(index: Int): Bitmap = openPage(index).use { page ->
     val size = renderSizeFor(page.width, page.height)
-    Bitmap.createBitmap(size.width, size.height, Bitmap.Config.ARGB_8888).also { bitmap ->
+    createBitmap(size.width, size.height, Bitmap.Config.ARGB_8888).also { bitmap ->
         bitmap.eraseColor(Color.WHITE)
         page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
     }

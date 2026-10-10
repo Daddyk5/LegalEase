@@ -64,7 +64,7 @@ fun RiskCard(
                             .fillMaxWidth()
                             .then(
                                 if (clickable) {
-                                    Modifier.clickable(role = Role.Button) { onPointClick?.invoke(index) }
+                                    Modifier.clickable(role = Role.Button) { onPointClick(index) }
                                 } else {
                                     Modifier
                                 }

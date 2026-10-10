@@ -13,6 +13,7 @@ import com.hcdc.legalease.core.domain.testing.FakeSyncScheduler
 import com.hcdc.legalease.core.domain.testing.MainDispatcherRule
 import com.hcdc.legalease.core.domain.usecase.DeleteAnalysisUseCase
 import com.hcdc.legalease.core.domain.usecase.GetHistoryUseCase
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -22,6 +23,7 @@ import org.junit.Assert.assertNull
 import org.junit.Rule
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class HistoryViewModelTest {
 
     @get:Rule val mainDispatcher = MainDispatcherRule()

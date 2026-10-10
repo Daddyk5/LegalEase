@@ -78,7 +78,6 @@ class PageViewModel @Inject constructor(
     /** Rendered PDF pages are temporary files; remove them when the viewer closes. */
     override fun onCleared() {
         rendered?.let(renderer::discard)
-        super.onCleared()
     }
 }
 
@@ -114,7 +113,7 @@ fun PageScreen(viewModel: PageViewModel = hiltViewModel()) {
 private fun ZoomablePage(path: String, page: Int) {
     var scale by remember { mutableFloatStateOf(1f) }
     var offset by remember { mutableStateOf(Offset.Zero) }
-    val transform = rememberTransformableState { zoom, pan, _ ->
+    val transform = rememberTransformableState { _: Offset, zoom: Float, pan: Offset, _: Float ->
         scale = (scale * zoom).coerceIn(MIN_ZOOM, MAX_ZOOM)
         offset = if (scale == MIN_ZOOM) Offset.Zero else offset + pan
     }

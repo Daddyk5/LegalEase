@@ -14,10 +14,10 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun DashboardCard(
     title: String,
-    subtitle: String? = null,
     imageRes: Int,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    subtitle: String? = null,
 ) {
     Card(
         onClick = onClick,

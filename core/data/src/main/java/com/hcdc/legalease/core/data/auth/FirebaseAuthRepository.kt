@@ -50,7 +50,6 @@ internal class FirebaseAuthRepository @Inject constructor(
         val user = checkNotNull(auth.createUserWithEmailAndPassword(email, password).await().user)
         try {
             user.sendEmailVerification().await()
-            Unit
         } finally {
             // Unverified accounts may not use the app; they sign in again after verifying.
             auth.signOut()

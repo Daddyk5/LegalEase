@@ -103,7 +103,7 @@ class AnalyzeContractUseCaseTest {
         assertEquals(Classification.VOIDABLE, report.shownClassification)
         assertTrue("score ${report.confidence.total}", report.confidence.total >= 0.8f)
         assertEquals(1f, report.confidence.components!!.selfConsistency)
-        assertEquals(1f, report.confidence.components!!.grounding)
+        assertEquals(1f, report.confidence.components.grounding)
         assertEquals("CONTRACT OF LEASE", report.contractTitle)
         assertEquals(AnalysisStatus.COMPLETED, repository.get(id)?.status)
         assertEquals(1, llm.released)
