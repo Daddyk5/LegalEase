@@ -129,7 +129,8 @@ the app works before the first fetch and offline. Changes reach running apps in 
 - Release & Monitor → **Performance**: enable. Custom traces: `analysis_end_to_end`,
   `ocr_page` (per page), `classify`.
 - Analytics events: `scan_started`, `analysis_completed`, `analysis_failed`, `analysis_deleted`,
-  `login`, `sign_up`. Parameters are enums, counts, and durations only; no document content.
+  `login`, `sign_up`, `contract_saved`, `contract_exported`, `clause_assist`. Parameters are enums,
+  counts, and durations only; no document content.
 
 ## 10. Play Console (before the first release)
 

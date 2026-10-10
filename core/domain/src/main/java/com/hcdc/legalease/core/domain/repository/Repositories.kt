@@ -1,7 +1,7 @@
 package com.hcdc.legalease.core.domain.repository
 
 import com.hcdc.legalease.core.domain.model.Analysis
-import com.hcdc.legalease.core.domain.model.ContractType
+import com.hcdc.legalease.core.domain.model.ContractDraft
 import com.hcdc.legalease.core.domain.model.ExtractedText
 import com.hcdc.legalease.core.domain.model.GeneratedContract
 import com.hcdc.legalease.core.domain.model.SourceKind
@@ -19,6 +19,9 @@ interface AnalysisRepository {
      * run in the background even after the picker's URI grant expires.
      */
     suspend fun create(documentName: String, kind: SourceKind, sourceUris: List<String>): AppResult<String>
+
+    /** Records a queued analysis of text LegalEase generated itself, one entry per page. */
+    suspend fun createFromText(documentName: String, pages: List<String>): AppResult<String>
 
     fun observe(id: String): Flow<Analysis?>
 
@@ -56,7 +59,12 @@ interface AnalysisRepository {
 interface ContractRepository {
 
     /** Saves a new version; pass null [contractId] to start a new contract. Returns the saved version. */
-    suspend fun saveVersion(contractId: String?, type: ContractType, title: String, body: String): GeneratedContract
+    suspend fun saveVersion(contractId: String?, draft: ContractDraft, title: String, body: String): GeneratedContract
+
+    fun observeVersion(versionId: String): Flow<GeneratedContract?>
+
+    /** Records which analysis checked this version. The text itself never changes. */
+    suspend fun linkAnalysis(versionId: String, analysisId: String)
 
     /** Latest version of every contract, newest first. */
     fun observeLatest(): Flow<List<GeneratedContract>>

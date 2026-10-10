@@ -5,7 +5,8 @@ import com.hcdc.legalease.core.data.local.GeneratedContractDao
 import com.hcdc.legalease.core.data.local.GeneratedContractEntity
 import com.hcdc.legalease.core.data.local.LegalEaseDatabase
 import com.hcdc.legalease.core.data.local.toDomain
-import com.hcdc.legalease.core.domain.model.ContractType
+import com.hcdc.legalease.core.data.local.DraftJson
+import com.hcdc.legalease.core.domain.model.ContractDraft
 import com.hcdc.legalease.core.domain.model.GeneratedContract
 import com.hcdc.legalease.core.domain.repository.ContractRepository
 import kotlinx.coroutines.flow.Flow
@@ -22,7 +23,7 @@ internal class OfflineFirstContractRepository @Inject constructor(
 
     override suspend fun saveVersion(
         contractId: String?,
-        type: ContractType,
+        draft: ContractDraft,
         title: String,
         body: String,
     ): GeneratedContract =
@@ -32,11 +33,12 @@ internal class OfflineFirstContractRepository @Inject constructor(
                 id = UUID.randomUUID().toString(),
                 contractId = id,
                 version = (dao.latestVersion(id) ?: 0) + 1,
-                type = type.name,
+                type = draft.type.name,
                 title = title,
                 body = body,
                 createdAt = clock.millis(),
                 needsSync = true,
+                draftJson = DraftJson.encode(draft),
             )
             dao.insert(entity)
             entity.toDomain()
@@ -47,4 +49,9 @@ internal class OfflineFirstContractRepository @Inject constructor(
 
     override fun observeVersions(contractId: String): Flow<List<GeneratedContract>> =
         dao.observeVersions(contractId).map { rows -> rows.map { it.toDomain() } }
+
+    override fun observeVersion(versionId: String): Flow<GeneratedContract?> =
+        dao.observe(versionId).map { it?.toDomain() }
+
+    override suspend fun linkAnalysis(versionId: String, analysisId: String) = dao.setAnalysisId(versionId, analysisId)
 }

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Home -->
+    <string name="generator_title">Create Contract</string>
+    <string name="generator_subtitle">Philippine contract templates, filled in step by step.</string>
+    <string name="generator_templates">Templates</string>
+    <string name="generator_saved">Your contracts</string>
+    <string name="generator_saved_item">%1$s · version %2$d</string>
+    <string name="generator_template_lease">Contract of Lease (house, apartment, lot)</string>
+    <string name="generator_template_loan">Contract of Loan</string>
+    <string name="generator_template_sale">Deed of Absolute Sale</string>
+    <string name="generator_template_lease_personal">Lease of Personal Property (vehicle, equipment)</string>
+
+    <!-- Stepper -->
+    <string name="generator_step">Step %1$d of %2$d · %3$s</string>
+    <string name="generator_step_subject">Property</string>
+    <string name="generator_step_terms">Terms</string>
+    <string name="generator_step_signing">Signing and witnesses</string>
+    <string name="generator_next">Next</string>
+    <string name="generator_preview">Preview</string>
+    <string name="generator_back">Back</string>
+
+    <!-- Roles -->
+    <string name="generator_role_lessor">Lessor (owner)</string>
+    <string name="generator_role_lessee">Lessee (tenant)</string>
+    <string name="generator_role_lender">Lender</string>
+    <string name="generator_role_borrower">Borrower</string>
+    <string name="generator_role_vendor">Vendor (seller)</string>
+    <string name="generator_role_vendee">Vendee (buyer)</string>
+
+    <!-- Party fields -->
+    <string name="generator_field_name">Full name</string>
+    <string name="generator_field_civil_status">Civil status</string>
+    <string name="generator_civil_single">Single</string>
+    <string name="generator_civil_married">Married</string>
+    <string name="generator_civil_widowed">Widowed</string>
+    <string name="generator_civil_separated">Legally separated</string>
+    <string name="generator_civil_annulled">Annulled</string>
+    <string name="generator_field_citizenship">Citizenship</string>
+    <string name="generator_field_address">Residence address</string>
+    <string name="generator_field_id_type">Government ID type (e.g. Passport, UMID, Driver\'s License)</string>
+    <string name="generator_field_id_number">ID number (optional; the notary can fill it in)</string>
+    <string name="generator_legal_age">Both parties are at least 18 years old.</string>
+
+    <!-- Subject -->
+    <string name="generator_property_real">Real property (land, house, condominium)</string>
+    <string name="generator_property_personal">Personal property (vehicle, equipment, other movables)</string>
+    <string name="generator_field_premises">Address and description of the house, apartment, or lot</string>
+    <string name="generator_field_personal_lease">Make, model, plate or serial number, and condition</string>
+    <string name="generator_field_sale_real">Location, area, and title (TCT or CCT) number</string>
+    <string name="generator_field_sale_personal">Make, model, plate or serial number, engine and chassis numbers</string>
+
+    <!-- Terms -->
+    <string name="generator_field_rent">Monthly rent (PHP)</string>
+    <string name="generator_field_price">Purchase price (PHP)</string>
+    <string name="generator_field_principal">Loan amount (PHP)</string>
+    <string name="generator_field_deposit">Security deposit, in months of rent (optional)</string>
+    <string name="generator_field_interest">Interest rate (%); enter 0 for no interest</string>
+    <string name="generator_interest_month">Per month</string>
+    <string name="generator_interest_year">Per year</string>
+    <string name="generator_schedule_lump">Pay in full on the due date</string>
+    <string name="generator_schedule_monthly">Monthly installments</string>
+    <string name="generator_field_installments">Number of monthly installments</string>
+    <string name="generator_field_lease_start">Lease starts (YYYY-MM-DD)</string>
+    <string name="generator_field_lease_end">Lease ends (YYYY-MM-DD)</string>
+    <string name="generator_field_loan_release">Money is handed over on (YYYY-MM-DD)</string>
+    <string name="generator_field_loan_due">Due date (YYYY-MM-DD)</string>
+
+    <!-- Signing -->
+    <string name="generator_field_place">City or municipality where it will be signed</string>
+    <string name="generator_field_execution_date">Date of signing (YYYY-MM-DD)</string>
+    <string name="generator_field_witness_one">First witness, full name</string>
+    <string name="generator_field_witness_two">Second witness, full name</string>
+
+    <!-- Validation -->
+    <string name="generator_error_required">Required.</string>
+    <string name="generator_error_amount">Enter an amount in pesos, for example 15,000 or 15000.50.</string>
+    <string name="generator_error_amount_large">That amount looks too large. Check the number of digits.</string>
+    <string name="generator_error_number">Enter a valid number.</string>
+    <!-- ISO dates use hyphens, not dashes. -->
+    <string name="generator_error_date" tools:ignore="TypographyDashes">Use the format YYYY-MM-DD, for example 2026-11-01.</string>
+    <string name="generator_error_end_before_start">Must be after the start date.</string>
+    <string name="generator_error_lease_99">A lease cannot be longer than 99 years (Art. 1643, Civil Code).</string>
+    <string name="generator_error_execution_after_start">The contract should be signed on or before the start date.</string>
+    <string name="generator_error_same_party">The two parties must be different people.</string>
+    <string name="generator_error_witness_party">A witness cannot be one of the parties.</string>
+    <string name="generator_error_legal_age">A contract signed by a minor can be annulled. Both parties must be at least 18.</string>
+
+    <!-- Preview -->
+    <string name="generator_version">Version %1$d</string>
+    <string name="generator_unsaved">Not saved yet</string>
+    <string name="generator_notices_title">Before you sign</string>
+    <string name="generator_notice_sale_real">A sale of real property must be in a public document (Art. 1358, Civil Code). Have this deed notarized: the notarized deed is also needed to register the sale and transfer the title.</string>
+    <string name="generator_notice_long_lease">This lease is longer than one year, so it must be in writing to be enforceable (Statute of Frauds, Art. 1403(2)(e), Civil Code). Notarizing it is recommended. A lease binds third persons only if it is recorded in the Registry of Property (Art. 1648, Civil Code).</string>
+    <string name="generator_notice_interest">Interest is due only because this contract states it in writing (Art. 1956, Civil Code). Keep the written rate exactly as agreed.</string>
+    <string name="generator_notice_acknowledgment">The last page is a notarial acknowledgment for a notary public to complete. Sign every page in front of your two witnesses.</string>
+    <string name="generator_optional_title">Optional clauses</string>
+    <string name="generator_optional_hint">Add any that fit your agreement. The main clauses above are fixed and cannot be changed here; edit the form instead.</string>
+    <string name="generator_optional_from_assistant">Suggested by offline assistant</string>
+    <string name="generator_suggest">Suggest clauses</string>
+    <string name="generator_reword">Reword for clarity</string>
+    <string name="generator_remove">Remove</string>
+    <string name="generator_assistant_working">Offline assistant is working…</string>
+    <string name="generator_assistant_preparing">Clause suggestions will be available when offline analysis is ready.</string>
+    <string name="generator_save_analyze">Save and analyze</string>
+    <string name="generator_edit_form">Back to the form</string>
+    <string name="generator_edit_new_version">Edit (saves a new version)</string>
+    <string name="generator_readonly">This version\'s form could not be read, so it cannot be edited. Its text is shown above.</string>
+
+    <!-- Analysis -->
+    <string name="generator_analysis_title">Analysis</string>
+    <string name="generator_analysis_waiting">Waiting to start…</string>
+    <string name="generator_analysis_checking">Checking the contract…</string>
+    <string name="generator_analysis_page">Analyzing page %1$d of %2$d…</string>
+    <string name="generator_analysis_verdict_high">%1$s · High confidence</string>
+    <string name="generator_analysis_verdict_confident">%1$s · Confident</string>
+    <string name="generator_analysis_inconclusive">Inconclusive — needs review</string>
+    <string name="generator_analysis_failed">The analysis did not finish.</string>
+    <string name="generator_view_analysis">View the full analysis</string>
+    <string name="generator_analyze_again">Analyze again</string>
+
+    <!-- Export -->
+    <string name="generator_export_title">Export</string>
+    <string name="generator_paper_a4">A4</string>
+    <string name="generator_paper_legal">Legal (8.5 × 13 in)</string>
+    <string name="generator_export">Export PDF</string>
+    <string name="generator_export_after_analysis">Export is available after the analysis finishes.</string>
+    <string name="generator_share">Share contract</string>
+    <string name="generator_pdf_footer">Generated by LegalEase — review before signing</string>
+    <string name="generator_pdf_page">Page %1$d of %2$d</string>
+
+    <!-- Diff -->
+    <string name="generator_diff_title_new">Suggested clause: %1$s</string>
+    <string name="generator_diff_title_reword">Suggested rewording: %1$s</string>
+    <string name="generator_diff_legend">Underlined words are added; crossed-out words are removed. Nothing changes unless you accept.</string>
+    <string name="generator_accept">Accept</string>
+    <string name="generator_discard">Discard</string>
+
+    <!-- Messages -->
+    <plurals name="generator_msg_withheld">
+        <item quantity="one">%1$d suggestion was withheld because it cited law or set an amount or date.</item>
+        <item quantity="other">%1$d suggestions were withheld because they cited law or set amounts or dates.</item>
+    </plurals>
+    <string name="generator_msg_no_suggestions">No further clauses were suggested.</string>
+    <string name="generator_msg_reword_withheld">The rewording was withheld because it changed the clause\'s meaning, numbers, or parties.</string>
+    <string name="generator_msg_reword_cites_law">The rewording was withheld because it referred to the law.</string>
+    <string name="generator_msg_unchanged">The clause is already clear; no rewording was suggested.</string>
+    <string name="generator_msg_assistant_failed">The offline assistant could not respond. Try again.</string>
+    <string name="generator_msg_failed">Something went wrong. Try again.</string>
+    <string name="generator_msg_storage">Not enough storage to export the PDF.</string>
+    <string name="generator_msg_not_found">This contract could not be found.</string>
+
+    <string name="generator_disclaimer">LegalEase provides general information, not legal advice. Have a lawyer review contracts before signing.</string>
+</resources>

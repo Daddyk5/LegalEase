@@ -59,9 +59,13 @@ class FirestoreMappersTest {
 
     @Test
     fun `contract versions round-trip`() {
-        val contract = GeneratedContractEntity("v1", "c1", 2, "LEASE", "Lease", "body", 30, needsSync = true)
+        val contract = GeneratedContractEntity(
+            "v1", "c1", 2, "LEASE", "Lease", "body", 30, needsSync = true, draftJson = "{}", analysisId = "a1",
+        )
         val restored = contractFromFirestore("v1", contract.toFirestore())!!
-        assertEquals(contract.copy(needsSync = false), restored)
+        // The analysis link is local only; the draft travels with the version.
+        assertEquals(contract.copy(needsSync = false, analysisId = null), restored)
+        assertEquals(false, "analysisId" in contract.toFirestore())
         assertFalse(restored.needsSync)
     }
 }

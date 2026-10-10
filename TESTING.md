@@ -10,7 +10,15 @@ cd firebase-tests && npm ci && npm test                  # Firestore and Storage
 Unit tests cover the pieces that decide what users see: OCR preprocessing and quality scoring,
 quote grounding, the reason-code → Civil Code table, confidence scoring and bands, the rule-based
 fallback, strict-JSON parsing of model output (valid, malformed, missing fields, out-of-range
-values), encryption round-trips and tamper detection, storage mappers, and every ViewModel.
+values), encryption round-trips and tamper detection, storage mappers, and every ViewModel. For
+the contract generator: every template renders the parties, witnesses, and acknowledgment and never
+cites law; form validation (required fields, amounts, date order, the 99-year lease limit, witnesses
+who are parties); the legal notices; peso amounts in words; the word diff; and the clause guard
+(law citations, amounts, dates, changed numbers or parties are withheld).
+
+PDF layout uses Android text measurement, so it is checked by hand: export each template in A4 and
+Legal, and confirm the logo header, page numbers, footer, that headings never end a page, and that
+the acknowledgment starts on its own page.
 
 The on-device model itself cannot run in JVM tests. Its behaviour is measured by the calibration
 procedure below.

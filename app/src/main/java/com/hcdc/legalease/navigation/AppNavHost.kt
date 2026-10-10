@@ -7,6 +7,8 @@ import androidx.navigation.compose.composable
 import com.hcdc.legalease.dashboard.DashboardScreen
 import com.hcdc.legalease.feature.auth.IntroRoute
 import com.hcdc.legalease.feature.auth.introScreen
+import com.hcdc.legalease.feature.generator.GeneratorRoute
+import com.hcdc.legalease.feature.generator.generatorScreens
 import com.hcdc.legalease.feature.history.HistoryRoute
 import com.hcdc.legalease.feature.history.historyScreen
 import com.hcdc.legalease.feature.result.ResultRoute
@@ -28,6 +30,7 @@ fun AppNavHost(navController: NavHostController) {
                 onUploadPdf = { navController.navigate(PdfRoute) },
                 onUploadImage = { navController.navigate(ImageRoute) },
                 onOpenHistory = { navController.navigate(HistoryRoute) },
+                onCreateContract = { navController.navigate(GeneratorRoute) },
             )
         }
         scanScreens(
@@ -36,5 +39,10 @@ fun AppNavHost(navController: NavHostController) {
         )
         historyScreen(onOpenAnalysis = { navController.navigate(ResultRoute(it)) })
         resultScreens(onOpenPage = { id, page -> navController.navigate(PageRoute(id, page)) })
+        generatorScreens(
+            onOpenEditor = { navController.navigate(it) },
+            onOpenAnalysis = { navController.navigate(ResultRoute(it)) },
+            onBack = { navController.popBackStack() },
+        )
     }
 }

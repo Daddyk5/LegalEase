@@ -31,6 +31,8 @@ import com.hcdc.legalease.core.domain.repository.FeatureFlags
 import com.hcdc.legalease.core.domain.repository.FeatureFlagsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import com.hcdc.legalease.core.domain.model.GeneratedContract
+import com.hcdc.legalease.core.domain.repository.ContractRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 
@@ -56,6 +58,14 @@ class FakeAnalysisRepository : AnalysisRepository {
         val id = "id-${nextId++}"
         put(Analysis(id, documentName, kind, AnalysisStatus.QUEUED, createdAtMillis = 0, updatedAtMillis = 0))
         sources[id] = sourceUris
+        return AppResult.Success(id)
+    }
+
+    override suspend fun createFromText(documentName: String, pages: List<String>): AppResult<String> {
+        createResult?.let { return it }
+        val id = "id-${nextId++}"
+        put(Analysis(id, documentName, SourceKind.GENERATED, AnalysisStatus.QUEUED, 0, 0))
+        texts[id] = ExtractedText(pages, unreadablePages = emptyList(), pageQuality = pages.map { 1f })
         return AppResult.Success(id)
     }
 
@@ -245,3 +255,57 @@ fun sampleReport(
     poorQualityPages = emptyList(),
     method = method,
 )
+
+class FakeContractRepository : ContractRepository {
+    val versions = MutableStateFlow<List<GeneratedContract>>(emptyList())
+    private var nextId = 0
+
+    override suspend fun saveVersion(
+        contractId: String?,
+        draft: com.hcdc.legalease.core.domain.model.ContractDraft,
+        title: String,
+        body: String,
+    ): GeneratedContract {
+        val id = contractId ?: "contract-${nextId++}"
+        val version = (versions.value.filter { it.contractId == id }.maxOfOrNull { it.version } ?: 0) + 1
+        val saved = GeneratedContract("v-${nextId++}", id, version, draft.type, title, body, 0, draft)
+        versions.value += saved
+        return saved
+    }
+
+    override fun observeLatest(): Flow<List<GeneratedContract>> = versions.map { all ->
+        all.groupBy { it.contractId }.map { (_, v) -> v.maxBy { it.version } }
+    }
+
+    override fun observeVersions(contractId: String): Flow<List<GeneratedContract>> =
+        versions.map { all -> all.filter { it.contractId == contractId }.sortedByDescending { it.version } }
+
+    override fun observeVersion(versionId: String): Flow<GeneratedContract?> =
+        versions.map { all -> all.firstOrNull { it.id == versionId } }
+
+    override suspend fun linkAnalysis(versionId: String, analysisId: String) {
+        versions.value = versions.value.map { if (it.id == versionId) it.copy(analysisId = analysisId) else it }
+    }
+}
+
+class FakeContractAssistant(
+    var availability: com.hcdc.legalease.core.domain.engine.LlmAvailability =
+        com.hcdc.legalease.core.domain.engine.LlmAvailability.READY,
+) : com.hcdc.legalease.core.domain.engine.ContractAssistant {
+    var suggestions: AppResult<List<com.hcdc.legalease.core.domain.engine.ClauseSuggestion>> =
+        AppResult.Success(emptyList())
+    var rewrite: AppResult<String> = AppResult.Success("")
+    var released = 0
+
+    override suspend fun availability() = availability
+
+    override suspend fun suggestClauses(type: com.hcdc.legalease.core.domain.model.ContractType, contractText: String) =
+        suggestions
+
+    override suspend fun rewriteForClarity(type: com.hcdc.legalease.core.domain.model.ContractType, clause: String) =
+        rewrite
+
+    override suspend fun release() {
+        released++
+    }
+}

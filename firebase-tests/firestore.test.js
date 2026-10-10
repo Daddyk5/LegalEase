@@ -98,6 +98,10 @@ describe('analysis schema', () => {
     await assertFails(write({ ...liveAnalysis(), createdAt: 'yesterday' }));
   });
 
+  it('accepts analyses of generated contracts', async () => {
+    await assertSucceeds(write({ ...liveAnalysis(), sourceKind: 'GENERATED' }));
+  });
+
   it('enforces size limits', async () => {
     await assertFails(write({ ...liveAnalysis(), summary: 'x'.repeat(2001) }));
     await assertFails(write({ ...liveAnalysis(), documentName: 'x'.repeat(301) }));
@@ -140,6 +144,13 @@ describe('contracts', () => {
   it('rejects unknown template types and oversized bodies', async () => {
     await assertFails(setDoc(ref(), { ...contract(), type: 'PROMISSORY_NOTE' }));
     await assertFails(setDoc(ref(), { ...contract(), body: 'x'.repeat(200001) }));
+  });
+
+  it('accepts the form draft as an optional string of bounded size', async () => {
+    await assertSucceeds(setDoc(ref(), { ...contract(), draft: '{"type":"LEASE"}' }));
+    await assertSucceeds(setDoc(doc(db(OWNER), `users/${OWNER}/contracts/v2`), { ...contract(), draft: null }));
+    await assertFails(setDoc(doc(db(OWNER), `users/${OWNER}/contracts/v3`), { ...contract(), draft: { type: 'LEASE' } }));
+    await assertFails(setDoc(doc(db(OWNER), `users/${OWNER}/contracts/v4`), { ...contract(), draft: 'x'.repeat(100001) }));
   });
 });
 

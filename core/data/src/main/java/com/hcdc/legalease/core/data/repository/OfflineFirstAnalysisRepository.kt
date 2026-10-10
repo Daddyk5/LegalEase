@@ -64,6 +64,31 @@ internal class OfflineFirstAnalysisRepository @Inject constructor(
             }
         }
 
+    /** Generated text is exact: every page is stored with full quality and nothing is copied. */
+    override suspend fun createFromText(documentName: String, pages: List<String>): AppResult<String> =
+        withContext(ioDispatcher) {
+            val id = UUID.randomUUID().toString()
+            val now = clock.millis()
+            database.withTransaction {
+                analysisDao.upsert(
+                    AnalysisEntity(
+                        id = id,
+                        documentName = documentName,
+                        sourceKind = SourceKind.GENERATED.name,
+                        status = AnalysisStatus.QUEUED.name,
+                        createdAt = now,
+                        updatedAt = now,
+                    )
+                )
+                pageDao.replace(
+                    id,
+                    pages.mapIndexed { index, page -> DocumentPageEntity(id, index, page, FULL_QUALITY) },
+                )
+                analysisDao.setPageInfo(id, pages.size, encodePageList(emptyList()))
+            }
+            AppResult.Success(id)
+        }
+
     override fun observe(id: String): Flow<Analysis?> = analysisDao.observe(id).map { it?.toDomain() }
 
     override suspend fun get(id: String): Analysis? = analysisDao.get(id)?.takeUnless { it.deleted }?.toDomain()
@@ -151,5 +176,6 @@ internal class OfflineFirstAnalysisRepository @Inject constructor(
 
     private companion object {
         const val HISTORY_PAGE_SIZE = 20
+        const val FULL_QUALITY = 1f
     }
 }

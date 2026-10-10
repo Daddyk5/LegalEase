@@ -13,6 +13,8 @@ internal object PromptVault {
     val extractSystem: String by lazy { open(SealedPrompts.EXTRACT_SYSTEM) }
     val reasonSystem: String by lazy { open(SealedPrompts.REASON_SYSTEM) }
     val civilCodeReference: String by lazy { open(SealedPrompts.CIVIL_CODE_REFERENCE) }
+    val clauseSuggestSystem: String by lazy { open(SealedPrompts.CLAUSE_SUGGEST_SYSTEM) }
+    val clauseRewriteSystem: String by lazy { open(SealedPrompts.CLAUSE_REWRITE_SYSTEM) }
 
     private val key by lazy {
         ByteArray(SealedPrompts.A.size) { (SealedPrompts.A[it] xor SealedPrompts.B[it]).toByte() }

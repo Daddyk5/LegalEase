@@ -3,7 +3,13 @@ package com.hcdc.legalease.core.domain.model
 import com.hcdc.legalease.core.domain.result.AppError
 
 /** How the document was uploaded. */
-enum class SourceKind { PDF, IMAGES }
+enum class SourceKind {
+    PDF,
+    IMAGES,
+
+    /** A contract LegalEase generated: the text is exact, so there is no OCR and no source page images. */
+    GENERATED,
+}
 
 enum class AnalysisStatus {
     QUEUED,

@@ -75,6 +75,9 @@ internal fun GeneratedContractEntity.toDomain(): GeneratedContract = GeneratedCo
     title = title,
     body = body,
     createdAtMillis = createdAt,
+    // An unreadable draft only disables editing; the saved text is still shown.
+    draft = draftJson?.let(DraftJson::decode),
+    analysisId = analysisId,
 )
 
 internal fun encodePageList(pages: List<Int>): String = pages.joinToString(",")

@@ -31,12 +31,12 @@ class MlKitTextExtractor @Inject constructor(
         onPage: suspend (page: Int, pageCount: Int) -> Unit,
     ): AppResult<ExtractedText> = withContext(ioDispatcher) {
         try {
-            AppResult.Success(
-                when (kind) {
-                    SourceKind.PDF -> extractPdf(File(paths.single()), onPage)
-                    SourceKind.IMAGES -> extractImages(paths.map(::File), onPage)
-                }
-            )
+            when (kind) {
+                SourceKind.PDF -> AppResult.Success(extractPdf(File(paths.single()), onPage))
+                SourceKind.IMAGES -> AppResult.Success(extractImages(paths.map(::File), onPage))
+                // Generated contracts store their exact text when created; there is nothing to read.
+                SourceKind.GENERATED -> AppResult.Failure(AppError.DocumentNotFound)
+            }
         } catch (_: IOException) {
             AppResult.Failure(AppError.UnreadableFile)
         } catch (_: SecurityException) {

@@ -27,6 +27,9 @@ fun PrimaryTextField(
     /** Error set by the caller, e.g. after a submit; shown regardless of [validator]. */
     error: String? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
+    /** False for long entries such as addresses and property descriptions. */
+    singleLine: Boolean = true,
+    minLines: Int = 1,
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
     var isValidatorError by remember { mutableStateOf(false) }
@@ -54,7 +57,8 @@ fun PrimaryTextField(
                     }
                 }
             },
-            singleLine = true,
+            singleLine = singleLine,
+            minLines = minLines,
             keyboardOptions = KeyboardOptions(keyboardType = if (isPassword) KeyboardType.Password else keyboardType),
             isError = isError,
             colors = TextFieldDefaults.colors(

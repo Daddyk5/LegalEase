@@ -168,7 +168,7 @@ private fun LazyListScope.reasonsCard(result: ResultModel, onOpenPage: (String, 
                 }
             },
             onPointClick = { index -> reasons[index].page?.let { onOpenPage(result.analysisId, it) } },
-            isPointClickable = { index -> reasons[index].page != null },
+            isPointClickable = { index -> result.pagesViewable && reasons[index].page != null },
         )
     }
 }

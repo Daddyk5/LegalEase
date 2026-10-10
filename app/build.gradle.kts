@@ -44,6 +44,7 @@ dependencies {
     implementation(project(":feature:scan"))
     implementation(project(":feature:result"))
     implementation(project(":feature:history"))
+    implementation(project(":feature:generator"))
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)

@@ -2,6 +2,7 @@ package com.hcdc.legalease.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hcdc.legalease.core.domain.repository.FeatureFlagsRepository
 import com.hcdc.legalease.core.domain.usecase.ObserveUserUseCase
 import com.hcdc.legalease.core.domain.usecase.SignOutUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +20,17 @@ import javax.inject.Inject
 class DashboardViewModel @Inject constructor(
     observeUser: ObserveUserUseCase,
     private val signOut: SignOutUseCase,
+    featureFlags: FeatureFlagsRepository,
 ) : ViewModel() {
+
+    /** Remote kill switch for the contract generator. */
+    val generatorEnabled: StateFlow<Boolean> = featureFlags.flags
+        .map { it.generatorEnabled }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
+            featureFlags.flags.value.generatorEnabled,
+        )
 
     /** The signed-in user's name, or null while unknown. */
     val greetingName: StateFlow<String?> = observeUser()

@@ -139,4 +139,11 @@ interface GeneratedContractDao {
 
     @Query("UPDATE generated_contracts SET needsSync = 0 WHERE id = :id")
     suspend fun markSynced(id: String)
+
+    @Query("SELECT * FROM generated_contracts WHERE id = :id")
+    fun observe(id: String): Flow<GeneratedContractEntity?>
+
+    /** The analysis link is local metadata: it does not change the version or mark it for sync. */
+    @Query("UPDATE generated_contracts SET analysisId = :analysisId WHERE id = :id")
+    suspend fun setAnalysisId(id: String, analysisId: String)
 }

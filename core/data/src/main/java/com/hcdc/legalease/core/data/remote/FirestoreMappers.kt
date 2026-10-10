@@ -96,6 +96,7 @@ internal fun GeneratedContractEntity.toFirestore(): Map<String, Any?> = mapOf(
     "type" to type,
     "title" to title,
     "body" to body,
+    "draft" to draftJson,
     "createdAt" to createdAt,
     FirestoreSchema.F_UPDATED_AT to createdAt,
 )
@@ -110,4 +111,5 @@ internal fun contractFromFirestore(id: String, data: Map<String, Any?>): Generat
         body = data["body"] as? String ?: return null,
         createdAt = (data["createdAt"] as? Number)?.toLong() ?: return null,
         needsSync = false,
+        draftJson = data["draft"] as? String,
     )

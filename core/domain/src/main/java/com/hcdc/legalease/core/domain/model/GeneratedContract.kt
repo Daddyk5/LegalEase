@@ -15,4 +15,8 @@ data class GeneratedContract(
     val title: String,
     val body: String,
     val createdAtMillis: Long,
+    /** The form this version was rendered from; null for versions synced without it. Needed to edit. */
+    val draft: ContractDraft? = null,
+    /** The analysis run on this version, if any. Export requires one. */
+    val analysisId: String? = null,
 )

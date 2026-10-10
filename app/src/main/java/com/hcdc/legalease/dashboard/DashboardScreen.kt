@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hcdc.legalease.R
+import com.hcdc.legalease.core.designsystem.R as DesignR
 import com.hcdc.legalease.core.designsystem.component.cards.DashboardCard
 import com.hcdc.legalease.core.designsystem.component.spacers.VerticalSpacer
 
@@ -37,9 +38,11 @@ fun DashboardScreen(
     onUploadPdf: () -> Unit,
     onUploadImage: () -> Unit,
     onOpenHistory: () -> Unit,
+    onCreateContract: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
     val greetingName by viewModel.greetingName.collectAsStateWithLifecycle()
+    val generatorEnabled by viewModel.generatorEnabled.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel) {
         viewModel.signedOut.collect { onLoggedOut() }
@@ -114,6 +117,16 @@ fun DashboardScreen(
                 onClick = { onUploadImage() },
                 modifier = Modifier.weight(.5f)
             )
+            if (generatorEnabled) {
+                VerticalSpacer(height = 0.dp)
+                DashboardCard(
+                    title = "Create Contract",
+                    subtitle = "Lease, loan, or sale, from Philippine templates",
+                    imageRes = DesignR.drawable.lawyer,
+                    onClick = { onCreateContract() },
+                    modifier = Modifier.weight(.5f)
+                )
+            }
             VerticalSpacer(height = 5.dp)
             HorizontalDivider(
                 color = Color.Gray.copy(alpha = .3f),

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.hcdc.legalease.core.domain.model.Analysis
 import com.hcdc.legalease.core.domain.model.AnalysisReport
 import com.hcdc.legalease.core.domain.model.AnalysisStatus
+import com.hcdc.legalease.core.domain.model.SourceKind
 import com.hcdc.legalease.core.domain.repository.FeatureFlagsRepository
 import com.hcdc.legalease.core.domain.result.AppError
 import com.hcdc.legalease.core.domain.usecase.ObserveAnalysisUseCase
@@ -25,6 +26,8 @@ data class ResultModel(
     val unreadablePages: List<Int>,
     /** Remote Config text explaining the confidence policy. */
     val thresholdText: String,
+    /** Uploaded documents have page images to open from a quote; generated contracts do not. */
+    val pagesViewable: Boolean = true,
 )
 
 sealed interface ResultUiState {
@@ -63,6 +66,7 @@ internal fun toUiState(analysis: Analysis?, thresholdText: String = ""): ResultU
                 report = report,
                 unreadablePages = analysis.unreadablePages.map { it + 1 },
                 thresholdText = thresholdText,
+                pagesViewable = analysis.sourceKind != SourceKind.GENERATED,
             )
         )
         AnalysisStatus.COMPLETED, AnalysisStatus.FAILED ->

@@ -67,3 +67,18 @@ recover it. Treat the model as protected from copying by its license, not by the
   it is dropped.
 - A classification is shown only at confidence ≥ 0.80 (see ARCHITECTURE.md for the formula). The
   classifier alone can never reach that threshold.
+
+## Contract generator integrity
+
+- The four templates are deterministic Kotlin (`core/domain/.../generator`). Their mandatory
+  clauses come only from the user's form entries; the model cannot change them.
+- The on-device model may only suggest optional clauses and reword optional clauses. Every
+  suggestion passes `ClauseGuard`, which withholds anything that cites law, states an amount or a
+  date, or (for rewording) changes a number or a party. The user is told how many were withheld.
+- Accepted changes are shown as a word diff first; nothing changes until the user accepts.
+- Legal notices (Arts. 1358, 1403(2)(e), 1648, 1956) are fixed, reviewed strings, never generated.
+- Every saved version is analysed with the same pipeline as an uploaded contract before it can be
+  exported. Versions are immutable locally and in Firestore; an edit is a new version.
+- Generated contracts and their form data contain personal data (names, addresses, ID types). They
+  are stored in the encrypted database and sync only for opted-in users. Exported PDFs are written
+  to app cache and replaced on the next export.

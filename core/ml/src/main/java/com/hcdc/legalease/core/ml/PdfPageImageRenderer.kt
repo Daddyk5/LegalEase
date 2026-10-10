@@ -34,6 +34,8 @@ class PdfPageImageRenderer @Inject constructor(
                         ?.let { AppResult.Success(RenderedPage(it, isTemporary = false)) }
                         ?: AppResult.Failure(AppError.DocumentNotFound)
                     SourceKind.PDF -> renderPdfPage(File(paths.single()), page)
+                    // No page images exist for generated contracts; the result screen does not offer them.
+                    SourceKind.GENERATED -> AppResult.Failure(AppError.DocumentNotFound)
                 }
             } catch (_: IOException) {
                 AppResult.Failure(AppError.UnreadableFile)

@@ -46,7 +46,7 @@ service cloud.firestore {
         && d.keys().hasAll(['documentName', 'sourceKind', 'status', 'createdAt', 'deleted'])
         && d.deleted == false
         && d.documentName is string && d.documentName.size() <= 300
-        && d.sourceKind in ['PDF', 'IMAGES']
+        && d.sourceKind in ['PDF', 'IMAGES', 'GENERATED']
         && d.status in ['COMPLETED', 'FAILED']
         && d.createdAt is int
         && optionalInt(d, 'pageCount', 0, 2000)
@@ -71,13 +71,15 @@ service cloud.firestore {
     // Generated contracts are immutable versions; an edit is a new document.
     function validContract(d) {
       return d.keys().hasOnly([
-          'schemaVersion', 'contractId', 'version', 'type', 'title', 'body', 'createdAt', 'updatedAt'])
+          'schemaVersion', 'contractId', 'version', 'type', 'title', 'body', 'draft', 'createdAt', 'updatedAt'])
         && d.schemaVersion == 1
         && d.contractId is string && d.contractId.size() <= 64
         && d.version is int && d.version >= 1
         && d.type in ['LEASE', 'LOAN', 'SALE', 'LEASE_OF_PERSONAL_PROPERTY']
         && d.title is string && d.title.size() <= 300
         && d.body is string && d.body.size() <= 200000
+        // The form the version was rendered from, so it can be edited into a new version.
+        && (!('draft' in d) || d.draft == null || (d.draft is string && d.draft.size() <= 100000))
         && d.createdAt is int
         && d.updatedAt is int;
     }

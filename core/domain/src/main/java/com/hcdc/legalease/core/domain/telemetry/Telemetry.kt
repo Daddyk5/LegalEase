@@ -34,6 +34,16 @@ sealed class AnalyticsEvent(val name: String, val params: Map<String, Any> = emp
 
     data object AnalysisDeleted : AnalyticsEvent("analysis_deleted")
 
+    class ContractSaved(type: String, version: Int) :
+        AnalyticsEvent("contract_saved", mapOf("contract_type" to type, "version" to version.toLong()))
+
+    class ContractExported(type: String, paper: String) :
+        AnalyticsEvent("contract_exported", mapOf("contract_type" to type, "paper_size" to paper))
+
+    /** [outcome] is "offered", "accepted", or "withheld"; [count] how many. */
+    class ClauseAssist(action: String, outcome: String, count: Int) :
+        AnalyticsEvent("clause_assist", mapOf("action" to action, "outcome" to outcome, "count" to count.toLong()))
+
     class Login(method: String) : AnalyticsEvent("login", mapOf("method" to method))
 
     class SignUp(method: String) : AnalyticsEvent("sign_up", mapOf("method" to method))

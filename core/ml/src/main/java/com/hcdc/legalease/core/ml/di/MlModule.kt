@@ -1,5 +1,6 @@
 package com.hcdc.legalease.core.ml.di
 
+import com.hcdc.legalease.core.domain.engine.ContractAssistant
 import com.hcdc.legalease.core.domain.engine.ContractClassifier
 import com.hcdc.legalease.core.domain.engine.TextExtractor
 import com.hcdc.legalease.core.domain.engine.LlmAnalyzer
@@ -9,6 +10,7 @@ import com.hcdc.legalease.core.ml.MlKitTextExtractor
 import com.hcdc.legalease.core.ml.PdfPageImageRenderer
 import com.hcdc.legalease.core.ml.TFLiteClassifier
 import com.hcdc.legalease.core.ml.llm.ModelProvisioner
+import com.hcdc.legalease.core.ml.llm.OnDeviceContractAssistant
 import com.hcdc.legalease.core.ml.llm.OnDeviceLlmAnalyzer
 import com.google.firebase.storage.FirebaseStorage
 import dagger.Binds
@@ -29,6 +31,9 @@ internal abstract class MlModule {
 
     @Binds
     abstract fun bindLlmAnalyzer(impl: OnDeviceLlmAnalyzer): LlmAnalyzer
+
+    @Binds
+    abstract fun bindContractAssistant(impl: OnDeviceContractAssistant): ContractAssistant
 
     @Binds
     abstract fun bindModelProvisioner(impl: ModelProvisioner): OfflineModelProvisioner

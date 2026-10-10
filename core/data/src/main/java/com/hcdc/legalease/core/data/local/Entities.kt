@@ -72,4 +72,8 @@ data class GeneratedContractEntity(
     val body: String,
     val createdAt: Long,
     val needsSync: Boolean = false,
+    /** The form this version was rendered from ([DraftJson]); synced with the version. */
+    val draftJson: String? = null,
+    /** Local only: the analysis run on this version. Set once, after the version is saved. */
+    val analysisId: String? = null,
 )
