@@ -13,6 +13,16 @@ data class ResultRoute(val analysisId: String) {
     }
 }
 
-fun NavGraphBuilder.resultScreen() {
-    composable<ResultRoute> { ResultScreen() }
+/** One page of an analysed document, opened from a quoted clause. [page] is 1-based. */
+@Serializable
+data class PageRoute(val analysisId: String, val page: Int) {
+    companion object {
+        const val ARG_ANALYSIS_ID = "analysisId"
+        const val ARG_PAGE = "page"
+    }
+}
+
+fun NavGraphBuilder.resultScreens(onOpenPage: (analysisId: String, page: Int) -> Unit) {
+    composable<ResultRoute> { ResultScreen(onOpenPage = onOpenPage) }
+    composable<PageRoute> { PageScreen() }
 }

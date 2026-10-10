@@ -29,6 +29,12 @@ data class AnalysisEntity(
     val needsSync: Boolean = false,
     val remoteUpdatedAt: Long? = null,
     val deleted: Boolean = false,
+    /** Full report as JSON ([ReportJson]); local only, never synced. */
+    val reportJson: String? = null,
+    /** Detected contract type, for history search. */
+    val contractType: String? = null,
+    /** [ReportJson.SCORING_VERSION] that produced [confidence]; null for analyses from earlier versions. */
+    val scoringVersion: Int? = null,
 )
 
 /** OCR text per page. Stays on the device: never synced to Firestore. */
@@ -48,6 +54,8 @@ data class DocumentPageEntity(
     val analysisId: String,
     val pageIndex: Int,
     val text: String,
+    /** OCR quality in [0, 1]; null for pages read by earlier versions. */
+    val quality: Float? = null,
 )
 
 /** One immutable version of a generated contract. */

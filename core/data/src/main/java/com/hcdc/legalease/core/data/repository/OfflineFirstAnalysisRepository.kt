@@ -19,7 +19,8 @@ import com.hcdc.legalease.core.domain.model.Analysis
 import com.hcdc.legalease.core.domain.model.AnalysisStatus
 import com.hcdc.legalease.core.domain.model.ExtractedText
 import com.hcdc.legalease.core.domain.model.SourceKind
-import com.hcdc.legalease.core.domain.model.Verdict
+import com.hcdc.legalease.core.domain.model.AnalysisReport
+import com.hcdc.legalease.core.data.local.ReportJson
 import com.hcdc.legalease.core.domain.repository.AnalysisRepository
 import com.hcdc.legalease.core.domain.result.AppError
 import com.hcdc.legalease.core.domain.result.AppResult
@@ -72,25 +73,49 @@ internal class OfflineFirstAnalysisRepository @Inject constructor(
     override suspend fun markExtracting(id: String, currentPage: Int, pageCount: Int) =
         analysisDao.markExtracting(id, currentPage, pageCount, clock.millis())
 
+    /** The source copy is kept (app-private, excluded from backups) so cited pages can be opened. */
     override suspend fun saveExtractedText(id: String, text: ExtractedText) {
         database.withTransaction {
-            pageDao.replace(id, text.pages.mapIndexed { index, page -> DocumentPageEntity(id, index, page) })
+            pageDao.replace(
+                id,
+                text.pages.mapIndexed { index, page ->
+                    DocumentPageEntity(id, index, page, text.pageQuality.getOrNull(index))
+                },
+            )
             analysisDao.setPageInfo(id, text.pages.size, encodePageList(text.unreadablePages))
         }
-        withContext(ioDispatcher) { sources.delete(id) }
     }
 
     override suspend fun extractedText(id: String): ExtractedText? {
         val pages = pageDao.pages(id).takeIf { it.isNotEmpty() } ?: return null
         val texts = pages.map { it.text }
-        return ExtractedText(texts, texts.indices.filter { texts[it].isBlank() })
+        val quality = pages.map { it.quality }
+        return ExtractedText(
+            pages = texts,
+            unreadablePages = texts.indices.filter { texts[it].isBlank() },
+            pageQuality = if (quality.all { it != null }) quality.map { it!! } else emptyList(),
+        )
     }
 
     override suspend fun markClassifying(id: String) =
         analysisDao.setStatus(id, AnalysisStatus.CLASSIFYING.name, clock.millis())
 
-    override suspend fun complete(id: String, verdict: Verdict) =
-        analysisDao.complete(id, verdict.classification.label, verdict.confidence, verdict.summary, clock.millis())
+    override suspend fun markAnalyzingPage(id: String, currentPage: Int, pageCount: Int) =
+        analysisDao.markAnalyzingPage(id, currentPage, pageCount, clock.millis())
+
+    override suspend fun markChecking(id: String) =
+        analysisDao.setStatus(id, AnalysisStatus.CHECKING.name, clock.millis())
+
+    override suspend fun complete(id: String, report: AnalysisReport) = analysisDao.complete(
+        id = id,
+        shownClassification = report.shownClassification?.label,
+        confidence = report.confidence.total,
+        summary = report.summary,
+        reportJson = ReportJson.encode(report),
+        contractType = report.contractType.name,
+        scoringVersion = ReportJson.SCORING_VERSION,
+        now = clock.millis(),
+    )
 
     override suspend fun fail(id: String, error: AppError) {
         analysisDao.fail(id, error.code, clock.millis())

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.legalease.android.library)
     alias(libs.plugins.legalease.hilt)
     alias(libs.plugins.room)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -14,6 +15,7 @@ room {
 
 dependencies {
     implementation(project(":core:domain"))
+    implementation(project(":core:security"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.room.runtime)
@@ -37,4 +39,5 @@ dependencies {
     implementation(libs.firebase.perf)
     implementation(libs.firebase.config)
     implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.kotlinx.serialization.json)
 }

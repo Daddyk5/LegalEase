@@ -20,9 +20,13 @@ android {
         buildConfig = true
     }
 
+    // The on-device language model ships outside the base APK.
+    assetPacks += ":llm_pack"
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

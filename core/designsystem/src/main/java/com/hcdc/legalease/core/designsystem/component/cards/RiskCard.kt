@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.hcdc.legalease.core.designsystem.component.spacers.VerticalSpacer
 import androidx.compose.foundation.layout.Column
@@ -23,7 +24,10 @@ fun RiskCard(
     riskLevel: String,
     riskColor: Color,
     points: List<String>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    /** When set, points whose index it accepts are tappable (e.g. to open the cited page). */
+    onPointClick: ((Int) -> Unit)? = null,
+    isPointClickable: (Int) -> Boolean = { onPointClick != null },
 ) {
     Card(
         modifier = modifier
@@ -53,11 +57,18 @@ fun RiskCard(
 
             // Sub-cards for each point
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                points.forEach { point ->
+                points.forEachIndexed { index, point ->
+                    val clickable = onPointClick != null && isPointClickable(index)
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable {  },
+                            .then(
+                                if (clickable) {
+                                    Modifier.clickable(role = Role.Button) { onPointClick?.invoke(index) }
+                                } else {
+                                    Modifier
+                                }
+                            ),
                         shape = RoundedCornerShape(8.dp),
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.background

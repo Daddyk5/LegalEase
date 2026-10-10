@@ -1,0 +1,9 @@
+Reference: Civil Code of the Philippines, summarized.
+Essential requisites: consent of the contracting parties; an object certain that is the subject matter; and a cause of the obligation. Without any of these there is no valid contract.
+Form: contracts bind in whatever form they are entered into. Some must appear in a public document, such as acts that create or transfer real rights over immovable property. Lacking that form does not by itself make the contract void; the parties may compel each other to execute the proper document.
+Rescissible: valid until rescinded. Examples: entered into by guardians or representatives causing lesion of more than one-fourth of the value; made in fraud of creditors.
+Voidable: valid until annulled. Examples: one party was incapable of giving consent, such as a minor; consent was vitiated by mistake, violence, intimidation, undue influence, or fraud.
+Unenforceable: cannot be enforced in court unless ratified. Examples: made in another's name without authority; agreements covered by the Statute of Frauds that are not in writing and signed, such as a sale of real property, a lease of more than one year, or an agreement not to be performed within a year; both parties incapable of giving consent.
+Void: inexistent from the beginning. Examples: cause, object, or purpose contrary to law, morals, good customs, public order, or public policy; absolutely simulated or fictitious; cause or object did not exist; object outside the commerce of men; expressly prohibited or declared void by law.
+Loan of money: no interest is due unless it is expressly stipulated in writing.
+Reason codes: NO_CONSENT, NO_OBJECT, NO_CAUSE, FORM_NOT_MET, STATUTE_OF_FRAUDS, LESION, VITIATED_CONSENT, INCAPACITY, ILLEGAL_OBJECT, SIMULATED, FRAUD_ON_CREDITORS, NONE.

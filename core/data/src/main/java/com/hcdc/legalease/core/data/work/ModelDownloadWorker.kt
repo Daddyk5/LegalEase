@@ -18,8 +18,18 @@ class ModelDownloadWorker @AssistedInject constructor(
     private val classifier: ContractClassifier,
 ) : CoroutineWorker(context, params) {
 
+    private companion object {
+        const val MAX_ATTEMPTS = 5
+    }
+
     override suspend fun doWork(): Result = when (val prepared = classifier.prepare()) {
         is AppResult.Success -> Result.success()
-        is AppResult.Failure -> if (prepared.error == AppError.ModelUnavailable) Result.retry() else Result.failure()
+        // Retry while offline. Any other failure still succeeds so the chained language-model
+        // download runs: the classifier is optional evidence, not a prerequisite.
+        is AppResult.Failure -> if (prepared.error == AppError.ModelUnavailable && runAttemptCount < MAX_ATTEMPTS) {
+            Result.retry()
+        } else {
+            Result.success()
+        }
     }
 }

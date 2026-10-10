@@ -42,7 +42,7 @@ service cloud.firestore {
       return d.keys().hasOnly([
           'schemaVersion', 'documentName', 'sourceKind', 'status', 'createdAt', 'updatedAt',
           'pageCount', 'unreadablePages', 'classification', 'confidence', 'summary',
-          'errorCode', 'deleted'])
+          'errorCode', 'contractType', 'scoringVersion', 'deleted'])
         && d.keys().hasAll(['documentName', 'sourceKind', 'status', 'createdAt', 'deleted'])
         && d.deleted == false
         && d.documentName is string && d.documentName.size() <= 300
@@ -56,7 +56,10 @@ service cloud.firestore {
         && (!('confidence' in d) || d.confidence == null
             || (d.confidence is number && d.confidence >= 0 && d.confidence <= 1))
         && optionalString(d, 'summary', 2000)
-        && optionalString(d, 'errorCode', 64);
+        && optionalString(d, 'errorCode', 64)
+        && (!('contractType' in d) || d.contractType == null
+            || d.contractType in ['LEASE', 'LOAN', 'SALE', 'LEASE_OF_PERSONAL_PROPERTY', 'OTHER'])
+        && optionalInt(d, 'scoringVersion', 1, 100);
     }
 
     function validAnalysis(d) {

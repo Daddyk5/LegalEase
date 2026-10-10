@@ -1,4 +1,4 @@
-package com.hcdc.legalease.core.data.local
+package com.hcdc.legalease.core.security
 
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertFalse

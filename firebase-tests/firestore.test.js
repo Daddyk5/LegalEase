@@ -26,6 +26,8 @@ const liveAnalysis = () => ({
   confidence: 0.83,
   summary: 'Opening text of the contract.',
   errorCode: null,
+  contractType: 'LEASE',
+  scoringVersion: 2,
   deleted: false,
 });
 
@@ -100,6 +102,10 @@ describe('analysis schema', () => {
     await assertFails(write({ ...liveAnalysis(), summary: 'x'.repeat(2001) }));
     await assertFails(write({ ...liveAnalysis(), documentName: 'x'.repeat(301) }));
     await assertSucceeds(write({ ...liveAnalysis(), summary: 'x'.repeat(2000) }));
+  });
+
+  it('rejects unknown contract types', async () => {
+    await assertFails(write({ ...liveAnalysis(), contractType: 'PROMISSORY_NOTE' }));
   });
 
   it('only finished analyses are synced', async () => {

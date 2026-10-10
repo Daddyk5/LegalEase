@@ -43,6 +43,8 @@ firebaseBom = "35.0.0"
 firebaseModelDownloader = "26.1.1"
 mlkitTextRecognition = "16.0.1"
 litert = "1.4.2"
+litertLm = "0.18.0"
+assetDelivery = "2.3.0"
 
 # Security
 sqlcipher = "4.19.1"
@@ -117,6 +119,8 @@ googleid = { group = "com.google.android.libraries.identity.googleid", name = "g
 firebase-ml-modeldownloader = { group = "com.google.firebase", name = "firebase-ml-modeldownloader", version.ref = "firebaseModelDownloader" }
 mlkit-text-recognition = { group = "com.google.mlkit", name = "text-recognition", version.ref = "mlkitTextRecognition" }
 litert = { group = "com.google.ai.edge.litert", name = "litert", version.ref = "litert" }
+litert-lm = { group = "com.google.ai.edge.litertlm", name = "litertlm-android", version.ref = "litertLm" }
+play-asset-delivery = { group = "com.google.android.play", name = "asset-delivery", version.ref = "assetDelivery" }
 
 sqlcipher-android = { group = "net.zetetic", name = "sqlcipher-android", version.ref = "sqlcipher" }
 

@@ -10,7 +10,8 @@ import com.hcdc.legalease.feature.auth.introScreen
 import com.hcdc.legalease.feature.history.HistoryRoute
 import com.hcdc.legalease.feature.history.historyScreen
 import com.hcdc.legalease.feature.result.ResultRoute
-import com.hcdc.legalease.feature.result.resultScreen
+import com.hcdc.legalease.feature.result.PageRoute
+import com.hcdc.legalease.feature.result.resultScreens
 import com.hcdc.legalease.feature.scan.ImageRoute
 import com.hcdc.legalease.feature.scan.PdfRoute
 import com.hcdc.legalease.feature.scan.scanScreens
@@ -34,6 +35,6 @@ fun AppNavHost(navController: NavHostController) {
             onBack = { navController.popBackStack() },
         )
         historyScreen(onOpenAnalysis = { navController.navigate(ResultRoute(it)) })
-        resultScreen()
+        resultScreens(onOpenPage = { id, page -> navController.navigate(PageRoute(id, page)) })
     }
 }

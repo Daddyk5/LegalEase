@@ -5,3 +5,7 @@ plugins {
 android {
     namespace = "com.hcdc.legalease.feature.result"
 }
+
+dependencies {
+    implementation(libs.coil.compose)
+}

@@ -9,7 +9,7 @@ import com.hcdc.legalease.core.domain.model.AnalysisStatus
 import com.hcdc.legalease.core.domain.model.ExtractedText
 import com.hcdc.legalease.core.domain.model.Prediction
 import com.hcdc.legalease.core.domain.model.SourceKind
-import com.hcdc.legalease.core.domain.model.Verdict
+import com.hcdc.legalease.core.domain.model.AnalysisReport
 import com.hcdc.legalease.core.domain.repository.AnalysisRepository
 import com.hcdc.legalease.core.domain.result.AppError
 import com.hcdc.legalease.core.domain.result.AppResult
@@ -22,7 +22,15 @@ import com.hcdc.legalease.core.domain.telemetry.AnalyticsEvent
 import com.hcdc.legalease.core.domain.telemetry.AnalyticsTracker
 import com.hcdc.legalease.core.domain.telemetry.PerformanceTrace
 import com.hcdc.legalease.core.domain.telemetry.PerformanceTracer
+import com.hcdc.legalease.core.domain.engine.ChunkFacts
+import com.hcdc.legalease.core.domain.engine.LlmAnalyzer
+import com.hcdc.legalease.core.domain.engine.LlmAvailability
+import com.hcdc.legalease.core.domain.engine.LlmReasoning
+import com.hcdc.legalease.core.domain.legal.TextChunk
+import com.hcdc.legalease.core.domain.repository.FeatureFlags
+import com.hcdc.legalease.core.domain.repository.FeatureFlagsRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 
@@ -66,8 +74,12 @@ class FakeAnalysisRepository : AnalysisRepository {
 
     override suspend fun extractedText(id: String): ExtractedText? = texts[id]
     override suspend fun markClassifying(id: String) = update(id) { it.copy(status = AnalysisStatus.CLASSIFYING) }
-    override suspend fun complete(id: String, verdict: Verdict) =
-        update(id) { it.copy(status = AnalysisStatus.COMPLETED, verdict = verdict) }
+    override suspend fun markAnalyzingPage(id: String, currentPage: Int, pageCount: Int) = update(id) {
+        it.copy(status = AnalysisStatus.ANALYZING_PAGES, currentPage = currentPage, pageCount = pageCount)
+    }
+    override suspend fun markChecking(id: String) = update(id) { it.copy(status = AnalysisStatus.CHECKING) }
+    override suspend fun complete(id: String, report: AnalysisReport) =
+        update(id) { it.copy(status = AnalysisStatus.COMPLETED, report = report) }
 
     override suspend fun fail(id: String, error: AppError) =
         update(id) { it.copy(status = AnalysisStatus.FAILED, error = error) }
@@ -78,7 +90,7 @@ class FakeAnalysisRepository : AnalysisRepository {
     fun historySnapshot(query: String): List<Analysis> = analyses.value.values.filter {
         (it.status == AnalysisStatus.COMPLETED || it.status == AnalysisStatus.FAILED) &&
             (it.documentName.contains(query, ignoreCase = true) ||
-                it.verdict?.classification?.label?.contains(query, ignoreCase = true) == true)
+                it.report?.shownClassification?.label?.contains(query, ignoreCase = true) == true)
     }.sortedByDescending { it.createdAtMillis }
 
     override fun history(query: String): Flow<PagingData<Analysis>> =
@@ -185,3 +197,51 @@ class FakeAuthRepository : AuthRepository {
         user.value = null
     }
 }
+
+/** Scripted language model: facts per page and a queue of reasoning results. */
+class FakeLlmAnalyzer(
+    var availability: LlmAvailability = LlmAvailability.READY,
+    var facts: (TextChunk) -> AppResult<ChunkFacts> = { AppResult.Failure(AppError.Unexpected("no facts scripted")) },
+    val reasoning: ArrayDeque<AppResult<LlmReasoning>> = ArrayDeque(),
+) : LlmAnalyzer {
+    var released = 0
+    val reasoningTemperatures = mutableListOf<Float>()
+
+    override suspend fun availability() = availability
+    override suspend fun extractFacts(chunk: TextChunk) = facts(chunk)
+    override suspend fun reason(facts: List<ChunkFacts>, temperature: Float): AppResult<LlmReasoning> {
+        reasoningTemperatures += temperature
+        return reasoning.removeFirstOrNull() ?: AppResult.Failure(AppError.Unexpected("no reasoning scripted"))
+    }
+    override suspend fun release() { released++ }
+    override suspend fun warmUp(): AppResult<Unit> = AppResult.Success(Unit)
+}
+
+class FakeFeatureFlags(initial: FeatureFlags = FeatureFlags.DEFAULT) : FeatureFlagsRepository {
+    val state = MutableStateFlow(initial)
+    override val flags: StateFlow<FeatureFlags> = state
+    override suspend fun refresh() = Unit
+}
+
+/** A minimal report; [total] decides whether [classification] is shown. */
+fun sampleReport(
+    classification: com.hcdc.legalease.core.domain.model.Classification?,
+    total: Float = 0.9f,
+    method: com.hcdc.legalease.core.domain.model.AnalysisMethod =
+        com.hcdc.legalease.core.domain.model.AnalysisMethod.LANGUAGE_MODEL,
+) = AnalysisReport(
+    candidate = classification,
+    confidence = com.hcdc.legalease.core.domain.model.ConfidenceScore(total, null),
+    summary = "s",
+    contractTitle = null,
+    contractType = com.hcdc.legalease.core.domain.model.DetectedContractType.LEASE,
+    reasons = emptyList(),
+    missingElements = emptyList(),
+    riskFlags = emptyList(),
+    recommendations = emptyList(),
+    unclear = emptyList(),
+    pageCount = 1,
+    skippedPages = emptyList(),
+    poorQualityPages = emptyList(),
+    method = method,
+)

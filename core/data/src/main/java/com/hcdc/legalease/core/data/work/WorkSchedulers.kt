@@ -60,14 +60,31 @@ class BackgroundWork @Inject constructor(
     private val workManager: WorkManager,
 ) {
     fun schedule() {
-        workManager.enqueueUniqueWork(
+        // Classifier first (small, any network); then the language model (large, Wi-Fi only);
+        // then a self-test once the device is charging and idle.
+        workManager.beginUniqueWork(
             MODEL_DOWNLOAD,
             ExistingWorkPolicy.KEEP,
             OneTimeWorkRequestBuilder<ModelDownloadWorker>()
                 .setConstraints(networkConstraint)
                 .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, BACKOFF_SECONDS, TimeUnit.SECONDS)
                 .build(),
-        )
+        ).then(
+            OneTimeWorkRequestBuilder<OfflineModelWorker>()
+                .setConstraints(
+                    Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.UNMETERED)
+                        .setRequiresBatteryNotLow(true)
+                        .setRequiresStorageNotLow(true)
+                        .build()
+                )
+                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, LLM_BACKOFF_MINUTES, TimeUnit.MINUTES)
+                .build()
+        ).then(
+            OneTimeWorkRequestBuilder<LlmWarmUpWorker>()
+                .setConstraints(Constraints.Builder().setRequiresCharging(true).setRequiresDeviceIdle(true).build())
+                .build()
+        ).enqueue()
         workManager.enqueueUniquePeriodicWork(
             SYNC_PERIODIC,
             ExistingPeriodicWorkPolicy.KEEP,
@@ -85,3 +102,4 @@ private const val SYNC_NOW = "sync-now"
 private const val SYNC_PERIODIC = "sync-periodic"
 private const val SYNC_INTERVAL_HOURS = 12L
 private const val BACKOFF_SECONDS = 30L
+private const val LLM_BACKOFF_MINUTES = 15L

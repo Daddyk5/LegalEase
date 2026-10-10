@@ -29,6 +29,8 @@ sealed interface ScanProgress {
     data object Preparing : ScanProgress
     data class ReadingPage(val page: Int, val pageCount: Int) : ScanProgress
     data object Classifying : ScanProgress
+    data class AnalyzingPage(val page: Int, val pageCount: Int) : ScanProgress
+    data object Checking : ScanProgress
 }
 
 data class ScanUiState(
@@ -120,10 +122,6 @@ class ScanViewModel @Inject constructor(
     private suspend fun onUpdate(analysisId: String, analysis: Analysis?) {
         when (analysis?.status) {
             null -> finish(ScanEvent.ShowError(AppError.DocumentNotFound))
-            AnalysisStatus.QUEUED -> setProgress(ScanProgress.Preparing)
-            AnalysisStatus.EXTRACTING_TEXT ->
-                setProgress(ScanProgress.ReadingPage(analysis.currentPage ?: 0, analysis.pageCount ?: 0))
-            AnalysisStatus.CLASSIFYING -> setProgress(ScanProgress.Classifying)
             AnalysisStatus.COMPLETED -> finish(ScanEvent.NavigateToResult(analysisId))
             AnalysisStatus.FAILED -> {
                 val error = analysis.error ?: AppError.Unexpected("missing_error")
@@ -137,7 +135,17 @@ class ScanViewModel @Inject constructor(
                 finish(event)
             }
             AnalysisStatus.CANCELLED -> finish(null)
+            else -> setProgress(progressOf(analysis))
         }
+    }
+
+    /** Progress for a still-running analysis. */
+    private fun progressOf(analysis: Analysis): ScanProgress = when (analysis.status) {
+        AnalysisStatus.EXTRACTING_TEXT -> ScanProgress.ReadingPage(analysis.currentPage ?: 0, analysis.pageCount ?: 0)
+        AnalysisStatus.CLASSIFYING -> ScanProgress.Classifying
+        AnalysisStatus.ANALYZING_PAGES -> ScanProgress.AnalyzingPage(analysis.currentPage ?: 0, analysis.pageCount ?: 0)
+        AnalysisStatus.CHECKING -> ScanProgress.Checking
+        else -> ScanProgress.Preparing
     }
 
     private fun setProgress(progress: ScanProgress) {

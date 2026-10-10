@@ -44,6 +44,8 @@ internal fun AnalysisEntity.toFirestore(): Map<String, Any?> = if (deleted) {
         "confidence" to confidence?.toDouble(),
         "summary" to summary,
         "errorCode" to errorCode,
+        "contractType" to contractType,
+        "scoringVersion" to scoringVersion?.toLong(),
         FirestoreSchema.F_DELETED to false,
     )
 }
@@ -75,6 +77,8 @@ internal fun analysisFromFirestore(id: String, data: Map<String, Any?>): Analysi
         confidence = (data["confidence"] as? Number)?.toFloat(),
         summary = data["summary"] as? String,
         errorCode = data["errorCode"] as? String,
+        contractType = data["contractType"] as? String,
+        scoringVersion = (data["scoringVersion"] as? Number)?.toInt(),
         needsSync = false,
         remoteUpdatedAt = updatedAt,
     )

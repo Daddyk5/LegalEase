@@ -14,12 +14,16 @@ class FirestoreMappersTest {
         id = "a1", documentName = "lease.pdf", sourceKind = "PDF", status = "COMPLETED",
         createdAt = 10, updatedAt = 20, pageCount = 3, unreadablePages = "2",
         classification = "Void", confidence = 0.91f, summary = "s", needsSync = true,
+        reportJson = "{local only}", contractType = "LEASE", scoringVersion = 2,
     )
 
     @Test
     fun `analysis round-trips and arrives marked as synced`() {
         val restored = analysisFromFirestore("a1", entity.toFirestore())!!
-        assertEquals(entity.copy(needsSync = false, remoteUpdatedAt = 20, confidence = restored.confidence), restored)
+        assertEquals(
+            entity.copy(needsSync = false, remoteUpdatedAt = 20, confidence = restored.confidence, reportJson = null),
+            restored,
+        )
         assertEquals(0.91f, restored.confidence!!, 1e-6f)
     }
 
@@ -28,10 +32,16 @@ class FirestoreMappersTest {
         assertEquals(
             setOf(
                 "schemaVersion", "documentName", "sourceKind", "status", "createdAt", "updatedAt", "pageCount",
-                "unreadablePages", "classification", "confidence", "summary", "errorCode", "deleted",
+                "unreadablePages", "classification", "confidence", "summary", "errorCode", "contractType",
+                "scoringVersion", "deleted",
             ),
             entity.toFirestore().keys,
         )
+    }
+
+    @Test
+    fun `the local report, with its verbatim quotes, is never uploaded`() {
+        assertTrue(entity.toFirestore().values.none { it == "{local only}" })
     }
 
     @Test

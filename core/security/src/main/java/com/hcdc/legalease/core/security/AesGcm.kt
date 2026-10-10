@@ -1,4 +1,4 @@
-package com.hcdc.legalease.core.data.local
+package com.hcdc.legalease.core.security
 
 import java.nio.ByteBuffer
 import javax.crypto.Cipher
@@ -9,7 +9,7 @@ import javax.crypto.spec.GCMParameterSpec
  * AES-256-GCM sealing for small secrets. The format is
  * `[version: 1 byte][iv length: 1 byte][iv][ciphertext + 16-byte tag]`.
  */
-internal object AesGcm {
+object AesGcm {
     private const val TRANSFORMATION = "AES/GCM/NoPadding"
     private const val FORMAT_VERSION: Byte = 1
     private const val TAG_BITS = 128

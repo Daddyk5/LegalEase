@@ -5,7 +5,7 @@ import com.hcdc.legalease.core.domain.model.ContractType
 import com.hcdc.legalease.core.domain.model.ExtractedText
 import com.hcdc.legalease.core.domain.model.GeneratedContract
 import com.hcdc.legalease.core.domain.model.SourceKind
-import com.hcdc.legalease.core.domain.model.Verdict
+import com.hcdc.legalease.core.domain.model.AnalysisReport
 import com.hcdc.legalease.core.domain.result.AppError
 import com.hcdc.legalease.core.domain.result.AppResult
 import androidx.paging.PagingData
@@ -24,19 +24,23 @@ interface AnalysisRepository {
 
     suspend fun get(id: String): Analysis?
 
-    /** Paths of the private copies made by [create]; empty once they have been discarded. */
+    /** Paths of the private copies made by [create], in page order; empty once deleted. */
     suspend fun sourcePaths(id: String): List<String>
 
     suspend fun markExtracting(id: String, currentPage: Int, pageCount: Int)
 
-    /** Persists OCR text and deletes the private source copies, which are no longer needed. */
+    /** Persists OCR text. The private source copy is kept so the user can open cited pages. */
     suspend fun saveExtractedText(id: String, text: ExtractedText)
 
     suspend fun extractedText(id: String): ExtractedText?
 
     suspend fun markClassifying(id: String)
 
-    suspend fun complete(id: String, verdict: Verdict)
+    suspend fun markAnalyzingPage(id: String, currentPage: Int, pageCount: Int)
+
+    suspend fun markChecking(id: String)
+
+    suspend fun complete(id: String, report: AnalysisReport)
 
     suspend fun fail(id: String, error: AppError)
 

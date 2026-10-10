@@ -1,0 +1,279 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "d871937a4a6f24ca9d5a5926342da901",
+    "entities": [
+      {
+        "tableName": "analyses",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `documentName` TEXT NOT NULL, `sourceKind` TEXT NOT NULL, `status` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `pageCount` INTEGER, `currentPage` INTEGER, `unreadablePages` TEXT NOT NULL, `classification` TEXT, `confidence` REAL, `summary` TEXT, `errorCode` TEXT, `needsSync` INTEGER NOT NULL, `remoteUpdatedAt` INTEGER, `deleted` INTEGER NOT NULL, `reportJson` TEXT, `contractType` TEXT, `scoringVersion` INTEGER, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "documentName",
+            "columnName": "documentName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sourceKind",
+            "columnName": "sourceKind",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pageCount",
+            "columnName": "pageCount",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "currentPage",
+            "columnName": "currentPage",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "unreadablePages",
+            "columnName": "unreadablePages",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "classification",
+            "columnName": "classification",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "confidence",
+            "columnName": "confidence",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "summary",
+            "columnName": "summary",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "errorCode",
+            "columnName": "errorCode",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "needsSync",
+            "columnName": "needsSync",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "remoteUpdatedAt",
+            "columnName": "remoteUpdatedAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "deleted",
+            "columnName": "deleted",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reportJson",
+            "columnName": "reportJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "contractType",
+            "columnName": "contractType",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "scoringVersion",
+            "columnName": "scoringVersion",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_analyses_createdAt",
+            "unique": false,
+            "columnNames": [
+              "createdAt"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_analyses_createdAt` ON `${TABLE_NAME}` (`createdAt`)"
+          },
+          {
+            "name": "index_analyses_needsSync",
+            "unique": false,
+            "columnNames": [
+              "needsSync"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_analyses_needsSync` ON `${TABLE_NAME}` (`needsSync`)"
+          }
+        ]
+      },
+      {
+        "tableName": "document_pages",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`analysisId` TEXT NOT NULL, `pageIndex` INTEGER NOT NULL, `text` TEXT NOT NULL, `quality` REAL, PRIMARY KEY(`analysisId`, `pageIndex`), FOREIGN KEY(`analysisId`) REFERENCES `analyses`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "analysisId",
+            "columnName": "analysisId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pageIndex",
+            "columnName": "pageIndex",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "text",
+            "columnName": "text",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "quality",
+            "columnName": "quality",
+            "affinity": "REAL"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "analysisId",
+            "pageIndex"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "analyses",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "analysisId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "generated_contracts",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `contractId` TEXT NOT NULL, `version` INTEGER NOT NULL, `type` TEXT NOT NULL, `title` TEXT NOT NULL, `body` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `needsSync` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "contractId",
+            "columnName": "contractId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "body",
+            "columnName": "body",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "needsSync",
+            "columnName": "needsSync",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_generated_contracts_contractId_version",
+            "unique": true,
+            "columnNames": [
+              "contractId",
+              "version"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_generated_contracts_contractId_version` ON `${TABLE_NAME}` (`contractId`, `version`)"
+          },
+          {
+            "name": "index_generated_contracts_needsSync",
+            "unique": false,
+            "columnNames": [
+              "needsSync"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_generated_contracts_needsSync` ON `${TABLE_NAME}` (`needsSync`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd871937a4a6f24ca9d5a5926342da901')"
+    ]
+  }
+}

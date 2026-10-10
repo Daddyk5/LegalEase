@@ -13,7 +13,7 @@ import com.hcdc.legalease.core.domain.usecase.CancelAnalysisUseCase
 import com.hcdc.legalease.core.domain.usecase.ObserveAnalysisUseCase
 import com.hcdc.legalease.core.domain.usecase.StartAnalysisUseCase
 import com.hcdc.legalease.core.domain.model.Classification
-import com.hcdc.legalease.core.domain.model.Verdict
+import com.hcdc.legalease.core.domain.testing.sampleReport
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -57,7 +57,7 @@ class ScanViewModelTest {
         val id = scheduler.enqueued.single()
 
         vm.events.test {
-            repository.complete(id, Verdict(Classification.VOID, 0.9f, "s"))
+            repository.complete(id, sampleReport(Classification.VOID))
             assertEquals(ScanEvent.NavigateToResult(id), awaitItem())
         }
         assertNull(vm.uiState.value.progress)

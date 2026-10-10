@@ -40,3 +40,30 @@ Rotation is required either way: anyone who cloned the repo already has the old 
 - **Cloud sync.** Off by default and only runs for a signed-in user who opted in. Only analysis
   results (name, classification, confidence, summary, page counts) go to Firestore; OCR page text
   and uploaded files never leave the device. Deleted analyses sync as content-free tombstones.
+
+## On-device model protection (deterrence, not DRM)
+
+The offline language model (Gemma 3, under the Gemma Terms of Use) runs entirely on the phone. The
+measures below make casual extraction harder. **They do not make extraction impossible:** the app
+must decrypt the model to run it, and a determined attacker with a rooted device or a debugger can
+recover it. Treat the model as protected from copying by its license, not by these controls.
+
+| Measure | Detail |
+|---|---|
+| Not in the base APK | Delivered via Play Asset Delivery (`llm_pack`, fast-follow) or a one-time Wi-Fi download from Cloud Storage. |
+| Integrity | Every model file is checked against a SHA-256 pinned in code (`ModelCatalog`) before use; a mismatch is deleted and re-fetched. Unpinned models are never loaded. |
+| Encrypted at rest | AES-256-GCM in authenticated 1 MiB chunks (reordering, truncation, and tampering are detected) under `filesDir/.cache_core/`, excluded from backup and device transfer. |
+| Key handling | A random data key sealed by a non-exportable Android Keystore key (StrongBox when available). Bulk decryption runs in software because StrongBox is too slow for it. |
+| Loading | Decrypted to a temporary file in `noBackupFilesDir`, loaded by the engine, and deleted immediately. The runtime's cache directory is wiped when the engine is released. |
+| Asset-pack copy | After Play delivers the pack and the encrypted copy is verified, the plaintext pack is removed. |
+| Prompts and legal reference text | Not shipped as assets: encrypted at build time into generated code (`sealPrompts`) and decrypted in memory at runtime. The key ships in the app, so this is obfuscation. |
+| Release build | R8 full mode with obfuscation; keep rules only for LiteRT-LM/TFLite native interfaces; `Log.d`/`Log.v` stripped. No model names appear in UI strings, file names, logs, or analytics. |
+
+## Analysis integrity
+
+- The model never supplies legal citations. It outputs reason codes; the app maps them to Civil
+  Code articles from a reviewed table, and strips any article numbers the model writes.
+- Every quote the model attributes to the contract must match the OCR text (similarity ≥ 0.85) or
+  it is dropped.
+- A classification is shown only at confidence ≥ 0.80 (see ARCHITECTURE.md for the formula). The
+  classifier alone can never reach that threshold.

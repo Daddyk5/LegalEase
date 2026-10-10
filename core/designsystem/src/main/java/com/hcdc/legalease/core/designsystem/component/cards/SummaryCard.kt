@@ -1,6 +1,5 @@
 package com.hcdc.legalease.core.designsystem.component.cards
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,7 +18,8 @@ import androidx.compose.foundation.layout.Column
 @Composable
 fun SummaryCard(
     modifier: Modifier = Modifier,
-    text: String
+    text: String,
+    title: String = "Summary",
 ) {
     Card(
         modifier = modifier
@@ -38,7 +38,7 @@ fun SummaryCard(
 
                 VerticalSpacer(8.dp)
                 Text(
-                    text = "Summary",
+                    text = title,
                     style = MaterialTheme.typography.titleMedium.copy(
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -49,8 +49,7 @@ fun SummaryCard(
 
             Card(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {  },
+                    .fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.background

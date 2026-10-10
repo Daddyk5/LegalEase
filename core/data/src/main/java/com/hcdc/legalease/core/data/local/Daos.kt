@@ -26,14 +26,32 @@ interface AnalysisDao {
     )
     suspend fun markExtracting(id: String, currentPage: Int, pageCount: Int, now: Long)
 
+    @Query(
+        "UPDATE analyses SET status = 'ANALYZING_PAGES', currentPage = :currentPage, pageCount = :pageCount, " +
+            "updatedAt = :now WHERE id = :id"
+    )
+    suspend fun markAnalyzingPage(id: String, currentPage: Int, pageCount: Int, now: Long)
+
     @Query("UPDATE analyses SET status = :status, updatedAt = :now WHERE id = :id")
     suspend fun setStatus(id: String, status: String, now: Long)
 
     @Query(
-        "UPDATE analyses SET status = 'COMPLETED', classification = :classification, confidence = :confidence, " +
-            "summary = :summary, errorCode = NULL, currentPage = NULL, updatedAt = :now, needsSync = 1 WHERE id = :id"
+        "UPDATE analyses SET status = 'COMPLETED', classification = :shownClassification, confidence = :confidence, " +
+            "summary = :summary, reportJson = :reportJson, contractType = :contractType, " +
+            "scoringVersion = :scoringVersion, errorCode = NULL, currentPage = NULL, updatedAt = :now, needsSync = 1 " +
+            "WHERE id = :id"
     )
-    suspend fun complete(id: String, classification: String, confidence: Float, summary: String, now: Long)
+    @Suppress("LongParameterList") // One parameter per column written.
+    suspend fun complete(
+        id: String,
+        shownClassification: String?,
+        confidence: Float,
+        summary: String,
+        reportJson: String,
+        contractType: String,
+        scoringVersion: Int,
+        now: Long,
+    )
 
     @Query(
         "UPDATE analyses SET status = 'FAILED', errorCode = :errorCode, currentPage = NULL, " +
@@ -45,13 +63,14 @@ interface AnalysisDao {
     suspend fun setPageInfo(id: String, pageCount: Int, unreadablePages: String)
 
     /**
-     * Completed and failed analyses, newest first. [query] matches the document name or
-     * classification label; `%` and `_` in it are matched literally.
+     * Completed and failed analyses, newest first. [query] matches the document name, the shown
+     * classification label, or the contract type; `%` and `_` in it are matched literally.
      */
     @Query(
         "SELECT * FROM analyses WHERE deleted = 0 AND status IN ('COMPLETED', 'FAILED') AND (" +
             "documentName LIKE '%' || :query || '%' ESCAPE '\\' OR " +
-            "classification LIKE '%' || :query || '%' ESCAPE '\\') ORDER BY createdAt DESC"
+            "classification LIKE '%' || :query || '%' ESCAPE '\\' OR " +
+            "REPLACE(contractType, '_', ' ') LIKE '%' || :query || '%' ESCAPE '\\') ORDER BY createdAt DESC"
     )
     fun history(query: String): PagingSource<Int, AnalysisEntity>
 

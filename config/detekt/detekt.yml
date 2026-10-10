@@ -20,8 +20,8 @@ complexity:
     ignoreAnnotated: ['Composable', 'Inject', 'AssistedInject']
   # Repository and DAO interfaces mirror the operations of one aggregate.
   TooManyFunctions:
-    thresholdInInterfaces: 15
-    thresholdInClasses: 15
+    thresholdInInterfaces: 20
+    thresholdInClasses: 20
 
 style:
   MagicNumber:

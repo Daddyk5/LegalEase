@@ -1,6 +1,8 @@
 package com.hcdc.legalease.core.domain.telemetry
 
+import com.hcdc.legalease.core.domain.model.AnalysisMethod
 import com.hcdc.legalease.core.domain.model.Classification
+import com.hcdc.legalease.core.domain.model.ConfidenceBand
 
 /**
  * Analytics events. Parameters are limited to enums, counts, and durations by construction:
@@ -10,16 +12,23 @@ sealed class AnalyticsEvent(val name: String, val params: Map<String, Any> = emp
 
     class ScanStarted(sourceKind: String) : AnalyticsEvent("scan_started", mapOf("source_kind" to sourceKind))
 
-    class AnalysisCompleted(classification: Classification, confidenceBand: String, pageCount: Int, durationMs: Long) :
-        AnalyticsEvent(
-            "analysis_completed",
-            mapOf(
-                "classification" to classification.name,
-                "confidence_band" to confidenceBand,
-                "page_count" to pageCount.toLong(),
-                "duration_ms" to durationMs,
-            ),
-        )
+    class AnalysisCompleted(
+        classification: Classification?,
+        confidenceBand: ConfidenceBand,
+        method: AnalysisMethod,
+        pageCount: Int,
+        durationMs: Long,
+    ) : AnalyticsEvent(
+        "analysis_completed",
+        mapOf(
+            // Only a verdict the user was shown; otherwise "inconclusive".
+            "classification" to (classification?.name ?: "INCONCLUSIVE"),
+            "confidence_band" to confidenceBand.name.lowercase(),
+            "method" to method.name.lowercase(),
+            "page_count" to pageCount.toLong(),
+            "duration_ms" to durationMs,
+        ),
+    )
 
     class AnalysisFailed(errorCode: String) : AnalyticsEvent("analysis_failed", mapOf("error_code" to errorCode))
 
@@ -33,15 +42,6 @@ sealed class AnalyticsEvent(val name: String, val params: Map<String, Any> = emp
         const val METHOD_EMAIL = "email"
         const val METHOD_GOOGLE = "google"
 
-        /** Coarse band for analytics; never the raw probability. */
-        fun confidenceBand(confidence: Float): String = when {
-            confidence >= HIGH -> "high"
-            confidence >= CONFIDENT -> "confident"
-            else -> "below_threshold"
-        }
-
-        private const val HIGH = 0.90f
-        private const val CONFIDENT = 0.80f
     }
 }
 
@@ -79,4 +79,6 @@ object TraceNames {
     const val OCR_PAGE = "ocr_page"
     const val ANALYSIS_END_TO_END = "analysis_end_to_end"
     const val CLASSIFY = "classify"
+    const val LLM_EXTRACT = "llm_extract"
+    const val LLM_REASON = "llm_reason"
 }

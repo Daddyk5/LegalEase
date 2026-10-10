@@ -5,6 +5,8 @@
     <exclude domain="database" path="." />
     <!-- Temporary copies of uploaded documents. -->
     <exclude domain="file" path="scans/" />
+    <!-- Encrypted on-device model; its key is device-bound. -->
+    <exclude domain="file" path=".cache_core/" />
     <!-- Sync bookkeeping that must stay consistent with the excluded database. -->
     <exclude domain="file" path="datastore/" />
 </full-backup-content>

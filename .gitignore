@@ -33,3 +33,7 @@ google-services.json
 # Firebase rules tests
 firebase-tests/node_modules/
 *-debug.log
+
+# On-device model files (shipped via Play Asset Delivery / Cloud Storage, never git)
+llm_pack/src/main/assets/models/*.bin
+*.litertlm

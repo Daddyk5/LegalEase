@@ -6,7 +6,7 @@ import com.hcdc.legalease.core.domain.model.Analysis
 import com.hcdc.legalease.core.domain.model.AnalysisStatus
 import com.hcdc.legalease.core.domain.model.Classification
 import com.hcdc.legalease.core.domain.model.SourceKind
-import com.hcdc.legalease.core.domain.model.Verdict
+import com.hcdc.legalease.core.domain.testing.sampleReport
 import com.hcdc.legalease.core.domain.testing.FakeAnalysisRepository
 import com.hcdc.legalease.core.domain.testing.FakeAnalytics
 import com.hcdc.legalease.core.domain.testing.FakeSyncScheduler
@@ -31,7 +31,7 @@ class HistoryViewModelTest {
             Analysis(
                 "a1", "Lease of apartment", SourceKind.PDF, AnalysisStatus.COMPLETED,
                 createdAtMillis = 3, updatedAtMillis = 3,
-                verdict = Verdict(Classification.VOIDABLE, 0.9f, "s"),
+                report = sampleReport(Classification.VOIDABLE),
             )
         )
         put(Analysis("a2", "Loan agreement", SourceKind.IMAGES, AnalysisStatus.FAILED, 2, 2))

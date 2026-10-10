@@ -2,6 +2,8 @@
     <string name="scan_preparing">Preparing document…</string>
     <string name="scan_progress_page">Reading page %1$d of %2$d…</string>
     <string name="scan_classifying">Analyzing contract…</string>
+    <string name="scan_analyzing_page">Analyzing page %1$d of %2$d…</string>
+    <string name="scan_checking">Checking the classification…</string>
     <string name="scan_error_unreadable_file">This file could not be opened. It may be damaged or password-protected.</string>
     <string name="scan_error_no_text">No readable text was found. Try a clearer scan.</string>
     <string name="scan_error_storage_full">Your device is out of storage. Free up some space and try again.</string>

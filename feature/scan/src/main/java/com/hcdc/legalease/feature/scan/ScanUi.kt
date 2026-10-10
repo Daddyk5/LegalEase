@@ -27,6 +27,8 @@ internal fun ScanProgress.message(): String = when (this) {
         stringResource(R.string.scan_progress_page, page, pageCount)
     }
     ScanProgress.Classifying -> stringResource(R.string.scan_classifying)
+    is ScanProgress.AnalyzingPage -> stringResource(R.string.scan_analyzing_page, page, pageCount)
+    ScanProgress.Checking -> stringResource(R.string.scan_checking)
 }
 
 @StringRes

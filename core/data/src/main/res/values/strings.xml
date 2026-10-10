@@ -5,4 +5,6 @@
     <string name="analysis_notification_reading">Reading page %1$d of %2$d</string>
     <string name="analysis_notification_classifying">Checking classification…</string>
     <string name="analysis_notification_cancel">Cancel</string>
+    <string name="analysis_notification_analyzing">Analyzing page %1$d of %2$d</string>
+    <string name="analysis_notification_reasoning">Checking the classification…</string>
 </resources>

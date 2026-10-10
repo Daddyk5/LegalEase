@@ -79,6 +79,32 @@ Gets a new developer from a fresh clone to a running, Firebase-connected debug b
 > Firebase ML is deprecated and shuts down on **2027-06-15**. The model will move to Cloud Storage
 > (`models/`, already covered by the rules above) before then.
 
+## 7b. On-device language model
+
+The offline explanation uses **Gemma 3** in LiteRT-LM (`.litertlm`) format, int4:
+
+| Tier | Model | File name in the app | Used on |
+|---|---|---|---|
+| Primary | Gemma 3 1B instruction-tuned, int4 | `core-a.bin` | about 6 GB RAM or more |
+| Lite | Gemma 3 270M instruction-tuned, int4 | `core-b.bin` | smaller devices |
+
+1. Accept the **Gemma Terms of Use** with your Google account on Kaggle or Hugging Face, then
+   download the LiteRT-LM community builds of both models. Keep a copy of the terms: redistributing
+   the model inside the app requires passing on its use restrictions and notice.
+2. Rename the files to `core-a.bin` and `core-b.bin`. Neutral names keep model names out of the app.
+3. Pin them: compute `sha256sum core-a.bin core-b.bin` and the byte sizes, and set `sha256` and
+   `sizeBytes` in `core/ml/src/main/java/com/hcdc/legalease/core/ml/llm/ModelCatalog.kt`. Until both
+   are pinned the app never loads a model and every analysis is "needs review" (classifier + basic
+   checks).
+4. Deliver them:
+   - **Play Store builds:** copy both files into `llm_pack/src/main/assets/models/` (git-ignored)
+     before `./gradlew bundleRelease`. They ship in the `llm_pack` fast-follow asset pack.
+   - **Debug and sideloaded builds:** upload both to Cloud Storage at `models/core-a.bin` and
+     `models/core-b.bin` (Console → Storage → Upload). The app downloads its tier once, on Wi-Fi.
+5. Verify: install, connect to Wi-Fi, and wait for the background download. Then scan a contract;
+   progress should show "Analyzing page X of Y". While the model is not ready, results say
+   "Preparing offline analysis…".
+
 ## 8. Remote Config
 
 Deploy the parameters and defaults from the repo:

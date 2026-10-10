@@ -19,6 +19,17 @@ interface TextExtractor {
     ): AppResult<ExtractedText>
 }
 
+/** An image of one page. [isTemporary] images are deleted with [PageImageRenderer.discard]. */
+data class RenderedPage(val imagePath: String, val isTemporary: Boolean)
+
+/** Turns a page of the private source copy into an image for display. */
+interface PageImageRenderer {
+    /** @param page 1-based page number. */
+    suspend fun render(kind: SourceKind, paths: List<String>, page: Int): AppResult<RenderedPage>
+
+    fun discard(page: RenderedPage)
+}
+
 /** On-device contract classifier. */
 interface ContractClassifier {
     /** Downloads and loads the model if needed. Safe to call repeatedly. */
