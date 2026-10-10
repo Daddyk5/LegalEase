@@ -50,6 +50,9 @@ sealed class AppError(val code: String) {
     /** Too many attempts; the user should wait before retrying. */
     data object TooManyRequests : AppError("too_many_requests")
 
+    /** Deleting the account needs a fresh sign-in; Firebase refuses it for older sessions. */
+    data object RecentLoginRequired : AppError("recent_login_required")
+
     /** A failure with no specific handling. [detail] is for logs only, never document content. */
     data class Unexpected(val detail: String) : AppError(UNEXPECTED_CODE)
 
@@ -61,6 +64,7 @@ sealed class AppError(val code: String) {
                 DocumentNotFound, UnreadableFile, NoTextFound, ModelUnavailable,
                 ModelIncompatible, StorageFull, Cancelled, Network, NotSignedIn,
                 InvalidCredentials, EmailNotVerified, EmailInUse, WeakPassword, TooManyRequests,
+                RecentLoginRequired,
             ).associateBy { it.code }
         }
 

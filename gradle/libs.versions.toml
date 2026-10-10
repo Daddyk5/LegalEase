@@ -45,6 +45,9 @@ mlkitTextRecognition = "16.0.1"
 litert = "2.3.0"
 litertLm = "0.18.0"
 assetDelivery = "2.3.0"
+playIntegrity = "1.6.0"
+biometric = "1.1.0"
+fragment = "1.9.1"
 
 # Security
 sqlcipher = "4.19.1"
@@ -111,6 +114,7 @@ firebase-storage = { group = "com.google.firebase", name = "firebase-storage" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
 firebase-perf = { group = "com.google.firebase", name = "firebase-perf" }
 firebase-config = { group = "com.google.firebase", name = "firebase-config" }
+firebase-functions = { group = "com.google.firebase", name = "firebase-functions" }
 firebase-appcheck-playintegrity = { group = "com.google.firebase", name = "firebase-appcheck-playintegrity" }
 firebase-appcheck-debug = { group = "com.google.firebase", name = "firebase-appcheck-debug" }
 androidx-credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
@@ -121,6 +125,9 @@ mlkit-text-recognition = { group = "com.google.mlkit", name = "text-recognition"
 litert = { group = "com.google.ai.edge.litert", name = "litert", version.ref = "litert" }
 litert-lm = { group = "com.google.ai.edge.litertlm", name = "litertlm-android", version.ref = "litertLm" }
 play-asset-delivery = { group = "com.google.android.play", name = "asset-delivery", version.ref = "assetDelivery" }
+play-integrity = { group = "com.google.android.play", name = "integrity", version.ref = "playIntegrity" }
+androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
+androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragment" }
 
 sqlcipher-android = { group = "net.zetetic", name = "sqlcipher-android", version.ref = "sqlcipher" }
 

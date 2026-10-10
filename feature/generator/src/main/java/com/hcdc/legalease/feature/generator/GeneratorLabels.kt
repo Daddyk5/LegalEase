@@ -1,5 +1,6 @@
 package com.hcdc.legalease.feature.generator
 
+import com.hcdc.legalease.core.domain.engine.PaperSize
 import androidx.annotation.StringRes
 import com.hcdc.legalease.core.domain.generator.ClauseRejection
 import com.hcdc.legalease.core.domain.generator.FieldError

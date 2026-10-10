@@ -1,5 +1,6 @@
 package com.hcdc.legalease.feature.result
 
+import com.hcdc.legalease.core.designsystem.component.SecureContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
@@ -84,6 +85,8 @@ class PageViewModel @Inject constructor(
 /** Shows one page of the original document so a quoted clause can be checked in context. Pinch to zoom. */
 @Composable
 fun PageScreen(viewModel: PageViewModel = hiltViewModel()) {
+    // Contract content: no screenshots, recordings, or recents thumbnail.
+    SecureContent()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     Column(
         modifier = Modifier

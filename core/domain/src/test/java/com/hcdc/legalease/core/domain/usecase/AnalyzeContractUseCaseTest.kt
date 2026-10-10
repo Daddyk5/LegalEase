@@ -29,6 +29,11 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import com.hcdc.legalease.core.domain.testing.FakeIntegrityChecker
+import com.hcdc.legalease.core.domain.testing.FakeAuditLog
+import com.hcdc.legalease.core.domain.model.DeviceIntegrity
+import com.hcdc.legalease.core.domain.model.AuditEvent
+import com.hcdc.legalease.core.domain.legal.ConfidenceScorer
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
@@ -66,9 +71,11 @@ class AnalyzeContractUseCaseTest {
     private val sync = FakeSyncScheduler()
     private val tracer = FakeTracer()
     private val analytics = FakeAnalytics()
+    private val auditLog = FakeAuditLog()
+    private val integrity = FakeIntegrityChecker()
     private val analyze = AnalyzeContractUseCase(
         repository, extractor, classifier, llm, flags, sync, tracer, analytics,
-        Clock.fixed(Instant.EPOCH, ZoneOffset.UTC),
+        Clock.fixed(Instant.EPOCH, ZoneOffset.UTC), auditLog, integrity,
     )
 
     private fun reasoning(
@@ -107,6 +114,33 @@ class AnalyzeContractUseCaseTest {
         assertEquals("CONTRACT OF LEASE", report.contractTitle)
         assertEquals(AnalysisStatus.COMPLETED, repository.get(id)?.status)
         assertEquals(1, llm.released)
+    }
+
+    @Test
+    fun `the audit log records the model and every confidence component, never document text`() = runTest {
+        repeat(3) { llm.reasoning += reasoning(Classification.VOIDABLE) }
+        val id = queued()
+        val report = (analyze(id) as AppResult.Success).value
+
+        val entry = auditLog.entries.value.single()
+        assertEquals(AuditEvent.ANALYSIS_COMPLETED, entry.event)
+        assertEquals(id, entry.subjectId)
+        assertEquals("primary:test", entry.modelVersion)
+        assertEquals(report.confidence, entry.confidence)
+        assertEquals(ConfidenceScorer.VERSION, entry.scoringVersion)
+        assertNull(entry.detail)
+    }
+
+    @Test
+    fun `a device that failed the integrity check never uses the language model`() = runTest {
+        integrity.state.value = DeviceIntegrity.COMPROMISED
+        repeat(3) { llm.reasoning += reasoning(Classification.VOIDABLE) }
+
+        val report = (analyze(queued()) as AppResult.Success).value
+
+        assertEquals(AnalysisMethod.CLASSIFIER_ONLY, report.method)
+        assertNull(report.shownClassification)
+        assertEquals("classifier:test", auditLog.entries.value.single().modelVersion)
     }
 
     @Test

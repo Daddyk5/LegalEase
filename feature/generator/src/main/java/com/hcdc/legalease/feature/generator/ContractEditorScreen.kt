@@ -1,5 +1,6 @@
 package com.hcdc.legalease.feature.generator
 
+import com.hcdc.legalease.core.designsystem.component.SecureContent
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -54,6 +55,8 @@ fun ContractEditorScreen(
     onBack: () -> Unit,
     viewModel: ContractEditorViewModel = hiltViewModel(),
 ) {
+    // Contract content: no screenshots, recordings, or recents thumbnail.
+    SecureContent()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val snackbar = remember { SnackbarHostState() }

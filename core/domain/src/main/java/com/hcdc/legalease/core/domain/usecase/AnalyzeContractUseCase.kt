@@ -1,15 +1,22 @@
 package com.hcdc.legalease.core.domain.usecase
 
+import com.hcdc.legalease.core.domain.engine.AuditLog
 import com.hcdc.legalease.core.domain.engine.ChunkFacts
+import com.hcdc.legalease.core.domain.engine.IntegrityChecker
 import com.hcdc.legalease.core.domain.engine.ContractClassifier
 import com.hcdc.legalease.core.domain.engine.LlmAnalyzer
 import com.hcdc.legalease.core.domain.engine.LlmAvailability
 import com.hcdc.legalease.core.domain.engine.LlmReasoning
 import com.hcdc.legalease.core.domain.engine.SyncScheduler
 import com.hcdc.legalease.core.domain.engine.TextExtractor
+import com.hcdc.legalease.core.domain.legal.ConfidenceScorer
 import com.hcdc.legalease.core.domain.legal.ReportBuilder
 import com.hcdc.legalease.core.domain.legal.TextChunker
+import com.hcdc.legalease.core.domain.model.AnalysisMethod
 import com.hcdc.legalease.core.domain.model.AnalysisReport
+import com.hcdc.legalease.core.domain.model.AuditEntry
+import com.hcdc.legalease.core.domain.model.AuditEvent
+import com.hcdc.legalease.core.domain.model.DeviceIntegrity
 import com.hcdc.legalease.core.domain.model.ExtractedText
 import com.hcdc.legalease.core.domain.model.Prediction
 import com.hcdc.legalease.core.domain.model.SourceKind
@@ -55,6 +62,8 @@ class AnalyzeContractUseCase @Inject constructor(
     private val tracer: PerformanceTracer,
     private val analytics: AnalyticsTracker,
     private val clock: Clock,
+    private val auditLog: AuditLog,
+    private val integrity: IntegrityChecker,
 ) {
 
     suspend operator fun invoke(
@@ -78,8 +87,29 @@ class AnalyzeContractUseCase @Inject constructor(
                         durationMs = clock.millis() - startedAt,
                     )
                 )
+                auditLog.record(
+                    AuditEntry(
+                        timestampMillis = clock.millis(),
+                        event = AuditEvent.ANALYSIS_COMPLETED,
+                        subjectId = analysisId,
+                        modelVersion = modelVersion(report.method),
+                        method = report.method,
+                        confidence = report.confidence,
+                        scoringVersion = ConfidenceScorer.VERSION,
+                    )
+                )
             }
-            is AppResult.Failure -> analytics.log(AnalyticsEvent.AnalysisFailed(result.error.code))
+            is AppResult.Failure -> {
+                analytics.log(AnalyticsEvent.AnalysisFailed(result.error.code))
+                auditLog.record(
+                    AuditEntry(
+                        timestampMillis = clock.millis(),
+                        event = AuditEvent.ANALYSIS_FAILED,
+                        subjectId = analysisId,
+                        detail = result.error.code,
+                    )
+                )
+            }
         }
         result
     }
@@ -115,7 +145,7 @@ class AnalyzeContractUseCase @Inject constructor(
         prediction: Prediction?,
         onProgress: suspend (AnalysisProgress) -> Unit,
     ): AnalysisReport? {
-        if (!featureFlags.flags.value.llmEnabled || llm.availability() != LlmAvailability.READY) return null
+        if (!languageModelAllowed() || llm.availability() != LlmAvailability.READY) return null
         try {
             val facts = mutableListOf<ChunkFacts>()
             val failedChunksByPage = mutableMapOf<Int, Int>()
@@ -160,6 +190,16 @@ class AnalyzeContractUseCase @Inject constructor(
         }
         if (result is AppResult.Success) repository.saveExtractedText(analysisId, result.value)
         return result
+    }
+
+    /** Off when switched off remotely, or on a device that failed the integrity check. */
+    private fun languageModelAllowed() =
+        featureFlags.flags.value.llmEnabled && integrity.verdict.value != DeviceIntegrity.COMPROMISED
+
+    private suspend fun modelVersion(method: AnalysisMethod): String? = when (method) {
+        AnalysisMethod.LANGUAGE_MODEL -> llm.modelVersion()
+        AnalysisMethod.CLASSIFIER_ONLY -> classifier.modelVersion()
+        AnalysisMethod.LEGACY -> null
     }
 
     private suspend fun fail(analysisId: String, error: AppError): AppResult.Failure {

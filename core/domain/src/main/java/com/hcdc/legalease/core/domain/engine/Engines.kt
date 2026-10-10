@@ -36,6 +36,9 @@ interface ContractClassifier {
     suspend fun prepare(): AppResult<Unit>
 
     suspend fun classify(text: String): AppResult<Prediction>
+
+    /** Identifies the classifier model for the audit log, e.g. its name and version. */
+    fun modelVersion(): String
 }
 
 /** Runs analyses in the background so they survive the app leaving the foreground. */

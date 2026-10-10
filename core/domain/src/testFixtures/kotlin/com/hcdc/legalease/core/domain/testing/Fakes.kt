@@ -132,6 +132,7 @@ class FakeClassifier(var result: AppResult<Prediction>) : ContractClassifier {
         classifiedTexts += text
         return result
     }
+    override fun modelVersion() = "classifier:test"
 }
 
 class FakeAnalysisScheduler : AnalysisScheduler {
@@ -225,6 +226,7 @@ class FakeLlmAnalyzer(
     }
     override suspend fun release() { released++ }
     override suspend fun warmUp(): AppResult<Unit> = AppResult.Success(Unit)
+    override suspend fun modelVersion(): String? = "primary:test".takeIf { availability == LlmAvailability.READY }
 }
 
 class FakeFeatureFlags(initial: FeatureFlags = FeatureFlags.DEFAULT) : FeatureFlagsRepository {
@@ -307,5 +309,64 @@ class FakeContractAssistant(
 
     override suspend fun release() {
         released++
+    }
+}
+
+class FakePreferences : com.hcdc.legalease.core.domain.repository.PreferencesRepository {
+    val sync = MutableStateFlow(false)
+    val retentionState = MutableStateFlow(com.hcdc.legalease.core.domain.model.RetentionPeriod.NEVER)
+    val lock = MutableStateFlow(false)
+    val notice = MutableStateFlow(0)
+    var cleared = false
+
+    override val cloudSyncEnabled: Flow<Boolean> = sync
+    override suspend fun setCloudSyncEnabled(enabled: Boolean) { sync.value = enabled }
+    override val retention: Flow<com.hcdc.legalease.core.domain.model.RetentionPeriod> = retentionState
+    override suspend fun setRetention(period: com.hcdc.legalease.core.domain.model.RetentionPeriod) {
+        retentionState.value = period
+    }
+    override val appLockEnabled: Flow<Boolean> = lock
+    override suspend fun setAppLockEnabled(enabled: Boolean) { lock.value = enabled }
+    override val acceptedPrivacyNoticeVersion: Flow<Int> = notice
+    override suspend fun acceptPrivacyNotice(version: Int) { notice.value = version }
+    override suspend fun clear() {
+        cleared = true
+        sync.value = false
+        retentionState.value = com.hcdc.legalease.core.domain.model.RetentionPeriod.NEVER
+        lock.value = false
+        notice.value = 0
+    }
+}
+
+class FakeAuditLog : com.hcdc.legalease.core.domain.engine.AuditLog {
+    val entries = MutableStateFlow<List<com.hcdc.legalease.core.domain.model.AuditEntry>>(emptyList())
+    override suspend fun record(entry: com.hcdc.legalease.core.domain.model.AuditEntry) { entries.value += entry }
+    override fun observe(): Flow<List<com.hcdc.legalease.core.domain.model.AuditEntry>> = entries
+    override suspend fun all() = entries.value
+}
+
+class FakeIntegrityChecker(
+    initial: com.hcdc.legalease.core.domain.model.DeviceIntegrity =
+        com.hcdc.legalease.core.domain.model.DeviceIntegrity.UNKNOWN,
+) : com.hcdc.legalease.core.domain.engine.IntegrityChecker {
+    val state = MutableStateFlow(initial)
+    override val verdict: StateFlow<com.hcdc.legalease.core.domain.model.DeviceIntegrity> = state
+    override suspend fun refresh() = Unit
+}
+
+class FakeAccountData : com.hcdc.legalease.core.domain.engine.AccountDataRepository {
+    var exportResult: AppResult<java.io.File> = AppResult.Success(java.io.File("export.zip"))
+    var deleteResult: AppResult<Unit> = AppResult.Success(Unit)
+    val cutoffs = mutableListOf<Long>()
+    var deleteCalls = 0
+
+    override suspend fun exportAll() = exportResult
+    override suspend fun deleteAnalysesBefore(cutoffMillis: Long): Int {
+        cutoffs += cutoffMillis
+        return 0
+    }
+    override suspend fun deleteAccountAndData(): AppResult<Unit> {
+        deleteCalls++
+        return deleteResult
     }
 }

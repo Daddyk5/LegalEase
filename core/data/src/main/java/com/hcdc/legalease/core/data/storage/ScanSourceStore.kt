@@ -52,6 +52,11 @@ class ScanSourceStore @Inject constructor(
         dir(analysisId).deleteRecursively()
     }
 
+    /** Removes every stored document, as part of deleting the user's data. */
+    fun deleteAll() {
+        File(context.filesDir, ROOT).deleteRecursively()
+    }
+
     private fun IOException.isNoSpace(): Boolean = message?.contains("ENOSPC") == true
 
     private companion object {

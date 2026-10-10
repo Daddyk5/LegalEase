@@ -42,6 +42,12 @@ import com.hcdc.legalease.core.domain.repository.UserSession
 import com.hcdc.legalease.core.domain.telemetry.AnalyticsTracker
 import com.hcdc.legalease.core.domain.telemetry.CrashReporter
 import com.hcdc.legalease.core.domain.telemetry.PerformanceTracer
+import com.hcdc.legalease.core.data.local.AuditDao
+import com.hcdc.legalease.core.data.repository.RoomAuditLog
+import com.hcdc.legalease.core.data.account.FirebaseAccountDataRepository
+import com.hcdc.legalease.core.domain.engine.AuditLog
+import com.hcdc.legalease.core.domain.engine.AccountDataRepository
+import com.google.firebase.functions.FirebaseFunctions
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -66,6 +72,8 @@ internal abstract class DataBindsModule {
     @Binds abstract fun analytics(impl: FirebaseAnalyticsTracker): AnalyticsTracker
     @Binds abstract fun tracer(impl: FirebasePerformanceTracer): PerformanceTracer
     @Binds abstract fun crashReporter(impl: FirebaseCrashReporter): CrashReporter
+    @Binds abstract fun auditLog(impl: RoomAuditLog): AuditLog
+    @Binds abstract fun accountData(impl: FirebaseAccountDataRepository): AccountDataRepository
 }
 
 @Module
@@ -99,6 +107,7 @@ internal object DataProvidesModule {
     @Provides fun analysisDao(db: LegalEaseDatabase): AnalysisDao = db.analysisDao()
     @Provides fun documentPageDao(db: LegalEaseDatabase): DocumentPageDao = db.documentPageDao()
     @Provides fun generatedContractDao(db: LegalEaseDatabase): GeneratedContractDao = db.generatedContractDao()
+    @Provides fun auditDao(db: LegalEaseDatabase): AuditDao = db.auditDao()
 
     @Provides
     @Singleton
@@ -118,6 +127,9 @@ internal object FirebaseModule {
     fun analytics(@ApplicationContext context: Context): FirebaseAnalytics = FirebaseAnalytics.getInstance(context)
     @Provides fun performance(): FirebasePerformance = FirebasePerformance.getInstance()
     @Provides fun crashlytics(): FirebaseCrashlytics = FirebaseCrashlytics.getInstance()
+
+    /** Same region as Firestore (Singapore). */
+    @Provides fun functions(): FirebaseFunctions = FirebaseFunctions.getInstance("asia-southeast1")
 
     @Provides
     fun remoteConfig(): FirebaseRemoteConfig = FirebaseRemoteConfig.getInstance().apply {

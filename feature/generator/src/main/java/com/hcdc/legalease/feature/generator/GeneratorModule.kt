@@ -1,5 +1,6 @@
 package com.hcdc.legalease.feature.generator
 
+import com.hcdc.legalease.core.domain.engine.ContractDocuments
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

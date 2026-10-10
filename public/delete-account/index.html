@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Delete your LegalEase account</title>
+  <meta name="robots" content="noindex">
+  <style>
+    :root { --primary: #6495ED; --text: #263238; --muted: #546E7A; --surface: #F5F5F5; --error: #C62828; --bg: #FFFFFF; }
+    @media (prefers-color-scheme: dark) {
+      :root { --text: #ECEFF1; --muted: #B0BEC5; --surface: #1E2428; --bg: #121619; }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--text); background: var(--bg); }
+    main { max-width: 640px; margin: 0 auto; padding: 24px 16px 48px; }
+    h1 { color: var(--primary); font-size: 1.75rem; margin: 0 0 8px; }
+    h2 { font-size: 1.1rem; margin: 24px 0 8px; }
+    p, li { color: var(--text); }
+    .muted { color: var(--muted); font-size: .95rem; }
+    .card { background: var(--surface); border-radius: 12px; padding: 16px; margin: 12px 0; }
+    label { display: block; margin: 8px 0 4px; }
+    input[type=email], input[type=password] { width: 100%; padding: 10px 12px; border: 1px solid var(--muted); border-radius: 12px; background: var(--bg); color: var(--text); font: inherit; }
+    button { width: 100%; padding: 12px; margin-top: 12px; border-radius: 12px; border: 1px solid var(--primary); background: var(--primary); color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+    button.secondary { background: transparent; color: var(--primary); }
+    button.danger { background: var(--error); border-color: var(--error); }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+    .check { display: flex; gap: 8px; align-items: flex-start; margin-top: 12px; }
+    #status { margin-top: 16px; font-weight: 600; }
+    #status.error { color: var(--error); }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Delete your LegalEase account</h1>
+  <p>Use this page if you can no longer use the LegalEase app. In the app, the same option is under
+    <strong>Settings → Privacy &amp; data → Delete my account</strong>.</p>
+
+  <div class="card">
+    <h2>What is deleted</h2>
+    <ul>
+      <li>Your LegalEase account (sign-in).</li>
+      <li>Your cloud backup: analysis results and contracts you created.</li>
+      <li>Any document backups stored under your account.</li>
+    </ul>
+    <p class="muted">Documents and analyses kept only on your phone are not reachable from this page. They are
+      removed when you uninstall LegalEase, or when you delete your account in the app. Deletion is permanent.</p>
+  </div>
+
+  <section id="signin">
+    <h2>1. Sign in</h2>
+    <button id="google" type="button" class="secondary">Sign in with Google</button>
+    <form id="emailForm">
+      <label for="email">Email</label>
+      <input id="email" type="email" autocomplete="username" required>
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="current-password" required>
+      <button type="submit" class="secondary">Sign in with email</button>
+    </form>
+  </section>
+
+  <section id="confirm" hidden>
+    <h2>2. Confirm</h2>
+    <p>Signed in as <strong id="who"></strong>.</p>
+    <label class="check"><input id="sure" type="checkbox"> I understand this permanently deletes my account and backup.</label>
+    <button id="delete" type="button" class="danger" disabled>Delete my account</button>
+  </section>
+
+  <p id="status" role="status" aria-live="polite"></p>
+  <p class="muted">Questions about your data: use the email address on LegalEase's Google Play listing.</p>
+</main>
+<!-- Optional App Check site key, set per deployment (see SETUP.md). Missing is allowed. -->
+<script src="appcheck-config.js" onerror="void 0"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>

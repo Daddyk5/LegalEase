@@ -1,5 +1,6 @@
 package com.hcdc.legalease.feature.result
 
+import com.hcdc.legalease.core.designsystem.component.SecureContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -36,6 +37,8 @@ fun ResultScreen(
     onOpenPage: (analysisId: String, page: Int) -> Unit,
     viewModel: ResultViewModel = hiltViewModel(),
 ) {
+    // Contract content: no screenshots, recordings, or recents thumbnail.
+    SecureContent()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Box(

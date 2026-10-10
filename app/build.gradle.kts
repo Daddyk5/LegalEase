@@ -45,6 +45,8 @@ dependencies {
     implementation(project(":feature:result"))
     implementation(project(":feature:history"))
     implementation(project(":feature:generator"))
+    implementation(project(":feature:settings"))
+    implementation(libs.androidx.fragment.ktx)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)

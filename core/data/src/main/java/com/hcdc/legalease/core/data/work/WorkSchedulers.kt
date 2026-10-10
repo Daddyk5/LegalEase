@@ -86,6 +86,11 @@ class BackgroundWork @Inject constructor(
                 .build()
         ).enqueue()
         workManager.enqueueUniquePeriodicWork(
+            RETENTION_DAILY,
+            ExistingPeriodicWorkPolicy.KEEP,
+            PeriodicWorkRequestBuilder<RetentionWorker>(1, TimeUnit.DAYS).build(),
+        )
+        workManager.enqueueUniquePeriodicWork(
             SYNC_PERIODIC,
             ExistingPeriodicWorkPolicy.KEEP,
             PeriodicWorkRequestBuilder<SyncWorker>(SYNC_INTERVAL_HOURS, TimeUnit.HOURS)
@@ -100,6 +105,7 @@ private val networkConstraint = Constraints.Builder().setRequiredNetworkType(Net
 private const val MODEL_DOWNLOAD = "model-download"
 private const val SYNC_NOW = "sync-now"
 private const val SYNC_PERIODIC = "sync-periodic"
+private const val RETENTION_DAILY = "retention-daily"
 private const val SYNC_INTERVAL_HOURS = 12L
 private const val BACKOFF_SECONDS = 30L
 private const val LLM_BACKOFF_MINUTES = 15L

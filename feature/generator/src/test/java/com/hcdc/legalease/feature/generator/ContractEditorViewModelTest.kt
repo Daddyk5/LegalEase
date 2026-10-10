@@ -13,7 +13,12 @@ import com.hcdc.legalease.core.domain.model.ContractDraft
 import com.hcdc.legalease.core.domain.model.ContractType
 import com.hcdc.legalease.core.domain.model.Party
 import com.hcdc.legalease.core.domain.result.AppResult
+import com.hcdc.legalease.core.domain.engine.ContractDocuments
+import com.hcdc.legalease.core.domain.engine.PaperSize
 import com.hcdc.legalease.core.domain.testing.FakeAnalysisRepository
+import com.hcdc.legalease.core.domain.testing.FakeAuditLog
+import com.hcdc.legalease.core.domain.testing.FakeIntegrityChecker
+import com.hcdc.legalease.core.domain.usecase.ExportContractUseCase
 import com.hcdc.legalease.core.domain.testing.FakeAnalysisScheduler
 import com.hcdc.legalease.core.domain.testing.FakeAnalytics
 import com.hcdc.legalease.core.domain.testing.FakeContractAssistant
@@ -59,15 +64,18 @@ class ContractEditorViewModelTest {
     private fun TestScope.viewModel(args: Map<String, Any?> = mapOf(ContractEditorRoute.ARG_TYPE to "LEASE")) =
         ContractEditorViewModel(
             savedStateHandle = SavedStateHandle(args),
-            saveVersion = SaveContractVersionUseCase(contracts, FakeSyncScheduler(), FakeAnalytics()),
+            saveVersion = SaveContractVersionUseCase(
+                contracts, FakeSyncScheduler(), FakeAnalytics(), FakeAuditLog(), clock,
+            ),
             observeVersion = ObserveContractVersionUseCase(contracts),
             observeAnalysis = ObserveAnalysisUseCase(analyses),
             analyze = AnalyzeGeneratedContractUseCase(analyses, contracts, scheduler, FakeAnalytics()),
-            assistantAvailability = AssistantAvailabilityUseCase(assistant, FakeFeatureFlags()),
+            assistantAvailability = AssistantAvailabilityUseCase(assistant, FakeFeatureFlags(), FakeIntegrityChecker()),
             suggestClauses = SuggestClausesUseCase(assistant, FakeAnalytics()),
             rewriteClause = RewriteClauseUseCase(assistant, FakeAnalytics()),
             assistant = assistant,
             documents = documents,
+            exportContract = ExportContractUseCase(documents, FakeAnalytics(), FakeAuditLog(), clock),
             analytics = FakeAnalytics(),
             clock = clock,
             appScope = backgroundScope,
@@ -238,5 +246,7 @@ class ContractEditorViewModelTest {
             exportedSize = size
             return File(fileName)
         }
+
+        override suspend fun write(contract: RenderedContract, size: PaperSize, target: File) = Unit
     }
 }

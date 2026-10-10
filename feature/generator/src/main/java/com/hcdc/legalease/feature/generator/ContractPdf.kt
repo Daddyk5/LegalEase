@@ -16,6 +16,8 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.scale
 import androidx.core.graphics.withTranslation
 import com.hcdc.legalease.core.domain.di.IoDispatcher
+import com.hcdc.legalease.core.domain.engine.ContractDocuments
+import com.hcdc.legalease.core.domain.engine.PaperSize
 import com.hcdc.legalease.core.domain.generator.ContractSection
 import com.hcdc.legalease.core.domain.generator.RenderedContract
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -24,26 +26,6 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 import com.hcdc.legalease.core.designsystem.R as DesignR
-
-private const val POINTS_PER_INCH = 72
-
-/** Paper sizes in PostScript points (1/72 inch). */
-enum class PaperSize(val widthPt: Int, val heightPt: Int) {
-    /** 210 x 297 mm. */
-    A4(widthPt = 595, heightPt = 842),
-
-    /** 8.5 x 13 in, the "legal" (long bond) size used for contracts in the Philippines; US legal is 8.5 x 14. */
-    LEGAL(widthPt = POINTS_PER_INCH * 17 / 2, heightPt = POINTS_PER_INCH * 13),
-}
-
-/** Lays out and writes contract PDFs. An interface so the editor's view model can be tested on the JVM. */
-interface ContractDocuments {
-    /** The body text of each page as laid out on [size]; what the analysis reads, so page numbers match. */
-    suspend fun pageTexts(contract: RenderedContract, size: PaperSize = PaperSize.A4): List<String>
-
-    /** Writes the PDF to app cache, replacing earlier exports, and returns it for sharing. */
-    suspend fun export(contract: RenderedContract, size: PaperSize, fileName: String): File
-}
 
 internal class AndroidContractDocuments @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -55,31 +37,36 @@ internal class AndroidContractDocuments @Inject constructor(
 
     override suspend fun export(contract: RenderedContract, size: PaperSize, fileName: String): File =
         withContext(ioDispatcher) {
-            val pages = paginate(contract, size)
             val dir = File(context.cacheDir, EXPORT_DIR)
             // Exports contain personal data; keep only the latest one.
-            dir.listFiles()?.forEach { it.delete() }
+            dir.listFiles()?.forEach { it.deleteRecursively() }
             dir.mkdirs()
-            val file = File(dir, fileName)
-            val document = PdfDocument()
-            val logo = loadLogo()
-            try {
-                pages.forEachIndexed { index, page ->
-                    val info = PdfDocument.PageInfo.Builder(size.widthPt, size.heightPt, index + 1).create()
-                    val pdfPage = document.startPage(info)
-                    val canvas = pdfPage.canvas
-                    logo?.let { drawLogo(canvas, it) }
-                    page.blocks.forEach { drawBlock(canvas, it) }
-                    drawFooter(canvas, size, number = index + 1, total = pages.size)
-                    document.finishPage(pdfPage)
-                }
-                file.outputStream().use { document.writeTo(it) }
-            } finally {
-                document.close()
-                logo?.recycle()
-            }
-            file
+            File(dir, fileName).also { writePdf(contract, size, it) }
         }
+
+    override suspend fun write(contract: RenderedContract, size: PaperSize, target: File) =
+        withContext(ioDispatcher) { writePdf(contract, size, target) }
+
+    private fun writePdf(contract: RenderedContract, size: PaperSize, file: File) {
+        val pages = paginate(contract, size)
+        val document = PdfDocument()
+        val logo = loadLogo()
+        try {
+            pages.forEachIndexed { index, page ->
+                val info = PdfDocument.PageInfo.Builder(size.widthPt, size.heightPt, index + 1).create()
+                val pdfPage = document.startPage(info)
+                val canvas = pdfPage.canvas
+                logo?.let { drawLogo(canvas, it) }
+                page.blocks.forEach { drawBlock(canvas, it) }
+                drawFooter(canvas, size, number = index + 1, total = pages.size)
+                document.finishPage(pdfPage)
+            }
+            file.outputStream().use { document.writeTo(it) }
+        } finally {
+            document.close()
+            logo?.recycle()
+        }
+    }
 
     private fun paginate(contract: RenderedContract, size: PaperSize): List<LaidOutPage> {
         val styles = Styles(

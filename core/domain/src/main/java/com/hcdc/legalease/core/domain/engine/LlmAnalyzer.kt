@@ -72,6 +72,9 @@ interface LlmAnalyzer {
     /** Frees the model's memory. The next call loads it again. */
     suspend fun release()
 
+    /** Identifies the installed model for the audit log (tier and hash prefix); null if none is ready. */
+    suspend fun modelVersion(): String?
+
     /** Loads the model, runs one tiny generation as a self-test, and releases it. */
     suspend fun warmUp(): AppResult<Unit>
 }

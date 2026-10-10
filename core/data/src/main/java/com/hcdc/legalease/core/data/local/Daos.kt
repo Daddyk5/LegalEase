@@ -83,6 +83,12 @@ interface AnalysisDao {
     @Query("DELETE FROM analyses WHERE id = :id")
     suspend fun hardDelete(id: String)
 
+    @Query("SELECT id FROM analyses WHERE deleted = 0 AND createdAt < :cutoff")
+    suspend fun idsCreatedBefore(cutoff: Long): List<String>
+
+    @Query("SELECT * FROM analyses WHERE deleted = 0 ORDER BY createdAt DESC")
+    suspend fun allLive(): List<AnalysisEntity>
+
     @Query("SELECT * FROM analyses WHERE needsSync = 1")
     suspend fun pendingSync(): List<AnalysisEntity>
 
@@ -139,6 +145,9 @@ interface GeneratedContractDao {
 
     @Query("UPDATE generated_contracts SET needsSync = 0 WHERE id = :id")
     suspend fun markSynced(id: String)
+
+    @Query("SELECT * FROM generated_contracts ORDER BY createdAt, version")
+    suspend fun all(): List<GeneratedContractEntity>
 
     @Query("SELECT * FROM generated_contracts WHERE id = :id")
     fun observe(id: String): Flow<GeneratedContractEntity?>

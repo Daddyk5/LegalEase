@@ -1,6 +1,10 @@
 package com.hcdc.legalease.core.domain.usecase
 
 import com.hcdc.legalease.core.domain.engine.AnalysisScheduler
+import com.hcdc.legalease.core.domain.engine.AuditLog
+import com.hcdc.legalease.core.domain.engine.ContractDocuments
+import com.hcdc.legalease.core.domain.engine.IntegrityChecker
+import com.hcdc.legalease.core.domain.engine.PaperSize
 import com.hcdc.legalease.core.domain.engine.ClauseSuggestion
 import com.hcdc.legalease.core.domain.engine.ContractAssistant
 import com.hcdc.legalease.core.domain.engine.LlmAvailability
@@ -10,7 +14,10 @@ import com.hcdc.legalease.core.domain.generator.ClauseRejection
 import com.hcdc.legalease.core.domain.generator.ContractTemplates
 import com.hcdc.legalease.core.domain.generator.DiffSegment
 import com.hcdc.legalease.core.domain.generator.WordDiff
+import com.hcdc.legalease.core.domain.model.AuditEntry
+import com.hcdc.legalease.core.domain.model.AuditEvent
 import com.hcdc.legalease.core.domain.model.ContractDraft
+import com.hcdc.legalease.core.domain.model.DeviceIntegrity
 import com.hcdc.legalease.core.domain.model.GeneratedContract
 import com.hcdc.legalease.core.domain.model.OptionalClause
 import com.hcdc.legalease.core.domain.repository.AnalysisRepository
@@ -21,6 +28,9 @@ import com.hcdc.legalease.core.domain.result.AppResult
 import com.hcdc.legalease.core.domain.telemetry.AnalyticsEvent
 import com.hcdc.legalease.core.domain.telemetry.AnalyticsTracker
 import kotlinx.coroutines.flow.Flow
+import java.io.File
+import java.io.IOException
+import java.time.Clock
 import java.util.UUID
 import javax.inject.Inject
 
@@ -32,12 +42,17 @@ class SaveContractVersionUseCase @Inject constructor(
     private val repository: ContractRepository,
     private val syncScheduler: SyncScheduler,
     private val analytics: AnalyticsTracker,
+    private val auditLog: AuditLog,
+    private val clock: Clock,
 ) {
     suspend operator fun invoke(contractId: String?, draft: ContractDraft): AppResult<GeneratedContract> {
         val rendered = ContractTemplates.render(draft) ?: return AppResult.Failure(AppError.Unexpected("invalid_draft"))
         val saved = repository.saveVersion(contractId, draft, rendered.title, rendered.plainText)
         syncScheduler.requestSync()
         analytics.log(AnalyticsEvent.ContractSaved(draft.type.name, saved.version))
+        auditLog.record(
+            AuditEntry(clock.millis(), AuditEvent.CONTRACT_SAVED, subjectId = saved.id, detail = draft.type.name)
+        )
         return AppResult.Success(saved)
     }
 }
@@ -85,9 +100,37 @@ data class Suggestions(val proposals: List<ProposedEdit>, val withheld: Int)
 class AssistantAvailabilityUseCase @Inject constructor(
     private val assistant: ContractAssistant,
     private val featureFlags: FeatureFlagsRepository,
+    private val integrity: IntegrityChecker,
 ) {
-    suspend operator fun invoke(): LlmAvailability =
-        if (featureFlags.flags.value.llmEnabled) assistant.availability() else LlmAvailability.UNAVAILABLE
+    /** Unavailable when switched off remotely or on a device that failed the integrity check. */
+    suspend operator fun invoke(): LlmAvailability {
+        val allowed = featureFlags.flags.value.llmEnabled && integrity.verdict.value != DeviceIntegrity.COMPROMISED
+        return if (allowed) assistant.availability() else LlmAvailability.UNAVAILABLE
+    }
+}
+
+/** Writes a saved version as a PDF for sharing, and records the export in the audit log. */
+class ExportContractUseCase @Inject constructor(
+    private val documents: ContractDocuments,
+    private val analytics: AnalyticsTracker,
+    private val auditLog: AuditLog,
+    private val clock: Clock,
+) {
+    suspend operator fun invoke(version: GeneratedContract, size: PaperSize): AppResult<File> {
+        val draft = version.draft ?: return AppResult.Failure(AppError.Unexpected("missing_draft"))
+        val rendered = ContractTemplates.render(draft) ?: return AppResult.Failure(AppError.Unexpected("invalid_draft"))
+        val name = "${ContractTemplates.shortName(version.type)} v${version.version} (${size.name}).pdf"
+        return try {
+            val file = documents.export(rendered, size, name)
+            analytics.log(AnalyticsEvent.ContractExported(version.type.name, size.name))
+            auditLog.record(
+                AuditEntry(clock.millis(), AuditEvent.CONTRACT_EXPORTED, subjectId = version.id, detail = size.name)
+            )
+            AppResult.Success(file)
+        } catch (_: IOException) {
+            AppResult.Failure(AppError.StorageFull)
+        }
+    }
 }
 
 /**

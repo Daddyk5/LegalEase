@@ -66,6 +66,12 @@ class OnDeviceLlmAnalyzer @Inject constructor(
 
     override suspend fun release() = engine.release()
 
+    override suspend fun modelVersion(): String? {
+        val spec = provisioner.specForDevice()?.takeIf { it.isPinned } ?: return null
+        if (!provisioner.isProvisioned()) return null
+        return "${spec.tier.name.lowercase()}:${spec.sha256.take(HASH_PREFIX)}"
+    }
+
     override suspend fun warmUp(): AppResult<Unit> {
         if (availability() != LlmAvailability.READY) return AppResult.Failure(AppError.ModelUnavailable)
         return try {
@@ -128,6 +134,7 @@ class OnDeviceLlmAnalyzer @Inject constructor(
 
     private companion object {
         const val TAG = "OnDeviceLlm"
+        const val HASH_PREFIX = 12
         const val SELF_TEST_TEXT =
             "This Contract of Lease is made between Juan dela Cruz, Lessor, and Maria Santos, Lessee."
         const val ATTEMPTS = 2

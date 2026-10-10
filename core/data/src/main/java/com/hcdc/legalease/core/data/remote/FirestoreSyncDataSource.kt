@@ -32,9 +32,30 @@ internal class FirestoreSyncDataSource @Inject constructor(
         contracts(uid).document(entity.id).set(entity.toFirestore()).await()
     }
 
+    /** Deletes every document LegalEase stores for [uid], then the user document itself. */
+    suspend fun deleteAll(uid: String) {
+        listOf(analyses(uid), contracts(uid)).forEach { deleteCollection(it) }
+        firestore.collection(FirestoreSchema.USERS).document(uid).delete().await()
+    }
+
     suspend fun contractsUpdatedSince(uid: String, sinceMillis: Long): List<GeneratedContractEntity> =
         contracts(uid)
             .whereGreaterThan(FirestoreSchema.F_UPDATED_AT, sinceMillis)
             .get().await()
             .documents.mapNotNull { doc -> doc.data?.let { contractFromFirestore(doc.id, it) } }
+
+    private suspend fun deleteCollection(collection: CollectionReference) {
+        var docs = collection.limit(DELETE_BATCH).get().await().documents
+        while (docs.isNotEmpty()) {
+            val batch = firestore.batch()
+            docs.forEach { batch.delete(it.reference) }
+            batch.commit().await()
+            docs = collection.limit(DELETE_BATCH).get().await().documents
+        }
+    }
+
+    private companion object {
+        /** Firestore allows 500 writes per batch. */
+        const val DELETE_BATCH = 400L
+    }
 }

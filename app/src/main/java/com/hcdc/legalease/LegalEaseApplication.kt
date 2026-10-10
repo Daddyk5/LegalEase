@@ -5,6 +5,7 @@ import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.hcdc.legalease.core.data.work.BackgroundWork
 import com.hcdc.legalease.core.domain.di.ApplicationScope
+import com.hcdc.legalease.core.domain.engine.IntegrityChecker
 import com.hcdc.legalease.core.domain.repository.FeatureFlagsRepository
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
@@ -20,6 +21,8 @@ class LegalEaseApplication : Application(), Configuration.Provider {
 
     @Inject lateinit var featureFlags: FeatureFlagsRepository
 
+    @Inject lateinit var integrity: IntegrityChecker
+
     @Inject @ApplicationScope lateinit var applicationScope: CoroutineScope
 
     override val workManagerConfiguration: Configuration
@@ -31,5 +34,6 @@ class LegalEaseApplication : Application(), Configuration.Provider {
         installAppCheck()
         backgroundWork.schedule()
         applicationScope.launch { featureFlags.refresh() }
+        applicationScope.launch { integrity.refresh() }
     }
 }

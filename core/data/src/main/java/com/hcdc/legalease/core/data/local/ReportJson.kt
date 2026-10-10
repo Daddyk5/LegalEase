@@ -1,5 +1,6 @@
 package com.hcdc.legalease.core.data.local
 
+import com.hcdc.legalease.core.domain.legal.ConfidenceScorer
 import com.hcdc.legalease.core.domain.model.AnalysisMethod
 import com.hcdc.legalease.core.domain.model.AnalysisReport
 import com.hcdc.legalease.core.domain.model.Citation
@@ -24,7 +25,7 @@ import kotlinx.serialization.json.Json
 internal object ReportJson {
 
     /** Bump when scoring changes so older stored scores are not compared with newer ones. */
-    const val SCORING_VERSION = 2
+    const val SCORING_VERSION = ConfidenceScorer.VERSION
 
     private val json = Json { ignoreUnknownKeys = true }
 

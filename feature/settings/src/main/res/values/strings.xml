@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Privacy notice (first launch and Settings). Keep in step with PRIVACY.md. -->
+    <string name="privacy_title">Your privacy</string>
+    <string name="privacy_intro">LegalEase follows the Data Privacy Act of 2012 (Republic Act No. 10173). This notice explains what the app processes, where, and for how long.</string>
+    <string name="privacy_what_title">What LegalEase processes</string>
+    <string name="privacy_what_body">• Documents you upload or photograph, and the text read from them.\n• The results of each analysis.\n• Contracts you create, including the names, addresses, and ID types you type in.\n• Your email address and name, to sign you in.\n• App diagnostics: crash reports, performance timings, and usage events. These never include document content.</string>
+    <string name="privacy_where_title">Where</string>
+    <string name="privacy_where_body">• Reading, analyzing, and creating contracts happen on this phone. Your documents and their text do not leave it.\n• Sign-in uses Google Firebase Authentication.\n• Diagnostics go to Google Firebase (Crashlytics, Performance Monitoring, Analytics).\n• Cloud backup is off unless you turn it on. If you do, your analysis results and the contracts you create are stored in Google Cloud Firestore in Singapore. Uploaded documents and their full text are never uploaded.</string>
+    <string name="privacy_how_long_title">How long</string>
+    <string name="privacy_how_long_body">• On this phone: until you delete it, or until it reaches your history setting (30, 90, or 365 days, or never).\n• Cloud backup: until you delete the item or your account.\n• Diagnostics: for the retention period of the Google services above.\nEverything is encrypted on the phone.</string>
+    <string name="privacy_rights_title">Your rights</string>
+    <string name="privacy_rights_body">You have the right to be informed, to access and correct your data, to object, to have it erased or blocked, to receive a copy (data portability), and to complain to the National Privacy Commission. In Privacy &amp; data you can export everything or delete your account. To contact us, use the email address on LegalEase\'s Google Play listing.</string>
+    <string name="privacy_accept">I understand</string>
+    <string name="privacy_exit">Exit</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Privacy &amp; data</string>
+    <string name="settings_subtitle">Control what is kept, where, and for how long.</string>
+    <string name="settings_backup_title">Cloud backup</string>
+    <string name="settings_backup_body">Back up analysis results and contracts you create to your account. Documents and their text stay on this phone.</string>
+    <string name="settings_backup_consent_title">Turn on cloud backup?</string>
+    <string name="settings_backup_consent_body">LegalEase will store, in Google Cloud Firestore in Singapore and under your account:\n• each analysis result: document name, classification, confidence, and summary;\n• each contract you create: its text and the details you entered (names, addresses, ID types).\n\nUploaded documents and the text read from them are never uploaded. You can turn this off at any time; to remove what was uploaded, delete your account.</string>
+    <string name="settings_backup_agree">I agree, turn on</string>
+    <string name="settings_cancel">Cancel</string>
+    <string name="settings_retention_title">Keep history</string>
+    <string name="settings_retention_body">Analyses older than this are deleted automatically, from this phone and from cloud backup.</string>
+    <string name="settings_retention_never">Forever</string>
+    <string name="settings_retention_30">30 days</string>
+    <string name="settings_retention_90">90 days</string>
+    <string name="settings_retention_365">1 year</string>
+    <string name="settings_retention_deleted">%1$d old analyses were deleted.</string>
+    <string name="settings_lock_title">App lock</string>
+    <string name="settings_lock_body">Ask for your fingerprint, face, or screen lock when LegalEase opens.</string>
+    <string name="settings_lock_unavailable">Set up a screen lock in your phone\'s settings to use this.</string>
+    <string name="settings_data_title">Your data</string>
+    <string name="settings_export">Export my data</string>
+    <string name="settings_export_body">A ZIP file with your analyses, documents, contracts (as PDFs), settings, and activity log.</string>
+    <string name="settings_export_share">Share data export</string>
+    <string name="settings_notice">Privacy notice</string>
+    <string name="settings_delete">Delete my account</string>
+    <string name="settings_delete_title">Delete your account?</string>
+    <string name="settings_delete_body">This permanently deletes your LegalEase account, your cloud backup, and everything on this phone: analyses, documents, contracts, settings, and the activity log. It cannot be undone.\n\nExport your data first if you want a copy.</string>
+    <string name="settings_delete_confirm">Delete everything</string>
+    <string name="settings_deleting">Deleting your account…</string>
+    <string name="settings_exporting">Preparing your data…</string>
+    <string name="settings_integrity_warning">This phone did not pass Google Play\'s integrity check (it may be rooted or modified). Offline analysis is turned off; results use basic checks only.</string>
+    <string name="settings_msg_recent_login">For your security, sign out and sign in again, then delete your account within five minutes.</string>
+    <string name="settings_msg_network">You\'re offline. Connect to the internet and try again.</string>
+    <string name="settings_msg_storage">Not enough storage to prepare the export.</string>
+    <string name="settings_msg_failed">Something went wrong. Try again.</string>
+    <string name="settings_sign_out">Sign out</string>
+
+    <!-- App lock -->
+    <string name="lock_title">LegalEase is locked</string>
+    <string name="lock_body">Unlock to see your documents.</string>
+    <string name="lock_unlock">Unlock</string>
+    <string name="lock_prompt_title">Unlock LegalEase</string>
+</resources>

@@ -3,6 +3,7 @@ package com.hcdc.legalease.core.domain.repository
 import com.hcdc.legalease.core.domain.model.Analysis
 import com.hcdc.legalease.core.domain.model.ContractDraft
 import com.hcdc.legalease.core.domain.model.ExtractedText
+import com.hcdc.legalease.core.domain.model.RetentionPeriod
 import com.hcdc.legalease.core.domain.model.GeneratedContract
 import com.hcdc.legalease.core.domain.model.SourceKind
 import com.hcdc.legalease.core.domain.model.AnalysisReport
@@ -84,4 +85,22 @@ interface PreferencesRepository {
     val cloudSyncEnabled: Flow<Boolean>
 
     suspend fun setCloudSyncEnabled(enabled: Boolean)
+
+    /** How long analysis history is kept. Defaults to [RetentionPeriod.NEVER]. */
+    val retention: Flow<RetentionPeriod>
+
+    suspend fun setRetention(period: RetentionPeriod)
+
+    /** Ask for biometrics or the device credential when the app opens. Defaults to false. */
+    val appLockEnabled: Flow<Boolean>
+
+    suspend fun setAppLockEnabled(enabled: Boolean)
+
+    /** Version of the privacy notice the user accepted; 0 if none. */
+    val acceptedPrivacyNoticeVersion: Flow<Int>
+
+    suspend fun acceptPrivacyNotice(version: Int)
+
+    /** Removes every setting, as part of deleting the user's data. */
+    suspend fun clear()
 }

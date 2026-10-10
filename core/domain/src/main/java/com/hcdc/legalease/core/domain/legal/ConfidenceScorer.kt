@@ -25,6 +25,9 @@ import com.hcdc.legalease.core.domain.model.ConfidenceScore
  */
 object ConfidenceScorer {
 
+    /** Bump whenever the formula or weights change, so scores from different versions are never compared. */
+    const val VERSION = 2
+
     const val W_SELF_CONSISTENCY = 0.30f
     const val W_GROUNDING = 0.25f
     const val W_AGREEMENT = 0.15f

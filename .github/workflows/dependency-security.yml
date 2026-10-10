@@ -1,0 +1,41 @@
+# Dependency vulnerability scanning. Submits the resolved Gradle dependency graph to GitHub, which
+# raises Dependabot alerts for known vulnerabilities; pull requests that add a vulnerable dependency
+# (high severity or worse) fail the review job.
+name: Dependency security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "0 3 * * 1" # Mondays, so new advisories are matched even without commits.
+
+permissions:
+  contents: read
+
+jobs:
+  submit-gradle-graph:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required to submit the dependency graph.
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: gradle/actions/dependency-submission@v6
+
+  review:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/dependency-review-action@v5
+        with:
+          fail-on-severity: high
+          comment-summary-in-pr: on-failure

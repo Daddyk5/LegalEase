@@ -1,5 +1,6 @@
 package com.hcdc.legalease.feature.generator
 
+import com.hcdc.legalease.core.domain.engine.PaperSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow

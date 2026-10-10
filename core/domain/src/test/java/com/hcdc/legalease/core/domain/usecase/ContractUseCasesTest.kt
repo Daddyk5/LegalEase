@@ -23,6 +23,13 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.time.ZoneOffset
+import java.time.Instant
+import java.time.Clock
+import com.hcdc.legalease.core.domain.testing.FakeIntegrityChecker
+import com.hcdc.legalease.core.domain.testing.FakeAuditLog
+import com.hcdc.legalease.core.domain.model.DeviceIntegrity
+import com.hcdc.legalease.core.domain.model.AuditEvent
 
 class ContractUseCasesTest {
 
@@ -30,7 +37,9 @@ class ContractUseCasesTest {
     private val analyses = FakeAnalysisRepository()
     private val scheduler = FakeAnalysisScheduler()
     private val assistant = FakeContractAssistant()
-    private val save = SaveContractVersionUseCase(contracts, FakeSyncScheduler(), FakeAnalytics())
+    private val auditLog = FakeAuditLog()
+    private val clock = Clock.fixed(Instant.EPOCH, ZoneOffset.UTC)
+    private val save = SaveContractVersionUseCase(contracts, FakeSyncScheduler(), FakeAnalytics(), auditLog, clock)
 
     @Test
     fun `edits create new versions and never overwrite`() = runTest {
@@ -113,9 +122,22 @@ class ContractUseCasesTest {
     }
 
     @Test
-    fun `the assistant is unavailable when switched off remotely`() = runTest {
-        val flags = FakeFeatureFlags(FeatureFlags.DEFAULT.copy(llmEnabled = false))
-        assertEquals(LlmAvailability.UNAVAILABLE, AssistantAvailabilityUseCase(assistant, flags)())
-        assertEquals(LlmAvailability.READY, AssistantAvailabilityUseCase(assistant, FakeFeatureFlags())())
+    fun `the assistant is unavailable when switched off remotely or on a compromised device`() = runTest {
+        fun availability(flags: FakeFeatureFlags, integrity: FakeIntegrityChecker) =
+            AssistantAvailabilityUseCase(assistant, flags, integrity)
+        val off = FakeFeatureFlags(FeatureFlags.DEFAULT.copy(llmEnabled = false))
+        assertEquals(LlmAvailability.UNAVAILABLE, availability(off, FakeIntegrityChecker())())
+        val compromised = FakeIntegrityChecker(DeviceIntegrity.COMPROMISED)
+        assertEquals(LlmAvailability.UNAVAILABLE, availability(FakeFeatureFlags(), compromised)())
+        assertEquals(LlmAvailability.READY, availability(FakeFeatureFlags(), FakeIntegrityChecker())())
+    }
+
+    @Test
+    fun `saving a version is audited without its text`() = runTest {
+        val saved = (save(null, validDraft(ContractType.SALE)) as AppResult.Success).value
+        val entry = auditLog.entries.value.single()
+        assertEquals(AuditEvent.CONTRACT_SAVED, entry.event)
+        assertEquals(saved.id, entry.subjectId)
+        assertEquals("SALE", entry.detail)
     }
 }

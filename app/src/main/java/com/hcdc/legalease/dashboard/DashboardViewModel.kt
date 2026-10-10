@@ -2,6 +2,8 @@ package com.hcdc.legalease.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hcdc.legalease.core.domain.engine.IntegrityChecker
+import com.hcdc.legalease.core.domain.model.DeviceIntegrity
 import com.hcdc.legalease.core.domain.repository.FeatureFlagsRepository
 import com.hcdc.legalease.core.domain.usecase.ObserveUserUseCase
 import com.hcdc.legalease.core.domain.usecase.SignOutUseCase
@@ -21,7 +23,13 @@ class DashboardViewModel @Inject constructor(
     observeUser: ObserveUserUseCase,
     private val signOut: SignOutUseCase,
     featureFlags: FeatureFlagsRepository,
+    integrity: IntegrityChecker,
 ) : ViewModel() {
+
+    /** True when Play Integrity found the device rooted or the app modified. */
+    val deviceCompromised: StateFlow<Boolean> = integrity.verdict
+        .map { it == DeviceIntegrity.COMPROMISED }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), false)
 
     /** Remote kill switch for the contract generator. */
     val generatorEnabled: StateFlow<Boolean> = featureFlags.flags

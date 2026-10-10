@@ -1,5 +1,6 @@
 package com.hcdc.legalease.feature.scan
 
+import com.hcdc.legalease.core.designsystem.component.SecureContent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -44,6 +45,8 @@ fun ImageScreen(
     onBack: () -> Unit,
     viewModel: ScanViewModel = hiltViewModel()
 ) {
+    // Contract content: no screenshots, recordings, or recents thumbnail.
+    SecureContent()
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val images = uiState.imageUris.map(Uri::parse)

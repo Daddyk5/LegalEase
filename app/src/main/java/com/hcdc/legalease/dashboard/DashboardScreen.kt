@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -39,8 +40,10 @@ fun DashboardScreen(
     onUploadImage: () -> Unit,
     onOpenHistory: () -> Unit,
     onCreateContract: () -> Unit,
+    onOpenSettings: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel(),
 ) {
+    val deviceCompromised by viewModel.deviceCompromised.collectAsStateWithLifecycle()
     val greetingName by viewModel.greetingName.collectAsStateWithLifecycle()
     val generatorEnabled by viewModel.generatorEnabled.collectAsStateWithLifecycle()
 
@@ -69,13 +72,23 @@ fun DashboardScreen(
                     .clip(CircleShape)
             )
 
-            IconButton(onClick = viewModel::logout) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.Logout,
-                    contentDescription = "Logout",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(30.dp)
-                )
+            Row {
+                IconButton(onClick = onOpenSettings) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Privacy and data settings",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
+                IconButton(onClick = viewModel::logout) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Logout,
+                        contentDescription = "Logout",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
             }
         }
         VerticalSpacer(height = 15.dp)
@@ -91,6 +104,14 @@ fun DashboardScreen(
             style = MaterialTheme.typography.bodyLarge.copy(
             )
         )
+        if (deviceCompromised) {
+            VerticalSpacer(height = 8.dp)
+            Text(
+                text = "This phone did not pass the Google Play integrity check. Offline analysis is turned " +
+                    "off; results use basic checks only.",
+                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.error)
+            )
+        }
         VerticalSpacer(height = 30.dp)
         HorizontalDivider(
             color = Color.Gray.copy(alpha = .3f),

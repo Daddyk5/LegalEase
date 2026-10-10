@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hcdc.legalease.core.domain.di.ApplicationScope
 import com.hcdc.legalease.core.domain.engine.ContractAssistant
+import com.hcdc.legalease.core.domain.engine.ContractDocuments
+import com.hcdc.legalease.core.domain.engine.PaperSize
 import com.hcdc.legalease.core.domain.engine.LlmAvailability
 import com.hcdc.legalease.core.domain.generator.ClauseRejection
 import com.hcdc.legalease.core.domain.generator.ContractTemplates
@@ -28,6 +30,7 @@ import com.hcdc.legalease.core.domain.telemetry.AnalyticsEvent
 import com.hcdc.legalease.core.domain.telemetry.AnalyticsTracker
 import com.hcdc.legalease.core.domain.usecase.AnalyzeGeneratedContractUseCase
 import com.hcdc.legalease.core.domain.usecase.AssistantAvailabilityUseCase
+import com.hcdc.legalease.core.domain.usecase.ExportContractUseCase
 import com.hcdc.legalease.core.domain.usecase.ObserveAnalysisUseCase
 import com.hcdc.legalease.core.domain.usecase.ObserveContractVersionUseCase
 import com.hcdc.legalease.core.domain.usecase.ProposedEdit
@@ -114,6 +117,7 @@ class ContractEditorViewModel @Inject constructor(
     private val rewriteClause: RewriteClauseUseCase,
     private val assistant: ContractAssistant,
     private val documents: ContractDocuments,
+    private val exportContract: ExportContractUseCase,
     private val analytics: AnalyticsTracker,
     private val clock: Clock,
     @ApplicationScope private val appScope: CoroutineScope,
@@ -353,20 +357,14 @@ class ContractEditorViewModel @Inject constructor(
     fun export() {
         val state = _uiState.value
         val version = state.saved ?: return
-        val rendered = state.rendered ?: return
         if (!state.canExport || state.busy) return
         viewModelScope.launch {
             _uiState.update { it.copy(busy = true) }
-            try {
-                val name = "${ContractTemplates.shortName(version.type)} v${version.version} (${state.paper.name}).pdf"
-                val file = documents.export(rendered, state.paper, name)
-                analytics.log(AnalyticsEvent.ContractExported(version.type.name, state.paper.name))
-                _events.send(EditorEvent.Share(file))
-            } catch (_: java.io.IOException) {
-                _uiState.update { it.copy(message = EditorMessage.Failed(AppError.StorageFull)) }
-            } finally {
-                _uiState.update { it.copy(busy = false) }
+            when (val result = exportContract(version, state.paper)) {
+                is AppResult.Success -> _events.send(EditorEvent.Share(result.value))
+                is AppResult.Failure -> _uiState.update { it.copy(message = EditorMessage.Failed(result.error)) }
             }
+            _uiState.update { it.copy(busy = false) }
         }
     }
 

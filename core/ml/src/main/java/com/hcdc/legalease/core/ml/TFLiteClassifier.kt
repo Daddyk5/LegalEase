@@ -139,6 +139,8 @@ class TFLiteClassifier @Inject constructor(
         val inputType: DataType,
     )
 
+    override fun modelVersion(): String = "classifier:$MODEL_NAME"
+
     companion object {
         private const val MODEL_NAME = "model_small_int8"
         private const val MAX_THREADS = 4

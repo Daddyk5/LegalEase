@@ -1,5 +1,6 @@
 package com.hcdc.legalease.feature.scan
 
+import com.hcdc.legalease.core.designsystem.component.SecureContent
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -47,6 +48,8 @@ fun PdfScreen(
     onBack: () -> Unit,
     viewModel: ScanViewModel = hiltViewModel()
 ) {
+    // Contract content: no screenshots, recordings, or recents thumbnail.
+    SecureContent()
 
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
