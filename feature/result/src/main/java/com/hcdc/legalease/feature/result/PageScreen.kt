@@ -30,7 +30,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.hcdc.legalease.core.designsystem.component.CustomLoading
 import com.hcdc.legalease.core.designsystem.component.spacers.VerticalSpacer
 import com.hcdc.legalease.core.domain.engine.PageImageRenderer

@@ -31,7 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.hcdc.legalease.core.designsystem.component.buttons.PrimaryButton
 import com.hcdc.legalease.core.designsystem.component.buttons.SecondaryButton
 import com.hcdc.legalease.core.designsystem.component.spacers.VerticalSpacer
