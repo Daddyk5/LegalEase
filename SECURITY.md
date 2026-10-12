@@ -33,7 +33,8 @@ Rotation is required either way: anyone who cloned the repo already has the old 
   in `noBackupFilesDir` sealed with AES-256-GCM under a non-exportable Android Keystore key
   (StrongBox-backed where the device supports it). If the Keystore key is lost or invalidated, the
   unreadable database is discarded and recreated rather than crashing the app.
-- **Uploaded files.** Copied to `filesDir/scans/{id}/` only until OCR finishes, then deleted.
+- **Uploaded files.** Copied to `filesDir/scans/{id}/` (app-private, excluded from backup) so
+  cited pages can be reopened; deleted with their analysis, by retention, or on account deletion.
 - **Backups.** The database, document copies, and DataStore settings are excluded from cloud
   backup and device transfer (`backup_rules.xml`, `data_extraction_rules.xml`); the database could
   not be decrypted on another device anyway.
@@ -82,3 +83,45 @@ recover it. Treat the model as protected from copying by its license, not by the
 - Generated contracts and their form data contain personal data (names, addresses, ID types). They
   are stored in the encrypted database and sync only for opted-in users. Exported PDFs are written
   to app cache and replaced on the next export.
+
+## Privacy and device protection (RA 10173)
+
+See PRIVACY.md for the user-facing policy.
+
+- **Consent:**
+  - A privacy notice must be accepted before first use. A new notice version asks again.
+  - Cloud backup turns on only after a separate consent dialog.
+- **Data controls:**
+  - *Export my data* builds a ZIP in `cache/exports/`. It stays app-private until the user shares
+    it through the share sheet.
+  - Retention (30/90/365 days, or never) runs daily in the WorkManager job `retention-daily`, and
+    once immediately whenever the setting changes. Deletions sync as tombstones.
+  - *Delete my account*, in this order:
+    1. Requires a sign-in within the last 5 minutes.
+    2. Stops background work.
+    3. Deletes the user's Firestore documents and `users/{uid}/backups/` in Storage.
+    4. Deletes the Firebase user.
+    5. Wipes the database, the documents, the exports and the settings.
+  - The same deletion is available without the app at `/delete-account/` on Firebase Hosting.
+- **App lock:** optional, using strong biometrics or the device credential. It locks on launch
+  and again after 30 seconds in the background. Turning it on requires one successful
+  authentication first.
+- **FLAG_SECURE:** set while the result, page, image, PDF and contract-editor screens are shown.
+  This blocks screenshots, screen recording and the recent-apps thumbnail.
+- **Network:** `network_security_config.xml` disables cleartext traffic and trusts only system CAs.
+- **Device integrity:**
+  - Release builds request a Play Integrity token. The `integrityVerdict` Cloud Function
+    (App Check enforced) decodes it server-side and returns only TRUSTED, COMPROMISED or UNKNOWN.
+  - On COMPROMISED, the dashboard shows a warning and the on-device LLM is disabled. Analysis
+    falls back to the classifier and rules.
+  - Network or API failures leave the cached verdict unchanged. They never mark a device
+    compromised.
+- **Audit log:**
+  - The local, encrypted `audit_log` table records each analysis (success or failure), contract
+    save, export, data export and cloud-backup consent change.
+  - Each entry holds the timestamp, the model version, the confidence total and its five
+    components, and the scoring version. It never holds document text.
+- **Dependency scanning:**
+  - `.github/workflows/dependency-security.yml` submits the Gradle dependency graph and fails pull
+    requests that add a dependency with a high-severity advisory.
+  - Dependabot watches Gradle, npm and GitHub Actions.

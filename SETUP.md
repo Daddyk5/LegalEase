@@ -137,7 +137,39 @@ the app works before the first fetch and offline. Changes reach running apps in 
 - **Foreground service declaration**: the app uses the `dataSync` foreground-service type for
   on-device document analysis that continues in the background. Declare it under
   App content → Foreground service permissions, with a short screen recording of a multi-page scan.
-- **Data safety**: see PRIVACY.md.
+- **Data safety**: fill it in from the appendix of PRIVACY.md.
+- **Privacy policy URL**: publish PRIVACY.md (for example, as a page on Firebase Hosting) and
+  enter its URL under App content → Privacy policy.
+- **Account deletion URL**: enter `https://<project-id>.web.app/delete-account/` under
+  App content → Data deletion (see 10b).
+
+## 10b. Cloud Functions and Hosting (integrity check and web account deletion)
+
+Cloud Functions requires the **Blaze** (pay-as-you-go) plan. Without it the app still works: the
+integrity verdict stays "unknown" and nothing is disabled.
+
+1. **Play Integrity verdicts.** In Google Cloud console, for the project linked in step 6:
+   - Enable the **Google Play Integrity API**.
+   - In Play Console → Test and release → App integrity → Play Integrity API, link that same
+     Cloud project.
+   - Grant the Functions runtime service account (`<project-id>@appspot.gserviceaccount.com`)
+     the **Service Usage Consumer** role.
+2. **Deploy the function** (region `asia-southeast1`; App Check is enforced on it):
+   ```sh
+   cd functions && npm ci && npm test && cd ..
+   firebase deploy --only functions
+   ```
+   Only release builds call it; debug builds always report "unknown".
+3. **Web account deletion page** (`public/delete-account/`). It reads the Firebase config from
+   Hosting's `/__/firebase/init.json`, so no key is stored in git. Deploy it with:
+   ```sh
+   firebase deploy --only hosting
+   ```
+   - If App Check is enforced for Firestore or Storage, the page needs a web App Check key:
+     1. In App Check → Apps, add the **web app** with **reCAPTCHA Enterprise**.
+     2. Copy `public/delete-account/appcheck-config.example.js` to `appcheck-config.js` (git-ignored).
+     3. Put the site key in that file, then redeploy.
+   - Add your Hosting domain under Authentication → Settings → Authorized domains.
 
 ## 11. Run and verify
 
@@ -155,6 +187,7 @@ the app works before the first fetch and offline. Changes reach running apps in 
 ```sh
 ./gradlew assembleDebug lint detekt testDebugUnitTest      # Android build and unit tests
 cd firebase-tests && npm ci && npm test                    # Security rules, on the emulators
+cd functions && npm ci && npm test                         # Integrity verdict classification
 ```
 
 The rules tests start the Firestore and Storage emulators automatically using the demo project
@@ -167,6 +200,8 @@ The rules tests start the Firestore and Storage emulators automatically using th
 | Build fails: `default_web_client_id` not found | `google-services.json` is missing the web OAuth client. Enable Google sign-in (3.3) and re-download it. |
 | "Google sign-in isn't available on this device" | Missing SHA-1 for the key that signed this build, or no Google account on the device. |
 | "Please verify your email first" after verifying | Log in again; the verified flag is read at sign-in. |
-| Sync never happens | Cloud sync is off by default and needs an opted-in, verified user (the opt-in screen arrives with the privacy work). |
+| Sync never happens | Cloud backup is off by default. Turn it on in Privacy & data (settings icon on the dashboard); it needs a verified user. |
+| "For your security, sign out and sign in again…" when deleting | Firebase requires a sign-in within the last 5 minutes. Use the snackbar's *Sign out* action, sign back in, and retry. |
+| Integrity warning on a normal phone | The verdict is cached for a day. Check that the build was installed from Play; sideloaded release builds fail the app-recognition check. |
 | `PERMISSION_DENIED` from Firestore in debug | App Check is enforced and this device's debug token is not registered (6.2). |
 | "Offline analysis isn't ready yet" | The model has not downloaded yet; connect once. Check the model name in step 7. |

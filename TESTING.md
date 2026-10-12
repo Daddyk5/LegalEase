@@ -20,6 +20,35 @@ PDF layout uses Android text measurement, so it is checked by hand: export each 
 Legal, and confirm the logo header, page numbers, footer, that headings never end a page, and that
 the acknowledgment starts on its own page.
 
+Privacy and device protection are covered by unit tests:
+- Privacy use cases: consent, retention, export, deletion.
+- Audit entries on analysis success and failure.
+- The integrity verdict disabling the LLM.
+- Audit-log mappers.
+- The settings ViewModel.
+- `functions/` tests the integrity verdict classification (`npm test`).
+
+Check these by hand on a device:
+
+1. **First launch:** the privacy notice appears. *Exit* closes the app; *Accept* continues and
+   does not show the notice again.
+2. **Cloud backup:** the switch shows the consent dialog. *Cancel* leaves backup off.
+3. **App lock:** turning it on asks for authentication. Background the app for over 30 seconds
+   and it locks; under 30 seconds (for example, while picking a file) it does not.
+4. **FLAG_SECURE:** screenshots are blocked and the recent-apps thumbnail is blank on a result,
+   a page, a document and the contract editor. Screenshots still work on the dashboard.
+5. **Export my data:** the share sheet opens with a ZIP. It contains `legalease-data.json`,
+   `documents/` and `contracts/`.
+6. **Retention:** choosing 30 days removes older analyses at once, and the snackbar shows the
+   count.
+7. **Delete my account:**
+   - More than 5 minutes after sign-in, the app asks you to sign in again.
+   - After deleting, you land on the intro screen, the Firestore documents are gone, and the
+     account no longer signs in.
+   - Repeat the deletion with the web page at `/delete-account/`.
+8. **Integrity (release build from a Play testing track):** a rooted device or emulator without
+   Play certification shows the warning, and analysis reports no LLM use.
+
 The on-device model itself cannot run in JVM tests. Its behaviour is measured by the calibration
 procedure below.
 
