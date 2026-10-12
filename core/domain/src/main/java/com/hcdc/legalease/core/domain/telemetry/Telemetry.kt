@@ -51,7 +51,6 @@ sealed class AnalyticsEvent(val name: String, val params: Map<String, Any> = emp
     companion object {
         const val METHOD_EMAIL = "email"
         const val METHOD_GOOGLE = "google"
-
     }
 }
 

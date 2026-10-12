@@ -4,11 +4,11 @@ import com.hcdc.legalease.core.domain.model.AnalysisStatus
 import com.hcdc.legalease.core.domain.model.SourceKind
 import com.hcdc.legalease.core.domain.result.AppError
 import com.hcdc.legalease.core.domain.result.AppResult
-import kotlinx.coroutines.flow.first
 import com.hcdc.legalease.core.domain.testing.FakeAnalysisRepository
 import com.hcdc.legalease.core.domain.testing.FakeAnalysisScheduler
-import com.hcdc.legalease.core.domain.testing.FakeSyncScheduler
 import com.hcdc.legalease.core.domain.testing.FakeAnalytics
+import com.hcdc.legalease.core.domain.testing.FakeSyncScheduler
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue

@@ -1,13 +1,11 @@
 package com.hcdc.legalease.core.designsystem.theme
 
-
 import androidx.compose.ui.graphics.Color
 
-//Risk Colors
+// Risk Colors
 val RiskColorLow = Color(0xFF2E7D32) // Green 800
 val RiskColorMedium = Color(0xFFF9A825) // Yellow 800
 val RiskColorHigh = Color(0xFFC62828) // Red 800
-
 
 // Light Theme Colors
 val md_theme_light_primary = Color(0xFF6495ED) // Prussian Blue
@@ -26,7 +24,6 @@ val md_theme_light_surface = Color(0xFFF5F5F5)
 val md_theme_light_onSurface = Color(0xFF263238)
 
 val md_theme_light_outline = Color(0xFFB0B8C1)
-
 
 // Dark Theme Colors
 val md_theme_dark_primary = Color(0xFF87CEFA)

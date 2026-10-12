@@ -2,8 +2,8 @@ package com.hcdc.legalease.core.domain.usecase
 
 import com.hcdc.legalease.core.domain.engine.AuditLog
 import com.hcdc.legalease.core.domain.engine.ChunkFacts
-import com.hcdc.legalease.core.domain.engine.IntegrityChecker
 import com.hcdc.legalease.core.domain.engine.ContractClassifier
+import com.hcdc.legalease.core.domain.engine.IntegrityChecker
 import com.hcdc.legalease.core.domain.engine.LlmAnalyzer
 import com.hcdc.legalease.core.domain.engine.LlmAvailability
 import com.hcdc.legalease.core.domain.engine.LlmReasoning

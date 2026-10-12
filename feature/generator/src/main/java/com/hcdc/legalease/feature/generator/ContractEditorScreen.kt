@@ -1,6 +1,5 @@
 package com.hcdc.legalease.feature.generator
 
-import com.hcdc.legalease.core.designsystem.component.SecureContent
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -40,6 +39,7 @@ import androidx.core.content.FileProvider
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hcdc.legalease.core.designsystem.component.CustomLoading
+import com.hcdc.legalease.core.designsystem.component.SecureContent
 import com.hcdc.legalease.core.designsystem.component.buttons.PrimaryButton
 import com.hcdc.legalease.core.designsystem.component.buttons.SecondaryButton
 import com.hcdc.legalease.core.designsystem.component.cards.RiskCard

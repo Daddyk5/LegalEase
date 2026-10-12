@@ -2,12 +2,12 @@ package com.hcdc.legalease.core.domain.usecase
 
 import com.hcdc.legalease.core.domain.engine.AnalysisScheduler
 import com.hcdc.legalease.core.domain.engine.AuditLog
-import com.hcdc.legalease.core.domain.engine.ContractDocuments
-import com.hcdc.legalease.core.domain.engine.IntegrityChecker
-import com.hcdc.legalease.core.domain.engine.PaperSize
 import com.hcdc.legalease.core.domain.engine.ClauseSuggestion
 import com.hcdc.legalease.core.domain.engine.ContractAssistant
+import com.hcdc.legalease.core.domain.engine.ContractDocuments
+import com.hcdc.legalease.core.domain.engine.IntegrityChecker
 import com.hcdc.legalease.core.domain.engine.LlmAvailability
+import com.hcdc.legalease.core.domain.engine.PaperSize
 import com.hcdc.legalease.core.domain.engine.SyncScheduler
 import com.hcdc.legalease.core.domain.generator.ClauseGuard
 import com.hcdc.legalease.core.domain.generator.ClauseRejection

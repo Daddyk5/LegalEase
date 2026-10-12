@@ -3,6 +3,8 @@ package com.hcdc.legalease.feature.generator
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.hcdc.legalease.core.domain.engine.ClauseSuggestion
+import com.hcdc.legalease.core.domain.engine.ContractDocuments
+import com.hcdc.legalease.core.domain.engine.PaperSize
 import com.hcdc.legalease.core.domain.generator.FieldError
 import com.hcdc.legalease.core.domain.generator.FormField
 import com.hcdc.legalease.core.domain.generator.RenderedContract
@@ -13,22 +15,20 @@ import com.hcdc.legalease.core.domain.model.ContractDraft
 import com.hcdc.legalease.core.domain.model.ContractType
 import com.hcdc.legalease.core.domain.model.Party
 import com.hcdc.legalease.core.domain.result.AppResult
-import com.hcdc.legalease.core.domain.engine.ContractDocuments
-import com.hcdc.legalease.core.domain.engine.PaperSize
 import com.hcdc.legalease.core.domain.testing.FakeAnalysisRepository
-import com.hcdc.legalease.core.domain.testing.FakeAuditLog
-import com.hcdc.legalease.core.domain.testing.FakeIntegrityChecker
-import com.hcdc.legalease.core.domain.usecase.ExportContractUseCase
 import com.hcdc.legalease.core.domain.testing.FakeAnalysisScheduler
 import com.hcdc.legalease.core.domain.testing.FakeAnalytics
+import com.hcdc.legalease.core.domain.testing.FakeAuditLog
 import com.hcdc.legalease.core.domain.testing.FakeContractAssistant
 import com.hcdc.legalease.core.domain.testing.FakeContractRepository
 import com.hcdc.legalease.core.domain.testing.FakeFeatureFlags
+import com.hcdc.legalease.core.domain.testing.FakeIntegrityChecker
 import com.hcdc.legalease.core.domain.testing.FakeSyncScheduler
 import com.hcdc.legalease.core.domain.testing.MainDispatcherRule
 import com.hcdc.legalease.core.domain.testing.sampleReport
 import com.hcdc.legalease.core.domain.usecase.AnalyzeGeneratedContractUseCase
 import com.hcdc.legalease.core.domain.usecase.AssistantAvailabilityUseCase
+import com.hcdc.legalease.core.domain.usecase.ExportContractUseCase
 import com.hcdc.legalease.core.domain.usecase.ObserveAnalysisUseCase
 import com.hcdc.legalease.core.domain.usecase.ObserveContractVersionUseCase
 import com.hcdc.legalease.core.domain.usecase.RewriteClauseUseCase
@@ -65,7 +65,11 @@ class ContractEditorViewModelTest {
         ContractEditorViewModel(
             savedStateHandle = SavedStateHandle(args),
             saveVersion = SaveContractVersionUseCase(
-                contracts, FakeSyncScheduler(), FakeAnalytics(), FakeAuditLog(), clock,
+                contracts,
+                FakeSyncScheduler(),
+                FakeAnalytics(),
+                FakeAuditLog(),
+                clock,
             ),
             observeVersion = ObserveContractVersionUseCase(contracts),
             observeAnalysis = ObserveAnalysisUseCase(analyses),

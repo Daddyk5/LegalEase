@@ -1,6 +1,5 @@
 package com.hcdc.legalease.feature.generator
 
-import com.hcdc.legalease.core.domain.engine.PaperSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -26,6 +25,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.hcdc.legalease.core.designsystem.component.buttons.PrimaryButton
 import com.hcdc.legalease.core.designsystem.component.buttons.SecondaryButton
+import com.hcdc.legalease.core.domain.engine.PaperSize
 import com.hcdc.legalease.core.domain.generator.DiffSegment
 import com.hcdc.legalease.core.domain.model.Analysis
 import com.hcdc.legalease.core.domain.model.AnalysisStatus

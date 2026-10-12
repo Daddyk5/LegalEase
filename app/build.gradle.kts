@@ -12,8 +12,22 @@ android {
 
     defaultConfig {
         applicationId = "com.hcdc.legalease"
-        versionCode = 1
-        versionName = "1.0"
+        // CI passes the build number; local builds stay at 1.
+        versionCode = providers.environmentVariable("VERSION_CODE").orNull?.toInt() ?: 1
+        versionName = providers.environmentVariable("VERSION_NAME").orNull ?: "1.0"
+    }
+
+    // Release signing comes only from environment variables (GitHub Secrets in CI), never from git.
+    val releaseKeystore = providers.environmentVariable("LEGALEASE_KEYSTORE_PATH").orNull
+    signingConfigs {
+        if (releaseKeystore != null) {
+            create("release") {
+                storeFile = file(releaseKeystore)
+                storePassword = providers.environmentVariable("LEGALEASE_KEYSTORE_PASSWORD").get()
+                keyAlias = providers.environmentVariable("LEGALEASE_KEY_ALIAS").get()
+                keyPassword = providers.environmentVariable("LEGALEASE_KEY_PASSWORD").get()
+            }
+        }
     }
 
     buildFeatures {
@@ -25,6 +39,8 @@ android {
 
     buildTypes {
         release {
+            // Unsigned when the variables are absent, so local release builds still work.
+            signingConfig = signingConfigs.findByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
@@ -53,6 +69,7 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.appcheck.playintegrity)
     debugImplementation(libs.firebase.appcheck.debug)
+    debugImplementation(libs.leakcanary)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

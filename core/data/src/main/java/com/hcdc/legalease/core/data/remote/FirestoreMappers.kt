@@ -85,8 +85,14 @@ internal fun analysisFromFirestore(id: String, data: Map<String, Any?>): Analysi
 }
 
 private fun tombstone(id: String, updatedAt: Long) = AnalysisEntity(
-    id = id, documentName = "", sourceKind = "", status = "", createdAt = 0, updatedAt = updatedAt,
-    remoteUpdatedAt = updatedAt, deleted = true,
+    id = id,
+    documentName = "",
+    sourceKind = "",
+    status = "",
+    createdAt = 0,
+    updatedAt = updatedAt,
+    remoteUpdatedAt = updatedAt,
+    deleted = true,
 )
 
 internal fun GeneratedContractEntity.toFirestore(): Map<String, Any?> = mapOf(

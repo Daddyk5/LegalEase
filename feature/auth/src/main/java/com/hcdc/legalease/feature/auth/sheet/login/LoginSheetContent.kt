@@ -42,7 +42,6 @@ fun LoginSheetContent(
     onNavigateToDashboard: () -> Unit,
     onLoginSuccess: () -> Unit
 ) {
-
     val loginSheetViewModel: LoginSheetViewModel = hiltViewModel()
     val bottomSheetViewModel: BottomSheetViewModel = viewModel()
 
@@ -106,7 +105,6 @@ fun LoginSheetContent(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary
             )
-
         }
         LoginMessages(state, onResend = loginSheetViewModel::resendVerificationEmail)
         VerticalSpacer(height = 30.dp)
@@ -148,7 +146,6 @@ fun LoginSheetContent(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.primary
         )
-
     }
 }
 

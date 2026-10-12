@@ -11,13 +11,16 @@ import androidx.work.WorkManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.perf.FirebasePerformance
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
-import com.google.firebase.firestore.FirebaseFirestore
+import com.hcdc.legalease.core.data.account.FirebaseAccountDataRepository
 import com.hcdc.legalease.core.data.auth.FirebaseAuthRepository
 import com.hcdc.legalease.core.data.config.RemoteConfigFeatureFlags
 import com.hcdc.legalease.core.data.local.AnalysisDao
+import com.hcdc.legalease.core.data.local.AuditDao
 import com.hcdc.legalease.core.data.local.DatabaseKeyProvider
 import com.hcdc.legalease.core.data.local.DocumentPageDao
 import com.hcdc.legalease.core.data.local.GeneratedContractDao
@@ -26,28 +29,25 @@ import com.hcdc.legalease.core.data.repository.DataStorePreferencesRepository
 import com.hcdc.legalease.core.data.repository.FirebaseUserSession
 import com.hcdc.legalease.core.data.repository.OfflineFirstAnalysisRepository
 import com.hcdc.legalease.core.data.repository.OfflineFirstContractRepository
+import com.hcdc.legalease.core.data.repository.RoomAuditLog
 import com.hcdc.legalease.core.data.telemetry.FirebaseAnalyticsTracker
 import com.hcdc.legalease.core.data.telemetry.FirebaseCrashReporter
 import com.hcdc.legalease.core.data.telemetry.FirebasePerformanceTracer
 import com.hcdc.legalease.core.data.work.WorkManagerAnalysisScheduler
 import com.hcdc.legalease.core.data.work.WorkManagerSyncScheduler
+import com.hcdc.legalease.core.domain.engine.AccountDataRepository
 import com.hcdc.legalease.core.domain.engine.AnalysisScheduler
+import com.hcdc.legalease.core.domain.engine.AuditLog
 import com.hcdc.legalease.core.domain.engine.SyncScheduler
 import com.hcdc.legalease.core.domain.repository.AnalysisRepository
 import com.hcdc.legalease.core.domain.repository.AuthRepository
-import com.hcdc.legalease.core.domain.repository.FeatureFlagsRepository
 import com.hcdc.legalease.core.domain.repository.ContractRepository
+import com.hcdc.legalease.core.domain.repository.FeatureFlagsRepository
 import com.hcdc.legalease.core.domain.repository.PreferencesRepository
 import com.hcdc.legalease.core.domain.repository.UserSession
 import com.hcdc.legalease.core.domain.telemetry.AnalyticsTracker
 import com.hcdc.legalease.core.domain.telemetry.CrashReporter
 import com.hcdc.legalease.core.domain.telemetry.PerformanceTracer
-import com.hcdc.legalease.core.data.local.AuditDao
-import com.hcdc.legalease.core.data.repository.RoomAuditLog
-import com.hcdc.legalease.core.data.account.FirebaseAccountDataRepository
-import com.hcdc.legalease.core.domain.engine.AuditLog
-import com.hcdc.legalease.core.domain.engine.AccountDataRepository
-import com.google.firebase.functions.FirebaseFunctions
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -62,17 +62,29 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 internal abstract class DataBindsModule {
     @Binds abstract fun analysisRepository(impl: OfflineFirstAnalysisRepository): AnalysisRepository
+
     @Binds abstract fun contractRepository(impl: OfflineFirstContractRepository): ContractRepository
+
     @Binds abstract fun preferencesRepository(impl: DataStorePreferencesRepository): PreferencesRepository
+
     @Binds abstract fun userSession(impl: FirebaseUserSession): UserSession
+
     @Binds abstract fun analysisScheduler(impl: WorkManagerAnalysisScheduler): AnalysisScheduler
+
     @Binds abstract fun syncScheduler(impl: WorkManagerSyncScheduler): SyncScheduler
+
     @Binds abstract fun authRepository(impl: FirebaseAuthRepository): AuthRepository
+
     @Binds abstract fun featureFlags(impl: RemoteConfigFeatureFlags): FeatureFlagsRepository
+
     @Binds abstract fun analytics(impl: FirebaseAnalyticsTracker): AnalyticsTracker
+
     @Binds abstract fun tracer(impl: FirebasePerformanceTracer): PerformanceTracer
+
     @Binds abstract fun crashReporter(impl: FirebaseCrashReporter): CrashReporter
+
     @Binds abstract fun auditLog(impl: RoomAuditLog): AuditLog
+
     @Binds abstract fun accountData(impl: FirebaseAccountDataRepository): AccountDataRepository
 }
 
@@ -105,8 +117,11 @@ internal object DataProvidesModule {
     }
 
     @Provides fun analysisDao(db: LegalEaseDatabase): AnalysisDao = db.analysisDao()
+
     @Provides fun documentPageDao(db: LegalEaseDatabase): DocumentPageDao = db.documentPageDao()
+
     @Provides fun generatedContractDao(db: LegalEaseDatabase): GeneratedContractDao = db.generatedContractDao()
+
     @Provides fun auditDao(db: LegalEaseDatabase): AuditDao = db.auditDao()
 
     @Provides
@@ -122,10 +137,14 @@ internal object DataProvidesModule {
 @InstallIn(SingletonComponent::class)
 internal object FirebaseModule {
     @Provides fun firebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+
     @Provides fun firestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
+
     @Provides
     fun analytics(@ApplicationContext context: Context): FirebaseAnalytics = FirebaseAnalytics.getInstance(context)
+
     @Provides fun performance(): FirebasePerformance = FirebasePerformance.getInstance()
+
     @Provides fun crashlytics(): FirebaseCrashlytics = FirebaseCrashlytics.getInstance()
 
     /** Same region as Firestore (Singapore). */

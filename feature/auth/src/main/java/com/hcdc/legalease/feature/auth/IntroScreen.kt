@@ -1,6 +1,5 @@
 package com.hcdc.legalease.feature.auth
 
-import com.hcdc.legalease.feature.auth.sheet.BottomSheet
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -11,23 +10,24 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.hcdc.legalease.core.designsystem.R as DesignR
+import com.hcdc.legalease.core.designsystem.component.buttons.PrimaryButton
+import com.hcdc.legalease.core.designsystem.component.spacers.VerticalSpacer
+import com.hcdc.legalease.feature.auth.sheet.BottomSheet
 import com.hcdc.legalease.feature.auth.sheet.BottomSheetContent
+import com.hcdc.legalease.feature.auth.sheet.BottomSheetViewModel
 import com.hcdc.legalease.feature.auth.sheet.forgotpassword.ForgotPasswordSheetContent
 import com.hcdc.legalease.feature.auth.sheet.login.LoginSheetContent
 import com.hcdc.legalease.feature.auth.sheet.register.RegisterSheetContent
-import com.hcdc.legalease.core.designsystem.component.buttons.PrimaryButton
-import com.hcdc.legalease.core.designsystem.component.spacers.VerticalSpacer
-import com.hcdc.legalease.feature.auth.sheet.BottomSheetViewModel
+import com.hcdc.legalease.core.designsystem.R as DesignR
 
 @Composable
 fun IntroScreen(
@@ -57,7 +57,6 @@ fun IntroScreen(
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Image(
             painter = painterResource(id = DesignR.drawable.lawyer),
             contentDescription = "Intro Screen Image",
@@ -67,7 +66,6 @@ fun IntroScreen(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Text(
                 text = "LegalEase",
                 style = MaterialTheme.typography.displayLarge.copy(
@@ -88,8 +86,7 @@ fun IntroScreen(
                 text = "Begin",
                 // A verified, signed-in user goes straight in; everyone else logs in first.
                 onClick = { if (isSignedIn) onLoginSuccess() else sheetViewModel.show(BottomSheetContent.Login) }
-                )
+            )
         }
     }
 }
-

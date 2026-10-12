@@ -31,6 +31,13 @@ data class Generation(
     val timeout: Duration,
 )
 
+/** Runs prompts on the on-device model; the seam that lets the analyzer and assistant be tested. */
+interface TextGenerator {
+    suspend fun generate(request: Generation): String
+    fun maxTokens(): Int
+    suspend fun release()
+}
+
 /**
  * App-scoped LiteRT-LM engine. Loads lazily on a background dispatcher: decrypts the model to a
  * temporary file, initialises the engine, and deletes the file immediately. [release] frees the
@@ -41,7 +48,7 @@ class LocalLlmEngine @Inject constructor(
     private val store: ModelStore,
     private val provisioner: ModelProvisioner,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-) {
+) : TextGenerator {
     private val mutex = Mutex()
     private var engine: Engine? = null
 
@@ -49,7 +56,7 @@ class LocalLlmEngine @Inject constructor(
      * Runs one generation in a fresh conversation, so steps never see each other's text. On timeout
      * or cancellation the native generation is cancelled too.
      */
-    suspend fun generate(request: Generation): String = coroutineScope {
+    override suspend fun generate(request: Generation): String = coroutineScope {
         val engine = acquire()
         val conversation = engine.createConversation(
             ConversationConfig(
@@ -103,9 +110,9 @@ class LocalLlmEngine @Inject constructor(
     }
 
     /** Context window of the loaded tier, for prompt budgeting. */
-    fun maxTokens(): Int = provisioner.specForDevice()?.maxTokens ?: 0
+    override fun maxTokens(): Int = provisioner.specForDevice()?.maxTokens ?: 0
 
-    suspend fun release() = mutex.withLock {
+    override suspend fun release() = mutex.withLock {
         engine?.close()
         engine = null
         store.clearRuntimeFiles()

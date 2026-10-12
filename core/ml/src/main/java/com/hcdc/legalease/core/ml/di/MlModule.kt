@@ -1,18 +1,21 @@
 package com.hcdc.legalease.core.ml.di
 
+import com.google.firebase.storage.FirebaseStorage
 import com.hcdc.legalease.core.domain.engine.ContractAssistant
 import com.hcdc.legalease.core.domain.engine.ContractClassifier
-import com.hcdc.legalease.core.domain.engine.TextExtractor
 import com.hcdc.legalease.core.domain.engine.LlmAnalyzer
 import com.hcdc.legalease.core.domain.engine.OfflineModelProvisioner
 import com.hcdc.legalease.core.domain.engine.PageImageRenderer
+import com.hcdc.legalease.core.domain.engine.TextExtractor
 import com.hcdc.legalease.core.ml.MlKitTextExtractor
 import com.hcdc.legalease.core.ml.PdfPageImageRenderer
 import com.hcdc.legalease.core.ml.TFLiteClassifier
+import com.hcdc.legalease.core.ml.llm.LocalLlmEngine
+import com.hcdc.legalease.core.ml.llm.ModelAvailability
 import com.hcdc.legalease.core.ml.llm.ModelProvisioner
 import com.hcdc.legalease.core.ml.llm.OnDeviceContractAssistant
 import com.hcdc.legalease.core.ml.llm.OnDeviceLlmAnalyzer
-import com.google.firebase.storage.FirebaseStorage
+import com.hcdc.legalease.core.ml.llm.TextGenerator
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -37,6 +40,12 @@ internal abstract class MlModule {
 
     @Binds
     abstract fun bindModelProvisioner(impl: ModelProvisioner): OfflineModelProvisioner
+
+    @Binds
+    abstract fun bindModelAvailability(impl: ModelProvisioner): ModelAvailability
+
+    @Binds
+    abstract fun bindTextGenerator(impl: LocalLlmEngine): TextGenerator
 
     @Binds
     abstract fun bindPageRenderer(impl: PdfPageImageRenderer): PageImageRenderer

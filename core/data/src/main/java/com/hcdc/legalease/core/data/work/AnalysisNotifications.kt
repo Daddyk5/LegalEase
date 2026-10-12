@@ -53,25 +53,30 @@ class AnalysisNotifications @Inject constructor(
                 WorkManager.getInstance(context).createCancelPendingIntent(workId),
             )
         when (progress) {
-            is AnalysisProgress.ReadingPage -> builder
-                .setContentText(
-                    context.getString(R.string.analysis_notification_reading, progress.page, progress.pageCount)
-                )
-                .setProgress(progress.pageCount, progress.page, false)
-            AnalysisProgress.Classifying -> builder
-                .setContentText(context.getString(R.string.analysis_notification_classifying))
-                .setProgress(0, 0, true)
-            is AnalysisProgress.AnalyzingPage -> builder
-                .setContentText(
-                    context.getString(R.string.analysis_notification_analyzing, progress.page, progress.pageCount)
-                )
-                .setProgress(progress.pageCount, progress.page, false)
-            is AnalysisProgress.Reasoning -> builder
-                .setContentText(context.getString(R.string.analysis_notification_reasoning))
-                .setProgress(progress.passes, progress.pass, false)
-            null -> builder
-                .setContentText(context.getString(R.string.analysis_notification_preparing))
-                .setProgress(0, 0, true)
+            is AnalysisProgress.ReadingPage ->
+                builder
+                    .setContentText(
+                        context.getString(R.string.analysis_notification_reading, progress.page, progress.pageCount)
+                    )
+                    .setProgress(progress.pageCount, progress.page, false)
+            AnalysisProgress.Classifying ->
+                builder
+                    .setContentText(context.getString(R.string.analysis_notification_classifying))
+                    .setProgress(0, 0, true)
+            is AnalysisProgress.AnalyzingPage ->
+                builder
+                    .setContentText(
+                        context.getString(R.string.analysis_notification_analyzing, progress.page, progress.pageCount)
+                    )
+                    .setProgress(progress.pageCount, progress.page, false)
+            is AnalysisProgress.Reasoning ->
+                builder
+                    .setContentText(context.getString(R.string.analysis_notification_reasoning))
+                    .setProgress(progress.passes, progress.pass, false)
+            null ->
+                builder
+                    .setContentText(context.getString(R.string.analysis_notification_preparing))
+                    .setProgress(0, 0, true)
         }
         return builder.build()
     }

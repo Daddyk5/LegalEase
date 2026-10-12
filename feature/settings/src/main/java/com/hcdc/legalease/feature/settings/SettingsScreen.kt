@@ -1,8 +1,5 @@
 package com.hcdc.legalease.feature.settings
 
-import android.content.ActivityNotFoundException
-import android.content.Context
-import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -42,7 +39,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import androidx.core.content.FileProvider
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hcdc.legalease.core.designsystem.component.buttons.PrimaryButton
@@ -51,7 +47,6 @@ import com.hcdc.legalease.core.designsystem.component.spacers.VerticalSpacer
 import com.hcdc.legalease.core.domain.model.DeviceIntegrity
 import com.hcdc.legalease.core.domain.model.RetentionPeriod
 import com.hcdc.legalease.core.domain.result.AppError
-import java.io.File
 
 @Composable
 fun SettingsScreen(

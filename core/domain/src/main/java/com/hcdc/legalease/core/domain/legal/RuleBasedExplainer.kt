@@ -58,7 +58,9 @@ object RuleBasedExplainer {
                         "This appears to be a sale of real property, but no notarial acknowledgment was found. " +
                             "Such a sale must appear in a public document, though the parties may compel each " +
                             "other to execute one.",
-                        null, null, ReasonCode.FORM_NOT_MET,
+                        null,
+                        null,
+                        ReasonCode.FORM_NOT_MET,
                     )
                 )
             }
@@ -67,7 +69,9 @@ object RuleBasedExplainer {
                     Finding(
                         "No written interest stipulation was found; interest is due only if expressly " +
                             "stipulated in writing.",
-                        null, null, ReasonCode.NONE,
+                        null,
+                        null,
+                        ReasonCode.NONE,
                     )
                 )
             }

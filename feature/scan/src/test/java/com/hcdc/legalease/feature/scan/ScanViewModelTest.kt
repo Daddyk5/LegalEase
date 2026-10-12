@@ -2,6 +2,7 @@ package com.hcdc.legalease.feature.scan
 
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
+import com.hcdc.legalease.core.domain.model.Classification
 import com.hcdc.legalease.core.domain.model.SourceKind
 import com.hcdc.legalease.core.domain.result.AppError
 import com.hcdc.legalease.core.domain.result.AppResult
@@ -9,11 +10,10 @@ import com.hcdc.legalease.core.domain.testing.FakeAnalysisRepository
 import com.hcdc.legalease.core.domain.testing.FakeAnalysisScheduler
 import com.hcdc.legalease.core.domain.testing.FakeAnalytics
 import com.hcdc.legalease.core.domain.testing.MainDispatcherRule
+import com.hcdc.legalease.core.domain.testing.sampleReport
 import com.hcdc.legalease.core.domain.usecase.CancelAnalysisUseCase
 import com.hcdc.legalease.core.domain.usecase.ObserveAnalysisUseCase
 import com.hcdc.legalease.core.domain.usecase.StartAnalysisUseCase
-import com.hcdc.legalease.core.domain.model.Classification
-import com.hcdc.legalease.core.domain.testing.sampleReport
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull

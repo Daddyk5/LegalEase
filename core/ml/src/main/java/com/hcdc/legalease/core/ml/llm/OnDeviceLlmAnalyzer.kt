@@ -21,8 +21,8 @@ import kotlin.time.Duration.Companion.seconds
  */
 @Singleton
 class OnDeviceLlmAnalyzer @Inject constructor(
-    private val engine: LocalLlmEngine,
-    private val provisioner: ModelProvisioner,
+    private val engine: TextGenerator,
+    private val provisioner: ModelAvailability,
 ) : LlmAnalyzer {
 
     override suspend fun availability(): LlmAvailability {

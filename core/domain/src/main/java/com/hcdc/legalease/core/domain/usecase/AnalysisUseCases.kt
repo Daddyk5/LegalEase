@@ -1,12 +1,12 @@
 package com.hcdc.legalease.core.domain.usecase
 
+import androidx.paging.PagingData
 import com.hcdc.legalease.core.domain.engine.AnalysisScheduler
 import com.hcdc.legalease.core.domain.engine.SyncScheduler
 import com.hcdc.legalease.core.domain.model.Analysis
 import com.hcdc.legalease.core.domain.model.SourceKind
 import com.hcdc.legalease.core.domain.repository.AnalysisRepository
 import com.hcdc.legalease.core.domain.result.AppResult
-import androidx.paging.PagingData
 import com.hcdc.legalease.core.domain.telemetry.AnalyticsEvent
 import com.hcdc.legalease.core.domain.telemetry.AnalyticsTracker
 import kotlinx.coroutines.flow.Flow

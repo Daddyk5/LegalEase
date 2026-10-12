@@ -19,19 +19,19 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hcdc.legalease.R
-import com.hcdc.legalease.core.designsystem.R as DesignR
 import com.hcdc.legalease.core.designsystem.component.cards.DashboardCard
 import com.hcdc.legalease.core.designsystem.component.spacers.VerticalSpacer
+import com.hcdc.legalease.core.designsystem.R as DesignR
 
 @Composable
 fun DashboardScreen(
@@ -101,8 +101,7 @@ fun DashboardScreen(
         VerticalSpacer(height = 5.dp)
         Text(
             text = "Ready to explore your documents?",
-            style = MaterialTheme.typography.bodyLarge.copy(
-            )
+            style = MaterialTheme.typography.bodyLarge.copy()
         )
         if (deviceCompromised) {
             VerticalSpacer(height = 8.dp)
@@ -162,7 +161,5 @@ fun DashboardScreen(
                 modifier = Modifier.weight(.5f)
             )
         }
-
     }
-
 }

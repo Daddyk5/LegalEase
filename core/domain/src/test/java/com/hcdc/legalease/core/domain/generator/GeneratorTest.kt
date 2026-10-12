@@ -19,7 +19,12 @@ import java.math.BigDecimal
 internal fun validDraft(type: ContractType) = ContractDraft(
     type = type,
     firstParty = Party(
-        "Juan dela Cruz", CivilStatus.MARRIED, "Filipino", "12 Mabini St., Davao City", "Passport", "P1234567A",
+        "Juan dela Cruz",
+        CivilStatus.MARRIED,
+        "Filipino",
+        "12 Mabini St., Davao City",
+        "Passport",
+        "P1234567A",
     ),
     secondParty = Party("Maria Santos", CivilStatus.SINGLE, "Filipino", "34 Rizal Ave., Davao City", "UMID", ""),
     partiesOfLegalAge = true,
@@ -127,8 +132,10 @@ class ContractTemplatesTest {
 
     @Test
     fun `ordinals`() {
-        assertEquals(listOf("1st", "2nd", "3rd", "4th", "11th", "12th", "13th", "21st", "22nd", "31st"),
-            listOf(1, 2, 3, 4, 11, 12, 13, 21, 22, 31).map(TemplateFormat::ordinal))
+        assertEquals(
+            listOf("1st", "2nd", "3rd", "4th", "11th", "12th", "13th", "21st", "22nd", "31st"),
+            listOf(1, 2, 3, 4, 11, 12, 13, 21, 22, 31).map(TemplateFormat::ordinal)
+        )
     }
 }
 
@@ -147,8 +154,11 @@ class ContractValidatorTest {
         val errors = ContractValidator.validate(draft, FormStep.FIRST_PARTY)
         assertEquals(
             setOf(
-                FormField.FIRST_NAME, FormField.FIRST_CIVIL_STATUS, FormField.FIRST_CITIZENSHIP,
-                FormField.FIRST_ADDRESS, FormField.FIRST_ID_TYPE,
+                FormField.FIRST_NAME,
+                FormField.FIRST_CIVIL_STATUS,
+                FormField.FIRST_CITIZENSHIP,
+                FormField.FIRST_ADDRESS,
+                FormField.FIRST_ID_TYPE,
             ),
             errors.keys,
         )

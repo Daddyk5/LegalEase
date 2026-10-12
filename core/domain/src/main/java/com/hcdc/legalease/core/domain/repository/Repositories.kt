@@ -1,15 +1,15 @@
 package com.hcdc.legalease.core.domain.repository
 
+import androidx.paging.PagingData
 import com.hcdc.legalease.core.domain.model.Analysis
+import com.hcdc.legalease.core.domain.model.AnalysisReport
 import com.hcdc.legalease.core.domain.model.ContractDraft
 import com.hcdc.legalease.core.domain.model.ExtractedText
-import com.hcdc.legalease.core.domain.model.RetentionPeriod
 import com.hcdc.legalease.core.domain.model.GeneratedContract
+import com.hcdc.legalease.core.domain.model.RetentionPeriod
 import com.hcdc.legalease.core.domain.model.SourceKind
-import com.hcdc.legalease.core.domain.model.AnalysisReport
 import com.hcdc.legalease.core.domain.result.AppError
 import com.hcdc.legalease.core.domain.result.AppResult
-import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 
 /** Local-first store of analyses. The local database is the source of truth. */

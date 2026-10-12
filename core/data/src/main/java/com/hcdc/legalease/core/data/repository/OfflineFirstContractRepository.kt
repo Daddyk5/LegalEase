@@ -1,11 +1,11 @@
 package com.hcdc.legalease.core.data.repository
 
 import androidx.room.withTransaction
+import com.hcdc.legalease.core.data.local.DraftJson
 import com.hcdc.legalease.core.data.local.GeneratedContractDao
 import com.hcdc.legalease.core.data.local.GeneratedContractEntity
 import com.hcdc.legalease.core.data.local.LegalEaseDatabase
 import com.hcdc.legalease.core.data.local.toDomain
-import com.hcdc.legalease.core.data.local.DraftJson
 import com.hcdc.legalease.core.domain.model.ContractDraft
 import com.hcdc.legalease.core.domain.model.GeneratedContract
 import com.hcdc.legalease.core.domain.repository.ContractRepository

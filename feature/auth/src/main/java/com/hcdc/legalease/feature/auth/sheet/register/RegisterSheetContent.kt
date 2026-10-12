@@ -32,7 +32,6 @@ import com.hcdc.legalease.feature.auth.sheet.BottomSheetViewModel
 /** Registration form. Success sends a verification email; the user logs in after verifying. */
 @Composable
 fun RegisterSheetContent() {
-
     val bottomSheetViewModel: BottomSheetViewModel = viewModel()
 
     val registerSheetViewModel: RegisterSheetViewModel = hiltViewModel()

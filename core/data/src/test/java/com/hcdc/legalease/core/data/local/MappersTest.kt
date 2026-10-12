@@ -27,8 +27,13 @@ class MappersTest {
         contractTitle = "CONTRACT OF LEASE",
         contractType = DetectedContractType.LEASE,
         reasons = listOf(
-            Reason("One-sided eviction", "may be evicted without notice", 2, ReasonCode.VITIATED_CONSENT,
-                listOf(Citation("Arts. 1390–1402", "Voidable contracts."))),
+            Reason(
+                "One-sided eviction",
+                "may be evicted without notice",
+                2,
+                ReasonCode.VITIATED_CONSENT,
+                listOf(Citation("Arts. 1390–1402", "Voidable contracts."))
+            ),
         ),
         missingElements = listOf("Term"),
         riskFlags = listOf(RiskFlag(RiskLevel.HIGH, "Eviction without notice")),

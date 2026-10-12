@@ -85,7 +85,10 @@ internal object ReportJson {
             contractType = report.contractType.name,
             reasons = report.reasons.map { r ->
                 ReasonDto(
-                    r.finding, r.clauseQuote, r.page, r.code.name,
+                    r.finding,
+                    r.clauseQuote,
+                    r.page,
+                    r.code.name,
                     r.citations.map { CitationDto(it.article, it.description) },
                 )
             },
@@ -117,7 +120,10 @@ internal object ReportJson {
             contractType = enumValueOf<DetectedContractType>(dto.contractType),
             reasons = dto.reasons.map { r ->
                 Reason(
-                    r.finding, r.quote, r.page, enumValueOf<ReasonCode>(r.code),
+                    r.finding,
+                    r.quote,
+                    r.page,
+                    enumValueOf<ReasonCode>(r.code),
                     r.citations.map { Citation(it.article, it.description) },
                 )
             },

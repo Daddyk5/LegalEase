@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.hcdc.legalease.core.domain.di.ApplicationScope
 import com.hcdc.legalease.core.domain.engine.ContractAssistant
 import com.hcdc.legalease.core.domain.engine.ContractDocuments
-import com.hcdc.legalease.core.domain.engine.PaperSize
 import com.hcdc.legalease.core.domain.engine.LlmAvailability
+import com.hcdc.legalease.core.domain.engine.PaperSize
 import com.hcdc.legalease.core.domain.generator.ClauseRejection
 import com.hcdc.legalease.core.domain.generator.ContractTemplates
 import com.hcdc.legalease.core.domain.generator.ContractValidator
@@ -39,9 +39,9 @@ import com.hcdc.legalease.core.domain.usecase.RewriteOutcome
 import com.hcdc.legalease.core.domain.usecase.SaveContractVersionUseCase
 import com.hcdc.legalease.core.domain.usecase.SuggestClausesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

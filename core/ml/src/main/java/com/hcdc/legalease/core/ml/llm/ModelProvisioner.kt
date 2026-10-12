@@ -20,6 +20,12 @@ import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/** Which model this device would use, and whether it is ready. */
+interface ModelAvailability {
+    fun specForDevice(): ModelSpec?
+    suspend fun isProvisioned(): Boolean
+}
+
 /**
  * Gets the model for this device's tier onto the device, verified and encrypted:
  * 1. Play Store installs: the `llm_pack` fast-follow asset pack. Its plaintext copy is removed
@@ -36,10 +42,10 @@ class ModelProvisioner @Inject constructor(
     private val store: ModelStore,
     private val storage: FirebaseStorage,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-) : OfflineModelProvisioner {
+) : OfflineModelProvisioner, ModelAvailability {
 
     /** The spec for this device, or null if it cannot run any tier. */
-    fun specForDevice(): ModelSpec? = capability.tier()?.let(ModelCatalog::spec)
+    override fun specForDevice(): ModelSpec? = capability.tier()?.let(ModelCatalog::spec)
 
     override suspend fun isProvisioned(): Boolean = specForDevice()?.let(store::isReady) ?: false
 
@@ -67,8 +73,11 @@ class ModelProvisioner @Inject constructor(
         val manager = AssetPackManagerFactory.getInstance(context)
         val assetsPath = manager.getPackLocation(ModelCatalog.ASSET_PACK)?.assetsPath()
             // Not installed from Play, or the fast-follow download has not finished yet.
-            ?: return if (packStatus(manager) in DOWNLOADING) PackOutcome.StillDownloading
-            else PackOutcome.NotAvailable
+            ?: return if (packStatus(manager) in DOWNLOADING) {
+                PackOutcome.StillDownloading
+            } else {
+                PackOutcome.NotAvailable
+            }
         val file = File(assetsPath, "${ModelCatalog.REMOTE_FOLDER}/${spec.tier.fileName}")
         if (!file.exists()) return PackOutcome.NotAvailable
         val result = importFile(spec, file)

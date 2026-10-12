@@ -4,10 +4,13 @@ import com.hcdc.legalease.core.domain.engine.ChunkFacts
 import com.hcdc.legalease.core.domain.engine.LlmAvailability
 import com.hcdc.legalease.core.domain.engine.LlmReason
 import com.hcdc.legalease.core.domain.engine.LlmReasoning
+import com.hcdc.legalease.core.domain.legal.ConfidenceScorer
 import com.hcdc.legalease.core.domain.model.AnalysisMethod
 import com.hcdc.legalease.core.domain.model.AnalysisStatus
+import com.hcdc.legalease.core.domain.model.AuditEvent
 import com.hcdc.legalease.core.domain.model.Classification
 import com.hcdc.legalease.core.domain.model.DetectedContractType
+import com.hcdc.legalease.core.domain.model.DeviceIntegrity
 import com.hcdc.legalease.core.domain.model.ExtractedText
 import com.hcdc.legalease.core.domain.model.Prediction
 import com.hcdc.legalease.core.domain.model.ReasonCode
@@ -18,8 +21,10 @@ import com.hcdc.legalease.core.domain.result.AppError
 import com.hcdc.legalease.core.domain.result.AppResult
 import com.hcdc.legalease.core.domain.testing.FakeAnalysisRepository
 import com.hcdc.legalease.core.domain.testing.FakeAnalytics
+import com.hcdc.legalease.core.domain.testing.FakeAuditLog
 import com.hcdc.legalease.core.domain.testing.FakeClassifier
 import com.hcdc.legalease.core.domain.testing.FakeFeatureFlags
+import com.hcdc.legalease.core.domain.testing.FakeIntegrityChecker
 import com.hcdc.legalease.core.domain.testing.FakeLlmAnalyzer
 import com.hcdc.legalease.core.domain.testing.FakeSyncScheduler
 import com.hcdc.legalease.core.domain.testing.FakeTextExtractor
@@ -29,11 +34,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import com.hcdc.legalease.core.domain.testing.FakeIntegrityChecker
-import com.hcdc.legalease.core.domain.testing.FakeAuditLog
-import com.hcdc.legalease.core.domain.model.DeviceIntegrity
-import com.hcdc.legalease.core.domain.model.AuditEvent
-import com.hcdc.legalease.core.domain.legal.ConfidenceScorer
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
@@ -277,8 +277,11 @@ class AnalyzeContractUseCaseTest {
 
         assertEquals(
             mapOf(
-                "classification" to "INCONCLUSIVE", "confidence_band" to "inconclusive",
-                "method" to "classifier_only", "page_count" to 3L, "duration_ms" to 0L,
+                "classification" to "INCONCLUSIVE",
+                "confidence_band" to "inconclusive",
+                "method" to "classifier_only",
+                "page_count" to 3L,
+                "duration_ms" to 0L,
             ),
             analytics.events.single().params,
         )

@@ -1,6 +1,8 @@
 package com.hcdc.legalease.core.designsystem.component.cards
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,8 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.hcdc.legalease.core.designsystem.component.spacers.VerticalSpacer
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Arrangement
 
 @Composable
 fun RiskCard(
@@ -40,10 +40,8 @@ fun RiskCard(
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-
             // Header row with colored circle and label
             Row(verticalAlignment = Alignment.CenterVertically) {
-
                 VerticalSpacer(8.dp)
                 Text(
                     text = riskLevel,

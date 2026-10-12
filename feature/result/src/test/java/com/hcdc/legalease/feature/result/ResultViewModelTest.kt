@@ -24,7 +24,13 @@ class ResultViewModelTest {
     @get:Rule val mainDispatcher = MainDispatcherRule()
 
     private val base = Analysis(
-        "a1", "lease.pdf", SourceKind.PDF, AnalysisStatus.QUEUED, 0, 0, unreadablePages = listOf(2),
+        "a1",
+        "lease.pdf",
+        SourceKind.PDF,
+        AnalysisStatus.QUEUED,
+        0,
+        0,
+        unreadablePages = listOf(2),
     )
 
     @Test
@@ -63,8 +69,11 @@ class ResultViewModelTest {
     fun `state mapping covers every status`() {
         assertEquals(ResultUiState.Error(AppError.DocumentNotFound), toUiState(null))
         listOf(
-            AnalysisStatus.QUEUED, AnalysisStatus.EXTRACTING_TEXT, AnalysisStatus.CLASSIFYING,
-            AnalysisStatus.ANALYZING_PAGES, AnalysisStatus.CHECKING,
+            AnalysisStatus.QUEUED,
+            AnalysisStatus.EXTRACTING_TEXT,
+            AnalysisStatus.CLASSIFYING,
+            AnalysisStatus.ANALYZING_PAGES,
+            AnalysisStatus.CHECKING,
         ).forEach { assertEquals(it.name, ResultUiState.Loading, toUiState(base.copy(status = it))) }
         assertEquals(
             ResultUiState.Error(AppError.ModelUnavailable),

@@ -24,13 +24,17 @@ object WordDiff {
         while (i < a.size || j < b.size) {
             when {
                 i < a.size && j < b.size && a[i] == b[j] -> {
-                    out.add(DiffSegment.Type.SAME, a[i]); i++; j++
+                    out.add(DiffSegment.Type.SAME, a[i])
+                    i++
+                    j++
                 }
                 j < b.size && (i == a.size || lcs[i][j + 1] >= lcs[i + 1][j]) -> {
-                    out.add(DiffSegment.Type.ADDED, b[j]); j++
+                    out.add(DiffSegment.Type.ADDED, b[j])
+                    j++
                 }
                 else -> {
-                    out.add(DiffSegment.Type.REMOVED, a[i]); i++
+                    out.add(DiffSegment.Type.REMOVED, a[i])
+                    i++
                 }
             }
         }

@@ -171,6 +171,22 @@ integrity verdict stays "unknown" and nothing is disabled.
      3. Put the site key in that file, then redeploy.
    - Add your Hosting domain under Authentication → Settings → Authorized domains.
 
+## 10c. Release builds
+
+Release signing is read only from environment variables, never from files in git:
+
+| Variable | Value |
+|---|---|
+| `LEGALEASE_KEYSTORE_PATH` | Absolute path to the upload keystore (`.jks`) |
+| `LEGALEASE_KEYSTORE_PASSWORD` | Keystore password |
+| `LEGALEASE_KEY_ALIAS` | Key alias |
+| `LEGALEASE_KEY_PASSWORD` | Key password |
+| `VERSION_CODE` | Build number (CI sets it; local builds default to 1) |
+| `VERSION_NAME` | Optional; defaults to `1.0` |
+
+Without `LEGALEASE_KEYSTORE_PATH`, `./gradlew :app:bundleRelease` produces an unsigned bundle.
+Write release notes from `.github/release-notes-template.md`.
+
 ## 11. Run and verify
 
 ```sh

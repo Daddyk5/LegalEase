@@ -2,7 +2,9 @@ package com.hcdc.legalease.core.designsystem.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.*
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.hcdc.legalease.core.designsystem.R
 
@@ -17,7 +19,6 @@ val Inter = FontFamily(
     Font(R.font.inter_medium, FontWeight.Medium),
     Font(R.font.inter_bold, FontWeight.Bold)
 )
-
 
 val LegalEaseTypography = Typography(
     // Titles — Roboto Slab
@@ -60,4 +61,3 @@ val LegalEaseTypography = Typography(
         lineHeight = 18.sp
     )
 )
-

@@ -1,6 +1,5 @@
 package com.hcdc.legalease.feature.scan
 
-import com.hcdc.legalease.core.designsystem.component.SecureContent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -30,14 +29,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.hcdc.legalease.core.designsystem.component.SecureContent
 import com.hcdc.legalease.core.designsystem.component.buttons.PrimaryButton
 import com.hcdc.legalease.core.designsystem.component.buttons.SecondaryButton
 import com.hcdc.legalease.core.designsystem.component.spacers.VerticalSpacer
 import kotlinx.coroutines.launch
-
 
 @Composable
 fun ImageScreen(
@@ -67,7 +66,7 @@ fun ImageScreen(
     val progress = uiState.progress
     if (progress != null) {
         ScanningContent(progress, viewModel, onBack)
-    } else{
+    } else {
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) }
         ) { paddingValues ->
@@ -80,7 +79,6 @@ fun ImageScreen(
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 Text(
                     text = "(${images.size}) Images selected"
                 )
@@ -132,9 +130,9 @@ fun ImageScreen(
                 PrimaryButton(
                     text = "Proceed to Scan",
                     onClick = {
-                        if (images.isNotEmpty()){
+                        if (images.isNotEmpty()) {
                             startScan()
-                        }else{
+                        } else {
                             scope.launch {
                                 snackbarHostState.showSnackbar(
                                     message = "Please select images",

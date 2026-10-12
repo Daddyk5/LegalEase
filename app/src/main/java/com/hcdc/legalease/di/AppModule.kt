@@ -3,9 +3,9 @@ package com.hcdc.legalease.di
 import android.content.Context
 import com.hcdc.legalease.R
 import com.hcdc.legalease.core.domain.di.ApplicationScope
-import com.hcdc.legalease.core.domain.model.GoogleSignInConfig
 import com.hcdc.legalease.core.domain.di.DefaultDispatcher
 import com.hcdc.legalease.core.domain.di.IoDispatcher
+import com.hcdc.legalease.core.domain.model.GoogleSignInConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

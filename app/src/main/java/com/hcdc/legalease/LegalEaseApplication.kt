@@ -23,13 +23,15 @@ class LegalEaseApplication : Application(), Configuration.Provider {
 
     @Inject lateinit var integrity: IntegrityChecker
 
-    @Inject @ApplicationScope lateinit var applicationScope: CoroutineScope
+    @Inject @ApplicationScope
+    lateinit var applicationScope: CoroutineScope
 
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder().setWorkerFactory(workerFactory).build()
 
     override fun onCreate() {
         super.onCreate()
+        installStrictMode()
         // Before any Firebase call that App Check protects.
         installAppCheck()
         backgroundWork.schedule()

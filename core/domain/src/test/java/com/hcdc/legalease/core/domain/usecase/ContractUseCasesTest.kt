@@ -5,7 +5,9 @@ import com.hcdc.legalease.core.domain.engine.LlmAvailability
 import com.hcdc.legalease.core.domain.generator.ClauseRejection
 import com.hcdc.legalease.core.domain.generator.DiffSegment
 import com.hcdc.legalease.core.domain.generator.validDraft
+import com.hcdc.legalease.core.domain.model.AuditEvent
 import com.hcdc.legalease.core.domain.model.ContractType
+import com.hcdc.legalease.core.domain.model.DeviceIntegrity
 import com.hcdc.legalease.core.domain.model.OptionalClause
 import com.hcdc.legalease.core.domain.model.SourceKind
 import com.hcdc.legalease.core.domain.repository.FeatureFlags
@@ -14,22 +16,20 @@ import com.hcdc.legalease.core.domain.result.AppResult
 import com.hcdc.legalease.core.domain.testing.FakeAnalysisRepository
 import com.hcdc.legalease.core.domain.testing.FakeAnalysisScheduler
 import com.hcdc.legalease.core.domain.testing.FakeAnalytics
+import com.hcdc.legalease.core.domain.testing.FakeAuditLog
 import com.hcdc.legalease.core.domain.testing.FakeContractAssistant
 import com.hcdc.legalease.core.domain.testing.FakeContractRepository
 import com.hcdc.legalease.core.domain.testing.FakeFeatureFlags
+import com.hcdc.legalease.core.domain.testing.FakeIntegrityChecker
 import com.hcdc.legalease.core.domain.testing.FakeSyncScheduler
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import java.time.ZoneOffset
-import java.time.Instant
 import java.time.Clock
-import com.hcdc.legalease.core.domain.testing.FakeIntegrityChecker
-import com.hcdc.legalease.core.domain.testing.FakeAuditLog
-import com.hcdc.legalease.core.domain.model.DeviceIntegrity
-import com.hcdc.legalease.core.domain.model.AuditEvent
+import java.time.Instant
+import java.time.ZoneOffset
 
 class ContractUseCasesTest {
 

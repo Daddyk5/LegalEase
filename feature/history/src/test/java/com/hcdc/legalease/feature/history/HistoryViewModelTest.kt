@@ -6,11 +6,11 @@ import com.hcdc.legalease.core.domain.model.Analysis
 import com.hcdc.legalease.core.domain.model.AnalysisStatus
 import com.hcdc.legalease.core.domain.model.Classification
 import com.hcdc.legalease.core.domain.model.SourceKind
-import com.hcdc.legalease.core.domain.testing.sampleReport
 import com.hcdc.legalease.core.domain.testing.FakeAnalysisRepository
 import com.hcdc.legalease.core.domain.testing.FakeAnalytics
 import com.hcdc.legalease.core.domain.testing.FakeSyncScheduler
 import com.hcdc.legalease.core.domain.testing.MainDispatcherRule
+import com.hcdc.legalease.core.domain.testing.sampleReport
 import com.hcdc.legalease.core.domain.usecase.DeleteAnalysisUseCase
 import com.hcdc.legalease.core.domain.usecase.GetHistoryUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,8 +31,12 @@ class HistoryViewModelTest {
     private val repository = FakeAnalysisRepository().apply {
         put(
             Analysis(
-                "a1", "Lease of apartment", SourceKind.PDF, AnalysisStatus.COMPLETED,
-                createdAtMillis = 3, updatedAtMillis = 3,
+                "a1",
+                "Lease of apartment",
+                SourceKind.PDF,
+                AnalysisStatus.COMPLETED,
+                createdAtMillis = 3,
+                updatedAtMillis = 3,
                 report = sampleReport(Classification.VOIDABLE),
             )
         )

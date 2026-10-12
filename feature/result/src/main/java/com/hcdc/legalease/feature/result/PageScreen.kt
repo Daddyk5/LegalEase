@@ -1,6 +1,5 @@
 package com.hcdc.legalease.feature.result
 
-import com.hcdc.legalease.core.designsystem.component.SecureContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
@@ -33,6 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import coil3.compose.AsyncImage
 import com.hcdc.legalease.core.designsystem.component.CustomLoading
+import com.hcdc.legalease.core.designsystem.component.SecureContent
 import com.hcdc.legalease.core.designsystem.component.spacers.VerticalSpacer
 import com.hcdc.legalease.core.domain.engine.PageImageRenderer
 import com.hcdc.legalease.core.domain.engine.RenderedPage

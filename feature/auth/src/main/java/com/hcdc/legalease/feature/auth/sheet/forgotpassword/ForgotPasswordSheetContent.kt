@@ -1,6 +1,5 @@
 package com.hcdc.legalease.feature.auth.sheet.forgotpassword
 
-import com.hcdc.legalease.core.designsystem.component.textfield.PrimaryTextField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -19,25 +18,24 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.hcdc.legalease.core.designsystem.component.buttons.PrimaryButton
+import com.hcdc.legalease.core.designsystem.component.spacers.VerticalSpacer
+import com.hcdc.legalease.core.designsystem.component.textfield.PrimaryTextField
 import com.hcdc.legalease.core.domain.model.CredentialValidator
 import com.hcdc.legalease.feature.auth.R
 import com.hcdc.legalease.feature.auth.authMessageRes
 import com.hcdc.legalease.feature.auth.messageRes
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hcdc.legalease.feature.auth.sheet.BottomSheetContent
-import com.hcdc.legalease.core.designsystem.component.buttons.PrimaryButton
-import com.hcdc.legalease.core.designsystem.component.spacers.VerticalSpacer
 import com.hcdc.legalease.feature.auth.sheet.BottomSheetViewModel
 
 @Composable
 fun ForgotPasswordSheetContent() {
-
     val bottomSheetViewModel: BottomSheetViewModel = viewModel()
 
     val forgotPasswordViewModel: ForgotPasswordViewModel = hiltViewModel()
 
     val state by forgotPasswordViewModel.uiState.collectAsStateWithLifecycle()
-
 
     Column(
         modifier = Modifier
@@ -96,4 +94,3 @@ fun ForgotPasswordSheetContent() {
         )
     }
 }
-

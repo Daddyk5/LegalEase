@@ -15,13 +15,13 @@ import com.hcdc.legalease.core.domain.engine.PaperSize
 import com.hcdc.legalease.core.domain.generator.ContractTemplates
 import com.hcdc.legalease.core.domain.repository.PreferencesRepository
 import kotlinx.coroutines.flow.first
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.put
 import java.io.File
 import java.io.OutputStream

@@ -21,7 +21,7 @@ import kotlin.time.Duration.Companion.seconds
  */
 @Singleton
 class OnDeviceContractAssistant @Inject constructor(
-    private val engine: LocalLlmEngine,
+    private val engine: TextGenerator,
     private val analyzer: LlmAnalyzer,
 ) : ContractAssistant {
 

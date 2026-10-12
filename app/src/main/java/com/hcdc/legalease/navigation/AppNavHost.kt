@@ -10,16 +10,16 @@ import com.hcdc.legalease.feature.auth.introScreen
 import com.hcdc.legalease.feature.generator.GeneratorRoute
 import com.hcdc.legalease.feature.generator.generatorScreens
 import com.hcdc.legalease.feature.history.HistoryRoute
-import com.hcdc.legalease.feature.settings.PrivacyNoticeRoute
-import com.hcdc.legalease.feature.settings.SettingsRoute
-import com.hcdc.legalease.feature.settings.settingsScreens
 import com.hcdc.legalease.feature.history.historyScreen
-import com.hcdc.legalease.feature.result.ResultRoute
 import com.hcdc.legalease.feature.result.PageRoute
+import com.hcdc.legalease.feature.result.ResultRoute
 import com.hcdc.legalease.feature.result.resultScreens
 import com.hcdc.legalease.feature.scan.ImageRoute
 import com.hcdc.legalease.feature.scan.PdfRoute
 import com.hcdc.legalease.feature.scan.scanScreens
+import com.hcdc.legalease.feature.settings.PrivacyNoticeRoute
+import com.hcdc.legalease.feature.settings.SettingsRoute
+import com.hcdc.legalease.feature.settings.settingsScreens
 
 @Composable
 fun AppNavHost(navController: NavHostController) {
