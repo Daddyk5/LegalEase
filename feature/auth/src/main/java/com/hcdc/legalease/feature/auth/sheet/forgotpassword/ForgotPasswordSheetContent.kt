@@ -45,7 +45,7 @@ fun ForgotPasswordSheetContent() {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = "Forgot Password",
+            text = stringResource(R.string.auth_forgot_title),
             style = MaterialTheme.typography.displayLarge.copy(
                 color = MaterialTheme.colorScheme.primary
             )
@@ -54,7 +54,7 @@ fun ForgotPasswordSheetContent() {
         PrimaryTextField(
             value = state.email,
             onValueChange = forgotPasswordViewModel::onEmailChanged,
-            label = "Email",
+            label = stringResource(R.string.auth_email),
             validator = { CredentialValidator.email(it) == null },
             errorMessage = stringResource(R.string.auth_error_email_invalid),
             error = state.emailProblem?.let { stringResource(it.messageRes()) },
@@ -74,18 +74,18 @@ fun ForgotPasswordSheetContent() {
         }
         VerticalSpacer(height = 30.dp)
         PrimaryButton(
-            text = "Submit",
+            text = stringResource(R.string.auth_submit),
             enabled = !state.isSubmitting,
             onClick = forgotPasswordViewModel::submit
         )
         VerticalSpacer(height = 30.dp)
         Text(
-            text = "────── or ──────",
+            text = stringResource(R.string.auth_or),
             style = MaterialTheme.typography.bodySmall
         )
         VerticalSpacer(height = 25.dp)
         Text(
-            text = "Login Instead",
+            text = stringResource(R.string.auth_login_instead),
             modifier = Modifier.clickable {
                 bottomSheetViewModel.show(BottomSheetContent.Login)
             },

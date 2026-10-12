@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="history_empty">Wala pang scan. Mag-upload ng PDF o larawan para magsimula.</string>
+    <string name="history_no_matches">Walang scan na tugma sa “%1$s”.</string>
+    <string name="history_delete">Burahin</string>
+    <string name="history_deleted">Nabura ang scan</string>
+    <string name="history_undo">I-undo</string>
+    <string name="history_title">Aking mga Scan</string>
+    <string name="history_subtitle">Ang kasaysayan ng iyong mga kontrata sa iisang lugar.</string>
+</resources>

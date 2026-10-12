@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_error_email_invalid">Mali ang format ng email</string>
+    <string name="auth_error_password_short">Dapat hindi bababa sa 8 character ang password</string>
+    <string name="auth_error_passwords_differ">Hindi magkatugma ang mga password</string>
+    <string name="auth_error_invalid_credentials">Mali ang email o password.</string>
+    <string name="auth_error_email_not_verified">Paki-verify muna ang iyong email. Tingnan ang link sa iyong inbox.</string>
+    <string name="auth_error_email_in_use">May account na gamit ang email na ito. Mag-log in na lang.</string>
+    <string name="auth_error_weak_password">Pumili ng mas matibay na password.</string>
+    <string name="auth_error_too_many_requests">Masyadong maraming pagsubok. Maghintay sandali at subukang muli.</string>
+    <string name="auth_error_network">Walang koneksyon sa internet. Subukang muli.</string>
+    <string name="auth_error_generic">May nangyaring mali. Subukang muli.</string>
+    <string name="auth_error_google_unavailable">Hindi available ang Google sign-in sa device na ito.</string>
+    <string name="auth_action_resend_verification">Ipadala muli ang verification email</string>
+    <string name="auth_notice_verification_sent">Naipadala na ang verification email. Tingnan ang iyong inbox.</string>
+    <string name="auth_notice_registered">Nagpadala kami ng verification link sa %1$s. I-verify ang iyong email, saka mag-log in.</string>
+    <string name="auth_notice_reset_sent">Kung may account para sa %1$s, papunta na ang link para i-reset ang password.</string>
+    <string name="auth_google_sign_in">Mag-sign in gamit ang Google</string>
+    <string name="intro_tagline">Unawain ang iyong kontrata bago pumirma.</string>
+    <string name="intro_begin">Magsimula</string>
+    <string name="auth_forgot_title">Nakalimutan ang Password</string>
+    <string name="auth_email">Email</string>
+    <string name="auth_submit">Ipasa</string>
+    <string name="auth_or">────── o ──────</string>
+    <string name="auth_login_instead">Mag-log in na lang</string>
+    <string name="auth_login">Mag-log in</string>
+    <string name="auth_password">Password</string>
+    <string name="auth_forgot_link">Nakalimutan ang password?</string>
+    <string name="auth_create_account">Gumawa ng Account</string>
+    <string name="auth_register">Magparehistro</string>
+    <string name="auth_repeat_password">Ulitin ang Password</string>
+</resources>

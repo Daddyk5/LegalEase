@@ -67,7 +67,7 @@ fun LoginSheetContent(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = "Login",
+            text = stringResource(R.string.auth_login),
             style = MaterialTheme.typography.displayLarge.copy(
                 color = MaterialTheme.colorScheme.primary
             )
@@ -76,7 +76,7 @@ fun LoginSheetContent(
         PrimaryTextField(
             value = state.email,
             onValueChange = loginSheetViewModel::onEmailChanged,
-            label = "Email",
+            label = stringResource(R.string.auth_email),
             validator = { CredentialValidator.email(it) == null },
             errorMessage = stringResource(R.string.auth_error_email_invalid),
             error = state.emailProblem?.let { stringResource(it.messageRes()) },
@@ -86,7 +86,7 @@ fun LoginSheetContent(
         PrimaryTextField(
             value = state.password,
             onValueChange = loginSheetViewModel::onPasswordChanged,
-            label = "Password",
+            label = stringResource(R.string.auth_password),
             isPassword = true,
             validator = { CredentialValidator.password(it) == null },
             errorMessage = stringResource(R.string.auth_error_password_short),
@@ -98,7 +98,7 @@ fun LoginSheetContent(
             horizontalArrangement = Arrangement.End
         ) {
             Text(
-                text = "Forgot password?",
+                text = stringResource(R.string.auth_forgot_link),
                 modifier = Modifier.clickable {
                     bottomSheetViewModel.show(BottomSheetContent.ForgotPassword)
                 },
@@ -109,13 +109,13 @@ fun LoginSheetContent(
         LoginMessages(state, onResend = loginSheetViewModel::resendVerificationEmail)
         VerticalSpacer(height = 30.dp)
         PrimaryButton(
-            text = "Login",
+            text = stringResource(R.string.auth_login),
             enabled = !state.isSubmitting,
             onClick = loginSheetViewModel::submit
         )
         VerticalSpacer(height = 30.dp)
         Text(
-            text = "────── or ──────",
+            text = stringResource(R.string.auth_or),
             style = MaterialTheme.typography.bodySmall
         )
         VerticalSpacer(height = 30.dp)
@@ -139,7 +139,7 @@ fun LoginSheetContent(
         }
         VerticalSpacer(height = 18.dp)
         Text(
-            text = "Create an Account",
+            text = stringResource(R.string.auth_create_account),
             modifier = Modifier.clickable {
                 bottomSheetViewModel.show(BottomSheetContent.Register)
             },

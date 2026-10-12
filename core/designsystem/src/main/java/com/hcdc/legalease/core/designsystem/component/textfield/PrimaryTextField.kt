@@ -20,10 +20,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.hcdc.legalease.core.designsystem.R
 
 @Composable
 fun PrimaryTextField(
@@ -64,7 +66,9 @@ fun PrimaryTextField(
             trailingIcon = {
                 if (isPassword) {
                     val image = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
-                    val description = if (passwordVisible) "Hide password" else "Show password"
+                    val description = stringResource(
+                        if (passwordVisible) R.string.ds_hide_password else R.string.ds_show_password
+                    )
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
                         Icon(imageVector = image, contentDescription = description)
                     }

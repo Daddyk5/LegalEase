@@ -40,4 +40,11 @@
     <string name="result_disclaimer">LegalEase provides general information, not legal advice. Consult a lawyer for binding decisions.</string>
     <string name="page_title">Page %1$d</string>
     <string name="page_content_description">Page %1$d of the scanned contract</string>
+    <string name="result_scan_complete">Scan Complete</string>
+    <string name="result_insights">Insights from your past scan</string>
+    <string name="classification_void">Void</string>
+    <string name="classification_voidable">Voidable</string>
+    <string name="classification_unenforceable">Unenforceable</string>
+    <string name="classification_rescissible">Rescissible</string>
+    <string name="classification_enforceable">Enforceable</string>
 </resources>

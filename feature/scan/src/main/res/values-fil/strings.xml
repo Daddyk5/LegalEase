@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="scan_preparing">Inihahanda ang dokumento…</string>
+    <string name="scan_progress_page">Binabasa ang pahina %1$d ng %2$d…</string>
+    <string name="scan_classifying">Sinusuri ang kontrata…</string>
+    <string name="scan_analyzing_page">Sinusuri ang pahina %1$d ng %2$d…</string>
+    <string name="scan_checking">Tinitingnan ang klasipikasyon…</string>
+    <string name="scan_error_unreadable_file">Hindi mabuksan ang file na ito. Maaaring sira ito o may password.</string>
+    <string name="scan_error_no_text">Walang nabasang teksto. Subukan ang mas malinaw na scan.</string>
+    <string name="scan_error_storage_full">Puno na ang storage ng iyong device. Magbakante ng espasyo at subukang muli.</string>
+    <string name="scan_error_generic">May nangyaring mali. Subukang muli.</string>
+    <string name="scan_default_pdf_name">In-upload na PDF</string>
+    <string name="scan_default_images_name">Mga na-scan na larawan</string>
+    <string name="action_ok">OK</string>
+    <string name="scan_images_selected">(%1$d) Napiling larawan</string>
+    <string name="scan_no_images">Walang napiling larawan.</string>
+    <string name="scan_choose_images">Pumili ng Larawan</string>
+    <string name="scan_proceed">Magpatuloy sa Pag-scan</string>
+    <string name="scan_select_images">Pumili ng mga larawan</string>
+    <string name="scan_no_pdf">Walang napiling PDF</string>
+    <string name="scan_choose_pdf">Pumili ng PDF</string>
+    <string name="scan_select_pdf">Pumili ng wastong PDF file</string>
+</resources>

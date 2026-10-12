@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="analysis_notification_channel">Pagsusuri ng kontrata</string>
+    <string name="analysis_notification_title">Sinusuri ang iyong kontrata</string>
+    <string name="analysis_notification_preparing">Inihahanda…</string>
+    <string name="analysis_notification_reading">Binabasa ang pahina %1$d ng %2$d</string>
+    <string name="analysis_notification_classifying">Tinitingnan ang klasipikasyon…</string>
+    <string name="analysis_notification_cancel">Kanselahin</string>
+    <string name="analysis_notification_analyzing">Sinusuri ang pahina %1$d ng %2$d</string>
+    <string name="analysis_notification_reasoning">Tinitingnan ang klasipikasyon…</string>
+</resources>

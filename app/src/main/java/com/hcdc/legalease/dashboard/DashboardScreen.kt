@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -66,7 +67,7 @@ fun DashboardScreen(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.avatar),
-                contentDescription = "Intro Screen Image",
+                contentDescription = null,
                 modifier = Modifier
                     .size(100.dp)
                     .clip(CircleShape)
@@ -76,7 +77,7 @@ fun DashboardScreen(
                 IconButton(onClick = onOpenSettings) {
                     Icon(
                         imageVector = Icons.Default.Settings,
-                        contentDescription = "Privacy and data settings",
+                        contentDescription = stringResource(R.string.dashboard_settings),
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(30.dp)
                     )
@@ -84,7 +85,7 @@ fun DashboardScreen(
                 IconButton(onClick = viewModel::logout) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.Logout,
-                        contentDescription = "Logout",
+                        contentDescription = stringResource(R.string.dashboard_logout),
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(30.dp)
                     )
@@ -100,14 +101,13 @@ fun DashboardScreen(
         )
         VerticalSpacer(height = 5.dp)
         Text(
-            text = "Ready to explore your documents?",
+            text = stringResource(R.string.dashboard_greeting),
             style = MaterialTheme.typography.bodyLarge.copy()
         )
         if (deviceCompromised) {
             VerticalSpacer(height = 8.dp)
             Text(
-                text = "This phone did not pass the Google Play integrity check. Offline analysis is turned " +
-                    "off; results use basic checks only.",
+                text = stringResource(R.string.dashboard_integrity_warning),
                 style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.error)
             )
         }
@@ -123,16 +123,16 @@ fun DashboardScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             DashboardCard(
-                title = "Upload PDF",
-                subtitle = "Scan and analyze legal documents",
+                title = stringResource(R.string.dashboard_upload_pdf),
+                subtitle = stringResource(R.string.dashboard_upload_pdf_subtitle),
                 imageRes = R.drawable.upload_pdf,
                 onClick = { onUploadPdf() },
                 modifier = Modifier.weight(.5f)
             )
             VerticalSpacer(height = 0.dp)
             DashboardCard(
-                title = "Upload Image",
-                subtitle = "Snap, upload, and understand",
+                title = stringResource(R.string.dashboard_upload_image),
+                subtitle = stringResource(R.string.dashboard_upload_image_subtitle),
                 imageRes = R.drawable.upload_image,
                 onClick = { onUploadImage() },
                 modifier = Modifier.weight(.5f)
@@ -140,8 +140,8 @@ fun DashboardScreen(
             if (generatorEnabled) {
                 VerticalSpacer(height = 0.dp)
                 DashboardCard(
-                    title = "Create Contract",
-                    subtitle = "Lease, loan, or sale, from Philippine templates",
+                    title = stringResource(R.string.dashboard_create_contract),
+                    subtitle = stringResource(R.string.dashboard_create_contract_subtitle),
                     imageRes = DesignR.drawable.lawyer,
                     onClick = { onCreateContract() },
                     modifier = Modifier.weight(.5f)
@@ -154,8 +154,8 @@ fun DashboardScreen(
             )
             VerticalSpacer(height = 5.dp)
             DashboardCard(
-                title = "My Scans",
-                subtitle = "History of your scanned files and reviews.",
+                title = stringResource(R.string.dashboard_history),
+                subtitle = stringResource(R.string.dashboard_history_subtitle),
                 imageRes = R.drawable.history,
                 onClick = { onOpenHistory() },
                 modifier = Modifier.weight(.5f)

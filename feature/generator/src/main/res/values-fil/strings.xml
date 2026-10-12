@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Home -->
+    <string name="generator_title">Gumawa ng Kontrata</string>
+    <string name="generator_subtitle">Mga template ng kontrata sa Pilipinas, pinupunan nang paisa-isang hakbang.</string>
+    <string name="generator_templates">Mga template</string>
+    <string name="generator_saved">Iyong mga kontrata</string>
+    <string name="generator_saved_item">%1$s · bersyon %2$d</string>
+    <string name="generator_template_lease">Kontrata ng Pag-upa (Contract of Lease) – bahay, apartment, lote</string>
+    <string name="generator_template_loan">Kontrata ng Pautang (Contract of Loan)</string>
+    <string name="generator_template_sale">Kasulatan ng Ganap na Bilihan (Deed of Absolute Sale)</string>
+    <string name="generator_template_lease_personal">Pag-upa ng Personal na Ari-arian (Lease of Personal Property) – sasakyan, kagamitan</string>
+
+    <!-- Stepper -->
+    <string name="generator_step">Hakbang %1$d ng %2$d · %3$s</string>
+    <string name="generator_step_subject">Ari-arian</string>
+    <string name="generator_step_terms">Mga kondisyon</string>
+    <string name="generator_step_signing">Pagpirma at mga saksi</string>
+    <string name="generator_next">Susunod</string>
+    <string name="generator_preview">Silipin</string>
+    <string name="generator_back">Bumalik</string>
+
+    <!-- Roles -->
+    <string name="generator_role_lessor">Nagpapaupa (Lessor) – may-ari</string>
+    <string name="generator_role_lessee">Umuupa (Lessee)</string>
+    <string name="generator_role_lender">Nagpapautang (Lender)</string>
+    <string name="generator_role_borrower">Nangungutang (Borrower)</string>
+    <string name="generator_role_vendor">Nagbebenta (Vendor)</string>
+    <string name="generator_role_vendee">Bumibili (Vendee)</string>
+
+    <!-- Party fields -->
+    <string name="generator_field_name">Buong pangalan</string>
+    <string name="generator_field_civil_status">Katayuang sibil (civil status)</string>
+    <string name="generator_civil_single">Walang asawa (Single)</string>
+    <string name="generator_civil_married">May asawa (Married)</string>
+    <string name="generator_civil_widowed">Balo (Widowed)</string>
+    <string name="generator_civil_separated">Legal na hiwalay (Legally separated)</string>
+    <string name="generator_civil_annulled">Na-annul (Annulled)</string>
+    <string name="generator_field_citizenship">Pagkamamamayan (citizenship)</string>
+    <string name="generator_field_address">Tirahan</string>
+    <string name="generator_field_id_type">Uri ng ID mula sa gobyerno (hal. Passport, UMID, Driver\'s License)</string>
+    <string name="generator_field_id_number">Numero ng ID (opsyonal; maaaring punan ng notaryo)</string>
+    <string name="generator_legal_age">Parehong nasa 18 taong gulang pataas ang mga partido.</string>
+
+    <!-- Subject -->
+    <string name="generator_property_real">Real na ari-arian (real property) – lupa, bahay, condominium</string>
+    <string name="generator_property_personal">Personal na ari-arian (personal property) – sasakyan, kagamitan, iba pang naililipat</string>
+    <string name="generator_field_premises">Address at paglalarawan ng bahay, apartment, o lote</string>
+    <string name="generator_field_personal_lease">Gawa, modelo, plaka o serial number, at kondisyon</string>
+    <string name="generator_field_sale_real">Lokasyon, sukat, at numero ng titulo (TCT o CCT)</string>
+    <string name="generator_field_sale_personal">Gawa, modelo, plaka o serial number, at numero ng makina at chassis</string>
+
+    <!-- Terms -->
+    <string name="generator_field_rent">Buwanang upa (PHP)</string>
+    <string name="generator_field_price">Halaga ng bilihan (PHP)</string>
+    <string name="generator_field_principal">Halaga ng utang (PHP)</string>
+    <string name="generator_field_deposit">Security deposit, sa bilang ng buwan ng upa (opsyonal)</string>
+    <string name="generator_field_interest">Tubo (interest rate, %); ilagay ang 0 kung walang tubo</string>
+    <string name="generator_interest_month">Bawat buwan</string>
+    <string name="generator_interest_year">Bawat taon</string>
+    <string name="generator_schedule_lump">Bayaran nang buo sa takdang petsa</string>
+    <string name="generator_schedule_monthly">Buwanang hulog</string>
+    <string name="generator_field_installments">Bilang ng buwanang hulog</string>
+    <string name="generator_field_lease_start">Simula ng upa (YYYY-MM-DD)</string>
+    <string name="generator_field_lease_end">Katapusan ng upa (YYYY-MM-DD)</string>
+    <string name="generator_field_loan_release">Petsa ng pag-abot ng pera (YYYY-MM-DD)</string>
+    <string name="generator_field_loan_due">Takdang petsa ng bayad (YYYY-MM-DD)</string>
+
+    <!-- Signing -->
+    <string name="generator_field_place">Lungsod o munisipyo kung saan pipirmahan</string>
+    <string name="generator_field_execution_date">Petsa ng pagpirma (YYYY-MM-DD)</string>
+    <string name="generator_field_witness_one">Unang saksi, buong pangalan</string>
+    <string name="generator_field_witness_two">Ikalawang saksi, buong pangalan</string>
+
+    <!-- Validation -->
+    <string name="generator_error_required">Kailangan.</string>
+    <string name="generator_error_amount">Maglagay ng halaga sa piso, halimbawa 15,000 o 15000.50.</string>
+    <string name="generator_error_amount_large">Mukhang masyadong malaki ang halaga. Tingnan ang bilang ng digit.</string>
+    <string name="generator_error_number">Maglagay ng wastong numero.</string>
+    <!-- ISO dates use hyphens, not dashes. -->
+    <string name="generator_error_date" tools:ignore="TypographyDashes">Gamitin ang format na YYYY-MM-DD, halimbawa 2026-11-01.</string>
+    <string name="generator_error_end_before_start">Dapat ay pagkatapos ng petsa ng simula.</string>
+    <string name="generator_error_lease_99">Hindi maaaring lumampas sa 99 taon ang upa (Art. 1643, Kodigo Sibil / Civil Code).</string>
+    <string name="generator_error_execution_after_start">Dapat pirmahan ang kontrata sa o bago ang petsa ng simula.</string>
+    <string name="generator_error_same_party">Dapat magkaibang tao ang dalawang partido.</string>
+    <string name="generator_error_witness_party">Hindi maaaring saksi ang isa sa mga partido.</string>
+    <string name="generator_error_legal_age">Maaaring ipawalang-bisa (annul) ang kontratang pinirmahan ng menor de edad. Dapat nasa 18 pataas ang parehong partido.</string>
+
+    <!-- Preview -->
+    <string name="generator_version">Bersyon %1$d</string>
+    <string name="generator_unsaved">Hindi pa naka-save</string>
+    <string name="generator_notices_title">Bago ka pumirma</string>
+    <string name="generator_notice_sale_real">Ang bilihan ng real na ari-arian ay dapat nasa pampublikong dokumento (public document) (Art. 1358, Kodigo Sibil / Civil Code). Ipa-notaryo ang kasulatang ito: kailangan din ang notaryadong kasulatan para mairehistro ang bilihan at mailipat ang titulo.</string>
+    <string name="generator_notice_long_lease">Mahigit isang taon ang upang ito, kaya dapat itong nakasulat para maipatupad (Statute of Frauds, Art. 1403(2)(e), Kodigo Sibil / Civil Code). Inirerekomendang ipa-notaryo ito. Nagbibigkis lamang ang upa sa ikatlong tao (third persons) kung nakatala ito sa Registry of Property (Art. 1648, Kodigo Sibil / Civil Code).</string>
+    <string name="generator_notice_interest">May tubo (interest) lamang dahil nakasulat ito sa kontratang ito (Art. 1956, Kodigo Sibil / Civil Code). Panatilihin ang nakasulat na rate ayon sa napagkasunduan.</string>
+    <string name="generator_notice_acknowledgment">Ang huling pahina ay isang notaryal na pagkilala (notarial acknowledgment) na kukumpletuhin ng notaryo publiko. Pirmahan ang bawat pahina sa harap ng iyong dalawang saksi.</string>
+    <string name="generator_optional_title">Mga opsyonal na probisyon (clauses)</string>
+    <string name="generator_optional_hint">Idagdag ang mga angkop sa inyong kasunduan. Hindi mababago rito ang mga pangunahing probisyon sa itaas; i-edit ang form sa halip.</string>
+    <string name="generator_optional_from_assistant">Iminungkahi ng offline na assistant</string>
+    <string name="generator_suggest">Magmungkahi ng probisyon</string>
+    <string name="generator_reword">Linawin ang pananalita</string>
+    <string name="generator_remove">Alisin</string>
+    <string name="generator_assistant_working">Gumagana ang offline na assistant…</string>
+    <string name="generator_assistant_preparing">Magiging available ang mga mungkahing probisyon kapag handa na ang offline na pagsusuri.</string>
+    <string name="generator_save_analyze">I-save at suriin</string>
+    <string name="generator_edit_form">Bumalik sa form</string>
+    <string name="generator_edit_new_version">I-edit (gagawa ng bagong bersyon)</string>
+    <string name="generator_readonly">Hindi mabasa ang form ng bersyong ito, kaya hindi ito ma-edit. Nasa itaas ang teksto nito.</string>
+
+    <!-- Analysis -->
+    <string name="generator_analysis_title">Pagsusuri</string>
+    <string name="generator_analysis_waiting">Naghihintay magsimula…</string>
+    <string name="generator_analysis_checking">Sinusuri ang kontrata…</string>
+    <string name="generator_analysis_page">Sinusuri ang pahina %1$d ng %2$d…</string>
+    <string name="generator_analysis_verdict_high">%1$s · Mataas na katiyakan</string>
+    <string name="generator_analysis_verdict_confident">%1$s · Tiyak</string>
+    <string name="generator_analysis_inconclusive">Hindi tiyak — kailangang suriin</string>
+    <string name="generator_analysis_failed">Hindi natapos ang pagsusuri.</string>
+    <string name="generator_classification_void">Walang bisa (Void)</string>
+    <string name="generator_classification_voidable">Maaaring mapawalang-bisa (Voidable)</string>
+    <string name="generator_classification_unenforceable">Hindi maipatutupad (Unenforceable)</string>
+    <string name="generator_classification_rescissible">Maaaring ipawalang-saysay (Rescissible)</string>
+    <string name="generator_classification_enforceable">Maipatutupad (Enforceable)</string>
+    <string name="generator_view_analysis">Tingnan ang buong pagsusuri</string>
+    <string name="generator_analyze_again">Suriin muli</string>
+
+    <!-- Export -->
+    <string name="generator_export_title">I-export</string>
+    <string name="generator_paper_legal">Legal (8.5 × 13 pulgada)</string>
+    <string name="generator_export">I-export ang PDF</string>
+    <string name="generator_export_after_analysis">Maaaring i-export kapag tapos na ang pagsusuri.</string>
+    <string name="generator_share">Ibahagi ang kontrata</string>
+
+    <!-- Diff -->
+    <string name="generator_diff_title_new">Mungkahing probisyon: %1$s</string>
+    <string name="generator_diff_title_reword">Mungkahing pananalita: %1$s</string>
+    <string name="generator_diff_legend">Ang mga salitang may salungguhit ay idinagdag; ang mga may guhit sa gitna ay inalis. Walang magbabago maliban kung tatanggapin mo.</string>
+    <string name="generator_accept">Tanggapin</string>
+    <string name="generator_discard">Itapon</string>
+
+    <!-- Messages -->
+    <plurals name="generator_msg_withheld">
+        <item quantity="one">%1$d mungkahi ang hindi ipinakita dahil bumanggit ito ng batas o nagtakda ng halaga o petsa.</item>
+        <item quantity="other">%1$d mungkahi ang hindi ipinakita dahil bumanggit ang mga ito ng batas o nagtakda ng halaga o petsa.</item>
+    </plurals>
+    <string name="generator_msg_no_suggestions">Wala nang ibang iminungkahing probisyon.</string>
+    <string name="generator_msg_reword_withheld">Hindi ipinakita ang bagong pananalita dahil binago nito ang kahulugan, mga numero, o mga partido ng probisyon.</string>
+    <string name="generator_msg_reword_cites_law">Hindi ipinakita ang bagong pananalita dahil bumanggit ito ng batas.</string>
+    <string name="generator_msg_unchanged">Malinaw na ang probisyon; walang iminungkahing pagbabago.</string>
+    <string name="generator_msg_assistant_failed">Hindi nakasagot ang offline na assistant. Subukang muli.</string>
+    <string name="generator_msg_failed">May nangyaring mali. Subukang muli.</string>
+    <string name="generator_msg_storage">Kulang ang storage para i-export ang PDF.</string>
+    <string name="generator_msg_not_found">Hindi matagpuan ang kontratang ito.</string>
+
+    <string name="generator_disclaimer">Pangkalahatang impormasyon ang ibinibigay ng LegalEase, hindi legal na payo. Ipasuri sa abogado ang mga kontrata bago pumirma.</string>
+</resources>

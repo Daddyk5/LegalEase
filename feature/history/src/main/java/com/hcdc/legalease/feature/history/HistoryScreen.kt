@@ -90,14 +90,14 @@ fun HistoryScreen(
             ) {
                 Column {
                     Text(
-                        text = "My Scans",
+                        text = stringResource(R.string.history_title),
                         style = MaterialTheme.typography.displayLarge.copy(
                             color = MaterialTheme.colorScheme.primary
                         )
                     )
                     VerticalSpacer(5.dp)
                     Text(
-                        text = "Your contract history in one place.",
+                        text = stringResource(R.string.history_subtitle),
                         style = MaterialTheme.typography.bodyMedium.copy(
                             color = MaterialTheme.colorScheme.onBackground
                         )

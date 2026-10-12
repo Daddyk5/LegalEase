@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -59,7 +60,7 @@ fun IntroScreen(
     ) {
         Image(
             painter = painterResource(id = DesignR.drawable.lawyer),
-            contentDescription = "Intro Screen Image",
+            contentDescription = null,
             modifier = Modifier.size(350.dp)
         )
 
@@ -67,7 +68,7 @@ fun IntroScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "LegalEase",
+                text = stringResource(R.string.app_title),
                 style = MaterialTheme.typography.displayLarge.copy(
                     color = MaterialTheme.colorScheme.primary,
                     fontSize = 50.sp
@@ -75,7 +76,7 @@ fun IntroScreen(
             )
             VerticalSpacer(height = 8.dp)
             Text(
-                text = "Understand your contract before you sign.",
+                text = stringResource(R.string.intro_tagline),
                 style = MaterialTheme.typography.titleSmall.copy(
                     color = MaterialTheme.colorScheme.onBackground
 
@@ -83,7 +84,7 @@ fun IntroScreen(
             )
             VerticalSpacer(height = 35.dp)
             PrimaryButton(
-                text = "Begin",
+                text = stringResource(R.string.intro_begin),
                 // A verified, signed-in user goes straight in; everyone else logs in first.
                 onClick = { if (isSignedIn) onLoginSuccess() else sheetViewModel.show(BottomSheetContent.Login) }
             )

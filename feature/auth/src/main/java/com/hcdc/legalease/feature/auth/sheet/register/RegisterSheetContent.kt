@@ -46,7 +46,7 @@ fun RegisterSheetContent() {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = "Register",
+            text = stringResource(R.string.auth_register),
             style = MaterialTheme.typography.displayLarge.copy(
                 color = MaterialTheme.colorScheme.primary
             )
@@ -55,7 +55,7 @@ fun RegisterSheetContent() {
         PrimaryTextField(
             value = state.email,
             onValueChange = registerSheetViewModel::onEmailChanged,
-            label = "Email",
+            label = stringResource(R.string.auth_email),
             validator = { CredentialValidator.email(it) == null },
             errorMessage = stringResource(R.string.auth_error_email_invalid),
             error = state.emailProblem?.let { stringResource(it.messageRes()) },
@@ -65,7 +65,7 @@ fun RegisterSheetContent() {
         PrimaryTextField(
             value = state.password,
             onValueChange = registerSheetViewModel::onPasswordChanged,
-            label = "Password",
+            label = stringResource(R.string.auth_password),
             isPassword = true,
             validator = { CredentialValidator.password(it) == null },
             errorMessage = stringResource(R.string.auth_error_password_short),
@@ -75,7 +75,7 @@ fun RegisterSheetContent() {
         PrimaryTextField(
             value = state.repeatPassword,
             onValueChange = registerSheetViewModel::onRepeatPasswordChanged,
-            label = "Repeat Password",
+            label = stringResource(R.string.auth_repeat_password),
             isPassword = true,
             validator = { CredentialValidator.repeatPassword(state.password, it) == null },
             errorMessage = stringResource(R.string.auth_error_passwords_differ),
@@ -95,18 +95,18 @@ fun RegisterSheetContent() {
         }
         VerticalSpacer(height = 30.dp)
         PrimaryButton(
-            text = "Register",
+            text = stringResource(R.string.auth_register),
             enabled = !state.isSubmitting,
             onClick = registerSheetViewModel::submit
         )
         VerticalSpacer(height = 30.dp)
         Text(
-            text = "────── or ──────",
+            text = stringResource(R.string.auth_or),
             style = MaterialTheme.typography.bodySmall
         )
         VerticalSpacer(height = 25.dp)
         Text(
-            text = "Login Instead",
+            text = stringResource(R.string.auth_login_instead),
             modifier = Modifier.clickable {
                 bottomSheetViewModel.show(BottomSheetContent.Login)
             },

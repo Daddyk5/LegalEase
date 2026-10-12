@@ -11,7 +11,9 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.hcdc.legalease.core.designsystem.R
 
 @Composable
 fun ScanSearchBar(
@@ -22,7 +24,7 @@ fun ScanSearchBar(
     OutlinedTextField(
         value = query,
         onValueChange = onQueryChange,
-        placeholder = { Text("Search your scans...") },
+        placeholder = { Text(stringResource(R.string.ds_search_hint)) },
         singleLine = true,
         leadingIcon = {
             Icon(

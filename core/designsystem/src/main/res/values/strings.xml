@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ds_open">Open</string>
+    <string name="ds_summary">Summary</string>
+    <string name="ds_search_hint">Search your scans…</string>
+    <string name="ds_hide_password">Hide password</string>
+    <string name="ds_show_password">Show password</string>
+</resources>

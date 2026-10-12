@@ -1,3 +1,15 @@
 <resources>
-    <string name="app_name">LegalEase</string>
+    <string name="app_name" translatable="false">LegalEase</string>
+    <string name="dashboard_settings">Privacy and data settings</string>
+    <string name="dashboard_logout">Log out</string>
+    <string name="dashboard_greeting">Ready to explore your documents?</string>
+    <string name="dashboard_integrity_warning">This phone did not pass the Google Play integrity check. Offline analysis is turned off; results use basic checks only.</string>
+    <string name="dashboard_upload_pdf">Upload PDF</string>
+    <string name="dashboard_upload_pdf_subtitle">Scan and analyze legal documents</string>
+    <string name="dashboard_upload_image">Upload Image</string>
+    <string name="dashboard_upload_image_subtitle">Snap, upload, and understand</string>
+    <string name="dashboard_create_contract">Create Contract</string>
+    <string name="dashboard_create_contract_subtitle">Lease, loan, or sale, from Philippine templates</string>
+    <string name="dashboard_history">My Scans</string>
+    <string name="dashboard_history_subtitle">History of your scanned files and reviews.</string>
 </resources>

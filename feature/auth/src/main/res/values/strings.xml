@@ -15,4 +15,18 @@
     <string name="auth_notice_registered">We sent a verification link to %1$s. Verify your email, then log in.</string>
     <string name="auth_notice_reset_sent">If an account exists for %1$s, a password reset link is on its way.</string>
     <string name="auth_google_sign_in">Sign in with Google</string>
+    <string name="app_title" translatable="false">LegalEase</string>
+    <string name="intro_tagline">Understand your contract before you sign.</string>
+    <string name="intro_begin">Begin</string>
+    <string name="auth_forgot_title">Forgot Password</string>
+    <string name="auth_email">Email</string>
+    <string name="auth_submit">Submit</string>
+    <string name="auth_or">────── or ──────</string>
+    <string name="auth_login_instead">Login Instead</string>
+    <string name="auth_login">Login</string>
+    <string name="auth_password">Password</string>
+    <string name="auth_forgot_link">Forgot password?</string>
+    <string name="auth_create_account">Create an Account</string>
+    <string name="auth_register">Register</string>
+    <string name="auth_repeat_password">Repeat Password</string>
 </resources>

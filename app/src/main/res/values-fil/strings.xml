@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dashboard_settings">Mga setting ng privacy at data</string>
+    <string name="dashboard_logout">Mag-log out</string>
+    <string name="dashboard_greeting">Handa ka na bang suriin ang iyong mga dokumento?</string>
+    <string name="dashboard_integrity_warning">Hindi pumasa ang teleponong ito sa integrity check ng Google Play. Naka-off ang offline na pagsusuri; mga batayang pagsusuri lamang ang ginagamit sa resulta.</string>
+    <string name="dashboard_upload_pdf">Mag-upload ng PDF</string>
+    <string name="dashboard_upload_pdf_subtitle">I-scan at suriin ang mga legal na dokumento</string>
+    <string name="dashboard_upload_image">Mag-upload ng Larawan</string>
+    <string name="dashboard_upload_image_subtitle">Kunan, i-upload, at unawain</string>
+    <string name="dashboard_create_contract">Gumawa ng Kontrata</string>
+    <string name="dashboard_create_contract_subtitle">Upa (lease), pautang (loan), o bilihan (sale), mula sa mga template ng Pilipinas</string>
+    <string name="dashboard_history">Aking mga Scan</string>
+    <string name="dashboard_history_subtitle">Kasaysayan ng iyong mga na-scan na file at pagsusuri.</string>
+</resources>

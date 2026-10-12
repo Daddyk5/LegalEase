@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Privacy notice. Keep in step with PRIVACY.md and the English notice. -->
+    <string name="privacy_title">Ang iyong privacy</string>
+    <string name="privacy_intro">Sumusunod ang LegalEase sa Data Privacy Act of 2012 (Republic Act No. 10173). Ipinapaliwanag ng abisong ito kung ano ang pinoproseso ng app, saan, at gaano katagal.</string>
+    <string name="privacy_what_title">Ang pinoproseso ng LegalEase</string>
+    <string name="privacy_what_body">• Mga dokumentong ina-upload o kinukunan mo ng larawan, at ang tekstong nabasa mula sa mga ito.\n• Ang resulta ng bawat pagsusuri.\n• Mga kontratang ginagawa mo, kasama ang mga pangalan, address, at uri ng ID na inilalagay mo.\n• Ang iyong email address at pangalan, para makapag-sign in ka.\n• Diagnostics ng app: mga crash report, sukat ng bilis, at mga usage event. Hindi kailanman kasama rito ang nilalaman ng dokumento.</string>
+    <string name="privacy_where_title">Saan</string>
+    <string name="privacy_where_body">• Sa teleponong ito nangyayari ang pagbasa, pagsusuri, at paggawa ng kontrata. Hindi umaalis dito ang iyong mga dokumento at ang teksto ng mga ito.\n• Gumagamit ang sign-in ng Google Firebase Authentication.\n• Napupunta ang diagnostics sa Google Firebase (Crashlytics, Performance Monitoring, Analytics).\n• Naka-off ang cloud backup maliban kung bubuksan mo ito. Kung bubuksan mo, iniimbak ang iyong mga resulta ng pagsusuri at mga kontratang ginawa mo sa Google Cloud Firestore sa Singapore. Hindi kailanman ina-upload ang mga dokumento at ang buong teksto ng mga ito.</string>
+    <string name="privacy_how_long_title">Gaano katagal</string>
+    <string name="privacy_how_long_body">• Sa teleponong ito: hanggang burahin mo, o hanggang umabot sa iyong setting ng kasaysayan (30, 90, o 365 araw, o hindi kailanman).\n• Cloud backup: hanggang burahin mo ang item o ang iyong account.\n• Diagnostics: ayon sa tagal ng pag-iimbak ng mga serbisyo ng Google sa itaas.\nNaka-encrypt ang lahat sa telepono.</string>
+    <string name="privacy_rights_title">Ang iyong mga karapatan</string>
+    <string name="privacy_rights_body">May karapatan kang malaman, ma-access at maitama ang iyong data, tumutol, ipabura o ipa-block ito, makakuha ng kopya (data portability), at magreklamo sa National Privacy Commission. Sa Privacy at data, maaari mong i-export ang lahat o burahin ang iyong account. Para makipag-ugnayan sa amin, gamitin ang email address sa Google Play listing ng LegalEase.</string>
+    <string name="privacy_accept">Naiintindihan ko</string>
+    <string name="privacy_exit">Lumabas</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Privacy at data</string>
+    <string name="settings_subtitle">Kontrolin kung ano ang iniimbak, saan, at gaano katagal.</string>
+    <string name="settings_backup_title">Cloud backup</string>
+    <string name="settings_backup_body">I-back up sa iyong account ang mga resulta ng pagsusuri at mga kontratang ginawa mo. Mananatili sa teleponong ito ang mga dokumento at ang teksto ng mga ito.</string>
+    <string name="settings_backup_consent_title">Buksan ang cloud backup?</string>
+    <string name="settings_backup_consent_body">Iimbakin ng LegalEase sa Google Cloud Firestore sa Singapore, sa ilalim ng iyong account:\n• bawat resulta ng pagsusuri: pangalan ng dokumento, klasipikasyon, katiyakan, at buod;\n• bawat kontratang ginawa mo: ang teksto nito at ang mga detalyeng inilagay mo (mga pangalan, address, uri ng ID).\n\nHindi kailanman ina-upload ang mga dokumento at ang tekstong nabasa mula sa mga ito. Maaari mo itong i-off anumang oras; para alisin ang na-upload na, burahin ang iyong account.</string>
+    <string name="settings_backup_agree">Sang-ayon ako, buksan</string>
+    <string name="settings_cancel">Kanselahin</string>
+    <string name="settings_retention_title">Itago ang kasaysayan</string>
+    <string name="settings_retention_body">Awtomatikong binubura ang mga pagsusuring mas luma rito, sa teleponong ito at sa cloud backup.</string>
+    <string name="settings_retention_never">Habambuhay</string>
+    <string name="settings_retention_30">30 araw</string>
+    <string name="settings_retention_90">90 araw</string>
+    <string name="settings_retention_365">1 taon</string>
+    <string name="settings_retention_deleted">%1$d lumang pagsusuri ang nabura.</string>
+    <string name="settings_lock_title">Lock ng app</string>
+    <string name="settings_lock_body">Hingin ang iyong fingerprint, mukha, o screen lock kapag binuksan ang LegalEase.</string>
+    <string name="settings_lock_unavailable">Mag-set up ng screen lock sa settings ng iyong telepono para magamit ito.</string>
+    <string name="settings_data_title">Ang iyong data</string>
+    <string name="settings_export">I-export ang aking data</string>
+    <string name="settings_export_body">Isang ZIP file ng iyong mga pagsusuri, dokumento, kontrata (bilang PDF), settings, at activity log.</string>
+    <string name="settings_export_share">Ibahagi ang data export</string>
+    <string name="settings_notice">Abiso sa privacy</string>
+    <string name="settings_delete">Burahin ang aking account</string>
+    <string name="settings_delete_title">Burahin ang iyong account?</string>
+    <string name="settings_delete_body">Permanenteng mabubura ang iyong LegalEase account, ang iyong cloud backup, at lahat ng nasa teleponong ito: mga pagsusuri, dokumento, kontrata, settings, at activity log. Hindi na ito maibabalik.\n\nI-export muna ang iyong data kung gusto mo ng kopya.</string>
+    <string name="settings_delete_confirm">Burahin ang lahat</string>
+    <string name="settings_deleting">Binubura ang iyong account…</string>
+    <string name="settings_exporting">Inihahanda ang iyong data…</string>
+    <string name="settings_integrity_warning">Hindi pumasa ang teleponong ito sa integrity check ng Google Play (maaaring naka-root o binago ito). Naka-off ang offline na pagsusuri; mga batayang pagsusuri lamang ang ginagamit sa resulta.</string>
+    <string name="settings_msg_recent_login">Para sa iyong seguridad, mag-sign out at mag-sign in muli, saka burahin ang iyong account sa loob ng limang minuto.</string>
+    <string name="settings_msg_network">Offline ka. Kumonekta sa internet at subukang muli.</string>
+    <string name="settings_msg_storage">Kulang ang storage para ihanda ang export.</string>
+    <string name="settings_msg_failed">May nangyaring mali. Subukang muli.</string>
+    <string name="settings_sign_out">Mag-sign out</string>
+
+    <!-- App lock -->
+    <string name="lock_title">Naka-lock ang LegalEase</string>
+    <string name="lock_body">I-unlock para makita ang iyong mga dokumento.</string>
+    <string name="lock_unlock">I-unlock</string>
+    <string name="lock_prompt_title">I-unlock ang LegalEase</string>
+</resources>

@@ -73,7 +73,7 @@ private fun verdict(analysis: Analysis): String {
     } else {
         R.string.generator_analysis_verdict_confident
     }
-    return stringResource(band, shown.label)
+    return stringResource(band, stringResource(shown.labelRes))
 }
 
 @Composable

@@ -58,6 +58,7 @@ fun PdfScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val okLabel = stringResource(R.string.action_ok)
+    val selectPdfMessage = stringResource(R.string.scan_select_pdf)
     val fallbackName = stringResource(R.string.scan_default_pdf_name)
     val startScan = rememberWithNotificationPermission { viewModel.scanPdf(fallbackName) }
 
@@ -120,25 +121,25 @@ fun PdfScreen(
                                 }
                             )
                         }
-                    } ?: Text("No PDF selected")
+                    } ?: Text(stringResource(R.string.scan_no_pdf))
                 }
                 VerticalSpacer(20.dp)
                 SecondaryButton(
-                    text = "Choose PDF",
+                    text = stringResource(R.string.scan_choose_pdf),
                     onClick = {
                         pdfPickerLauncher.launch(arrayOf("application/pdf"))
                     }
                 )
                 VerticalSpacer(10.dp)
                 PrimaryButton(
-                    text = "Proceed to Scan",
+                    text = stringResource(R.string.scan_proceed),
                     onClick = {
                         if (fileName?.endsWith(".pdf", ignoreCase = true) == true && pdfUri != null) {
                             startScan()
                         } else {
                             scope.launch {
                                 snackbarHostState.showSnackbar(
-                                    message = "Please select a valid PDF file",
+                                    message = selectPdfMessage,
                                     actionLabel = okLabel
                                 )
                             }

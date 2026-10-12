@@ -11,4 +11,12 @@
     <string name="scan_default_pdf_name">Uploaded PDF</string>
     <string name="scan_default_images_name">Scanned images</string>
     <string name="action_ok">OK</string>
+    <string name="scan_images_selected">(%1$d) Images selected</string>
+    <string name="scan_no_images">No images selected.</string>
+    <string name="scan_choose_images">Choose Image/s</string>
+    <string name="scan_proceed">Proceed to Scan</string>
+    <string name="scan_select_images">Please select images</string>
+    <string name="scan_no_pdf">No PDF selected</string>
+    <string name="scan_choose_pdf">Choose PDF</string>
+    <string name="scan_select_pdf">Please select a valid PDF file</string>
 </resources>

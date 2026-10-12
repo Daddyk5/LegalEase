@@ -268,7 +268,7 @@ private fun ClassificationCard(classification: Classification, band: ConfidenceB
     ) {
         Column(Modifier.padding(16.dp)) {
             Text(
-                text = "${stringResource(R.string.label_classification)} ${classification.label}",
+                text = "${stringResource(R.string.label_classification)} ${stringResource(classification.labelRes)}",
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
@@ -306,14 +306,14 @@ private fun Header() {
     ) {
         Column(modifier = Modifier.weight(0.9f)) {
             Text(
-                text = "Scan Complete",
+                text = stringResource(R.string.result_scan_complete),
                 style = MaterialTheme.typography.displayLarge.copy(
                     color = MaterialTheme.colorScheme.primary
                 )
             )
             VerticalSpacer(5.dp)
             Text(
-                text = "Insights from your past scan",
+                text = stringResource(R.string.result_insights),
                 style = MaterialTheme.typography.bodyMedium.copy(
                     color = MaterialTheme.colorScheme.onBackground
                 )
@@ -330,3 +330,13 @@ private fun Header() {
         )
     }
 }
+
+/** Classification names in the user's language, with the English legal term kept in translations. */
+private val Classification.labelRes: Int
+    get() = when (this) {
+        Classification.VOID -> R.string.classification_void
+        Classification.VOIDABLE -> R.string.classification_voidable
+        Classification.UNENFORCEABLE -> R.string.classification_unenforceable
+        Classification.RESCISSIBLE -> R.string.classification_rescissible
+        Classification.ENFORCEABLE -> R.string.classification_enforceable
+    }

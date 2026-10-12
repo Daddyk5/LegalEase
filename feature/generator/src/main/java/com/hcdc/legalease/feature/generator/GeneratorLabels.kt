@@ -7,6 +7,7 @@ import com.hcdc.legalease.core.domain.generator.FieldError
 import com.hcdc.legalease.core.domain.generator.FormStep
 import com.hcdc.legalease.core.domain.generator.LegalNotice
 import com.hcdc.legalease.core.domain.model.CivilStatus
+import com.hcdc.legalease.core.domain.model.Classification
 import com.hcdc.legalease.core.domain.model.ContractType
 import com.hcdc.legalease.core.domain.model.InterestPeriod
 import com.hcdc.legalease.core.domain.model.PaymentSchedule
@@ -145,4 +146,14 @@ private val AppError.textRes: Int
             R.string.generator_msg_assistant_failed
         this is AppError.Unexpected && detail.startsWith("llm_") -> R.string.generator_msg_assistant_failed
         else -> R.string.generator_msg_failed
+    }
+
+@get:StringRes
+internal val Classification.labelRes: Int
+    get() = when (this) {
+        Classification.VOID -> R.string.generator_classification_void
+        Classification.VOIDABLE -> R.string.generator_classification_voidable
+        Classification.UNENFORCEABLE -> R.string.generator_classification_unenforceable
+        Classification.RESCISSIBLE -> R.string.generator_classification_rescissible
+        Classification.ENFORCEABLE -> R.string.generator_classification_enforceable
     }

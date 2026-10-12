@@ -52,6 +52,7 @@ fun ImageScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val okLabel = stringResource(R.string.action_ok)
+    val selectImagesMessage = stringResource(R.string.scan_select_images)
     val documentName = stringResource(R.string.scan_default_images_name)
     val startScan = rememberWithNotificationPermission { viewModel.scanImages(documentName) }
 
@@ -80,7 +81,7 @@ fun ImageScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "(${images.size}) Images selected"
+                    text = stringResource(R.string.scan_images_selected, images.size)
                 )
 
                 VerticalSpacer(20.dp)
@@ -116,26 +117,26 @@ fun ImageScreen(
                             }
                         }
                     } else {
-                        Text("No images selected.")
+                        Text(stringResource(R.string.scan_no_images))
                     }
                 }
                 VerticalSpacer(20.dp)
                 SecondaryButton(
-                    text = "Choose Image/s",
+                    text = stringResource(R.string.scan_choose_images),
                     onClick = {
                         imagePickerLauncher.launch("image/*")
                     }
                 )
                 VerticalSpacer(10.dp)
                 PrimaryButton(
-                    text = "Proceed to Scan",
+                    text = stringResource(R.string.scan_proceed),
                     onClick = {
                         if (images.isNotEmpty()) {
                             startScan()
                         } else {
                             scope.launch {
                                 snackbarHostState.showSnackbar(
-                                    message = "Please select images",
+                                    message = selectImagesMessage,
                                     actionLabel = okLabel
                                 )
                             }

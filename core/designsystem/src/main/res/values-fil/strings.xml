@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ds_open">Buksan</string>
+    <string name="ds_summary">Buod</string>
+    <string name="ds_search_hint">Hanapin ang iyong mga scan…</string>
+    <string name="ds_hide_password">Itago ang password</string>
+    <string name="ds_show_password">Ipakita ang password</string>
+</resources>
