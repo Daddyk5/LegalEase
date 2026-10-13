@@ -44,12 +44,17 @@ Documents are read and analysed on the device. They are never uploaded.
 
 ## Screenshots
 
+| Privacy notice | Intro | Login |
+|---|---|---|
+| <img src="docs/screenshots/privacy-notice.png" alt="Privacy notice" width="240" /> | <img src="docs/screenshots/intro.png" alt="Intro screen" width="240" /> | <img src="docs/screenshots/login.png" alt="Login sheet" width="240" /> |
+
 | Dashboard | Result | Generator |
 |---|---|---|
 | _Screenshot to be added_ | _Screenshot to be added_ | _Screenshot to be added_ |
 
-<!-- Add images under docs/screenshots/ and replace the placeholders, for example
-     ![Result](docs/screenshots/result.png). Use made-up contracts only. -->
+<!-- Images live in docs/screenshots/. Screens past sign-in need a verified account. The result
+     screen and contract editor block screenshots (FLAG_SECURE), so capture them from a build with
+     SecureContent disabled, or photograph a test device. Use made-up contracts only. -->
 
 ## Architecture
 
