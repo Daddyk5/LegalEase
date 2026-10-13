@@ -26,6 +26,9 @@ local.properties
 gradle.properties
 !/gradle.properties
 secrets.properties
+.env
+.env.*
+!.env.example
 *.jks
 *.keystore
 google-services.json
