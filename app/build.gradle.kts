@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.baselineprofile)
+    alias(libs.plugins.play.publisher)
 }
 
 android {
@@ -50,6 +51,16 @@ android {
             )
         }
     }
+}
+
+// Gradle Play Publisher: uploads the release bundle to the internal testing track. Used only by the
+// release workflow, and only when a Play service-account key is provided (SETUP.md §10d).
+val playCredentials = providers.environmentVariable("PLAY_SERVICE_ACCOUNT_JSON_PATH").orNull
+play {
+    enabled.set(playCredentials != null)
+    playCredentials?.let { serviceAccountCredentials.set(file(it)) }
+    track.set("internal")
+    defaultToAppBundles.set(true)
 }
 
 dependencies {

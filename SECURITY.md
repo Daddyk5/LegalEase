@@ -2,8 +2,44 @@
 
 ## Reporting a vulnerability
 
-Please do not open a public issue. Email the maintainers privately with a description,
-reproduction steps, and the affected version. We aim to acknowledge reports within 72 hours.
+Please do not open a public issue. Report privately through GitHub:
+**Security → Report a vulnerability**
+([new advisory](https://github.com/Daddyk5/LegalEase/security/advisories/new)).
+
+Include a description, steps to reproduce, the affected version or commit, and the impact you
+expect. Do not include real contracts or personal data; a made-up sample is enough.
+
+| Step | Target |
+|---|---|
+| Acknowledge the report | Within 72 hours |
+| Initial assessment and severity | Within 7 days |
+| Fix for high or critical issues | Within 30 days, coordinated with the reporter before disclosure |
+
+Only the latest release is supported with security fixes.
+
+## Threat model
+
+LegalEase holds contracts with names, addresses, ID details and amounts. The main asset is that
+document content and the analyses built from it. Second come the user's account, the integrity
+of the legal output, and the licensed on-device model.
+
+| Threat | Mitigations | Residual risk |
+|---|---|---|
+| Lost or stolen phone | SQLCipher database with a Keystore-sealed key; private file storage; optional app lock (biometric or device credential, relocks after 30 s) | An unlocked phone with app lock off shows the app's contents |
+| Other apps or backups reading data | App-private storage; backup and device transfer excluded; exports stay private until the user shares them | None known; a rooted device removes the sandbox |
+| Screenshots, screen recording, recent-apps preview | `FLAG_SECURE` on result, page, document and editor screens | An external camera |
+| Network interception | HTTPS only, system CAs only, no cleartext (`network_security_config.xml`); documents are never uploaded | None known |
+| Cloud data exposure | Results only, opt-in; Firestore and Storage rules limit access to the verified owner and validate every field; App Check enforced | A compromised Firebase project or Google account |
+| Abuse of Firebase from scripts or modified apps | App Check (Play Integrity) on Firestore, Storage and Functions; Play Integrity verdict decoded server-side | Attackers on genuine, unmodified devices |
+| Tampered or rooted device manipulating analysis | Integrity verdict COMPROMISED disables the LLM (rules fallback, always inconclusive) | Verdict is cached for a day; offline devices keep the last verdict |
+| Misleading legal output (hallucinated law or quotes) | Citations only from the reviewed table; quotes verified against OCR; a 0.80 threshold that the classifier alone cannot reach; "Inconclusive" by default | Calibration not yet measured (TESTING.md); the app gives general information, not legal advice |
+| Prompt injection inside a scanned contract | The model returns strict JSON with reason codes only, parsed and validated; it cannot cite law or change mandatory clauses; quotes must match the document | Injected text could still affect the label, and grounding and consistency checks limit that |
+| Copying the on-device model | Encrypted at rest, pinned hashes, plaintext deleted after load (see below) | A determined attacker can extract it; the license is the real protection |
+| Leaked secrets in the repository | Secrets policy below; git-ignored config; GitHub secret scanning and push protection; CI uses a placeholder config | Keys already in git history (see rotation below) |
+| Malicious dependency or build tampering | Dependabot; dependency review fails pull requests that add high-severity advisories; pinned versions in the catalog; release secrets limited to a protected environment | A compromised upstream package before an advisory exists |
+
+Out of scope: attackers with root access or a debugger on the user's unlocked device, and
+compromise of Google infrastructure.
 
 ## Secrets policy
 
@@ -11,6 +47,16 @@ reproduction steps, and the affected version. We aim to acknowledge reports with
 - Machine-local values go in `local.properties` or `~/.gradle/gradle.properties`; both are git-ignored.
 - `google-services.json`, `*.jks`, and `*.keystore` are git-ignored. Copy
   `app/google-services.json.example` and fill it in from your own Firebase project.
+- CI secrets (the upload keystore, its passwords, `google-services.json`, and the Play service
+  account) live only in the GitHub `release` environment (SETUP.md §10d). The release workflow
+  writes them to the runner's temporary directory and deletes them at the end. Pull-request
+  builds use the placeholder config and never see a secret.
+- **Rotating CI credentials:**
+  - **Upload key leaked:** ask Play Console support to reset the upload key (Test and release →
+    App integrity). Play App Signing keeps the app signing key, so installed users are not
+    affected. Then update the four keystore secrets.
+  - **Play service account leaked:** delete its key in Google Cloud console → IAM → Service
+    accounts, create a new key, and update `PLAY_SERVICE_ACCOUNT_JSON`.
 
 ## Required action: rotate previously committed credentials
 

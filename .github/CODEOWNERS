@@ -1,0 +1,15 @@
+# Owners are requested for review automatically. With "Require review from Code Owners" on in
+# branch protection, their approval is needed to merge (CONTRIBUTING.md).
+*                                   @Daddyk5
+
+# Changes to these need particular care: legal output, security, privacy, and release.
+/core/domain/src/main/java/com/hcdc/legalease/core/domain/legal/      @Daddyk5
+/core/domain/src/main/java/com/hcdc/legalease/core/domain/generator/  @Daddyk5
+/core/security/                     @Daddyk5
+/core/ml/src/prompts/               @Daddyk5
+/firestore.rules                    @Daddyk5
+/storage.rules                      @Daddyk5
+/functions/                         @Daddyk5
+/.github/workflows/                 @Daddyk5
+/PRIVACY.md                         @Daddyk5
+/SECURITY.md                        @Daddyk5

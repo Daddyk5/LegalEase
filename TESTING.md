@@ -8,6 +8,10 @@
 cd firebase-tests && npm ci && npm test                  # Firestore and Storage rules on the emulators
 ```
 
+CI (`.github/workflows/ci.yml`) runs all of the above on every pull request, along with the
+Functions tests and compiling the instrumented tests. Instrumented tests, the manual checks below
+and calibration still need a device.
+
 Unit tests cover the pieces that decide what users see: OCR preprocessing and quality scoring,
 quote grounding, the reason-code → Civil Code table, confidence scoring and bands, the rule-based
 fallback, strict-JSON parsing of model output (valid, malformed, missing fields, out-of-range

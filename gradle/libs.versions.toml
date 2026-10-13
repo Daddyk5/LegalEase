@@ -68,6 +68,9 @@ benchmark = "1.5.0"
 profileinstaller = "1.4.1"
 uiautomator = "2.4.0"
 
+# Release
+playPublisher = "4.1.1"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
@@ -174,6 +177,7 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 android-test = { id = "com.android.test", version.ref = "agp" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark" }
+play-publisher = { id = "com.github.triplet.play", version.ref = "playPublisher" }
 
 # Convention plugins (build-logic)
 legalease-android-application = { id = "legalease.android.application" }

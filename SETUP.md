@@ -187,6 +187,39 @@ Release signing is read only from environment variables, never from files in git
 Without `LEGALEASE_KEYSTORE_PATH`, `./gradlew :app:bundleRelease` produces an unsigned bundle.
 Write release notes from `.github/release-notes-template.md`.
 
+## 10d. Continuous integration (GitHub Actions)
+
+| Workflow | Runs on | Does |
+|---|---|---|
+| `ci.yml` | Every pull request and push to `main` | Build, lint, detekt (with ktlint), unit tests, the 70% coverage gate, compiling the instrumented tests, the rules tests on the emulators, and the Functions tests |
+| `dependency-security.yml` | Pull requests, `main`, weekly | Dependency graph submission, and review that fails on high-severity advisories |
+| `release.yml` | Pushing a `v*` tag | Signed release bundle and R8 mapping as artifacts; optional upload to the Play internal track |
+
+`ci.yml` needs no secrets: it builds with `app/google-services.json.example`.
+
+For `release.yml`, create an environment named **`release`** (Settings → Environments). Limit it
+to `v*` tags, then add these environment secrets:
+
+| Secret | Value |
+|---|---|
+| `GOOGLE_SERVICES_JSON` | The full contents of your `google-services.json` |
+| `RELEASE_KEYSTORE_BASE64` | The upload keystore, base64-encoded: `base64 -w0 upload.jks` (macOS: `base64 -i upload.jks`) |
+| `LEGALEASE_KEYSTORE_PASSWORD` | Keystore password |
+| `LEGALEASE_KEY_ALIAS` | Key alias |
+| `LEGALEASE_KEY_PASSWORD` | Key password |
+| `PLAY_SERVICE_ACCOUNT_JSON` | Optional. A Google Cloud service-account key (JSON) with the *Release to testing tracks* permission in Play Console → Users and permissions. Leave it unset to skip the upload. |
+
+Notes:
+- **Version code:** the workflow's run number, which increases with every release. The version
+  name is the tag without its `v` (`v1.2.0` → `1.2.0`).
+- **First upload:** Play only accepts API uploads once the app exists. Upload the first bundle
+  by hand (download it from the workflow run's artifacts). Every later tag can upload itself.
+- **Language model:** the model files are not in git, so a CI bundle ships an empty `llm_pack`.
+  Installs then download the model once from Cloud Storage (§7b). To ship the model inside the
+  bundle instead, build the release locally with the files in place.
+- To release: `git tag v1.2.0 && git push origin v1.2.0`. CONTRIBUTING.md has the full checklist
+  and the recommended branch protection.
+
 ## 11. Run and verify
 
 ```sh

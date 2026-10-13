@@ -1,0 +1,66 @@
+name: Bug report
+description: Something in the app does not work as expected.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Do not attach real contracts, scans, names, addresses, or ID numbers.** Issues are public.
+        Describe the document instead (type, number of pages, scan or photo), or use a made-up sample.
+        Security problems go through private reporting instead (see SECURITY.md).
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what you saw instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open …
+        2. Upload a 3-page scanned PDF of a lease
+        3. …
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Sign-in and account
+        - Scanning and OCR
+        - Analysis result
+        - History
+        - Contract generator
+        - PDF export
+        - Settings, privacy and app lock
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      description: Android Settings → Apps → LegalEase shows the version. If you built it yourself, give the commit or tag.
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device and Android version
+      placeholder: e.g. Samsung Galaxy A54, Android 15
+    validations:
+      required: true
+  - type: dropdown
+    id: language
+    attributes:
+      label: App language
+      options: [English, Filipino]
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots
+      description: Remove any contract text or personal data first. The result and document screens block screenshots by design.
