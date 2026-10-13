@@ -20,6 +20,12 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             add("implementation", libs.lib("androidx-navigation-compose"))
             add("implementation", libs.lib("kotlinx-serialization-json"))
             add("testImplementation", testFixtures(project(":core:domain")))
+            // Compose UI tests drive real screens and ViewModels over the domain fakes.
+            add("androidTestImplementation", testFixtures(project(":core:domain")))
+            add("androidTestImplementation", libs.lib("androidx-ui-test-junit4"))
+            add("androidTestImplementation", libs.lib("androidx-junit"))
+            add("androidTestImplementation", libs.lib("kotlinx-coroutines-test"))
+            add("debugImplementation", libs.lib("androidx-ui-test-manifest"))
         }
     }
 }

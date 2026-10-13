@@ -50,6 +50,78 @@ Check these by hand on a device:
 8. **Integrity (release build from a Play testing track):** a rooted device or emulator without
    Play certification shows the warning, and analysis reports no LLM use.
 
+### On a device or emulator
+
+```sh
+./gradlew connectedDebugAndroidTest
+```
+
+- **Compose UI tests:** each test runs a real screen and its real ViewModel on the domain fakes,
+  so neither Hilt nor Firebase is involved.
+  - Result screen: a confident verdict, and the "Inconclusive — needs review" state.
+  - History: the list, and search.
+  - Generator: every template is offered, and the form refuses to advance past missing fields.
+- **Pipeline test (`:app` `AnalysisPipelineTest`):** draws a 3-page contract into a PDF, then
+  runs real PdfRenderer, preprocessing and ML Kit OCR, then the analysis, and checks that it
+  returns a non-null report.
+  - The classifier and the LLM are faked as unavailable, because their models download at
+    runtime.
+  - The report therefore comes from the rule-based fallback, which is what a fresh offline
+    install produces.
+- **Picking a file:** the scan screens start from the system file picker, which instrumented
+  tests cannot drive. The path from scan to result is covered by the pipeline test plus the
+  result screen test.
+
+### Performance
+
+```sh
+./gradlew :app:generateBaselineProfile                          # writes app/src/release/generated/baselineProfiles
+./gradlew :baselineprofile:connectedBenchmarkReleaseAndroidTest  # cold start, with and without the profile
+```
+
+- Both need a physical device for meaningful numbers. Profile generation needs API 33+, or a
+  rooted device on API 28+.
+- The cold-start target is under 1.5 s to first frame on a mid-range device, excluding
+  first-time model setup.
+
+| Device | Without profile (median) | With profile (median) |
+|---|---|---|
+| _not measured yet_ | | |
+
+### Accessibility
+
+**Automated or built in:**
+- Every actionable icon has a content description; decorative images have none, so TalkBack
+  skips them.
+- Text links have 48dp touch targets (`minimumInteractiveComponentSize`).
+- Buttons grow with the font size instead of clipping.
+- All UI strings are resources, in English and Filipino. Legal terms keep the English in
+  parentheses.
+
+**Checked by hand:**
+1. TalkBack: walk through sign-in, upload, the result (reasons and page links), history
+   (delete is a custom action) and the generator form. Every control must be announced with
+   its purpose.
+2. Font size: set it to the maximum and display size to the largest, then check that no text
+   is clipped on the dashboard, result, generator and settings screens.
+3. Language: switch the app to Filipino (Settings, then Apps, then LegalEase, then Language).
+
+**WCAG AA contrast** (4.5:1 for normal text, 3:1 for large text). Measured on the existing
+theme. These are flagged for a design decision; the colors were not changed:
+
+| Pair | Ratio | Result |
+|---|---|---|
+| Primary `#6495ED` text on white background (light: titles) | 2.97 | Fails normal text; passes large text (3:1) only barely, at 2.97 |
+| White on primary `#6495ED` (light: button labels) | 2.97 | Fails |
+| Primary on surface `#F5F5F5` (light: card titles) | 2.73 | Fails |
+| Outline `#B0B8C1` on white (text-field border) | 2.01 | Fails the 3:1 non-text minimum |
+| Risk label, medium `#F9A825` at 70% opacity on surface (light) | 1.53 | Fails |
+| Risk label, low `#2E7D32` at 70% opacity on surface (light) | 2.78 | Fails |
+| Risk label, high `#C62828` at 70% opacity on surface (light) | 3.28 | Large text only |
+| Risk labels, low and high, at 70% opacity on surface (dark) | 2.24 / 2.02 | Fail |
+| Body text, on-background and on-surface (light and dark) | 12–18 | Pass |
+| Dark theme primary on background, and on-primary on primary | 10.9 / 8.3 | Pass |
+
 ### Coverage
 
 Kover enforces at least 70% line coverage on `:core:domain` and `:core:ml`. Run

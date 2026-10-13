@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -99,7 +101,7 @@ fun LoginSheetContent(
         ) {
             Text(
                 text = stringResource(R.string.auth_forgot_link),
-                modifier = Modifier.clickable {
+                modifier = Modifier.minimumInteractiveComponentSize().clickable(role = Role.Button) {
                     bottomSheetViewModel.show(BottomSheetContent.ForgotPassword)
                 },
                 style = MaterialTheme.typography.bodySmall,
@@ -116,6 +118,7 @@ fun LoginSheetContent(
         VerticalSpacer(height = 30.dp)
         Text(
             text = stringResource(R.string.auth_or),
+            modifier = Modifier.clearAndSetSemantics {},
             style = MaterialTheme.typography.bodySmall
         )
         VerticalSpacer(height = 30.dp)
@@ -140,7 +143,7 @@ fun LoginSheetContent(
         VerticalSpacer(height = 18.dp)
         Text(
             text = stringResource(R.string.auth_create_account),
-            modifier = Modifier.clickable {
+            modifier = Modifier.minimumInteractiveComponentSize().clickable(role = Role.Button) {
                 bottomSheetViewModel.show(BottomSheetContent.Register)
             },
             style = MaterialTheme.typography.bodySmall,
@@ -171,7 +174,9 @@ private fun LoginMessages(state: LoginUiState, onResend: () -> Unit) {
         VerticalSpacer(height = 6.dp)
         Text(
             text = stringResource(R.string.auth_action_resend_verification),
-            modifier = Modifier.clickable(enabled = !state.isSubmitting, role = Role.Button, onClick = onResend),
+            modifier = Modifier
+                .minimumInteractiveComponentSize()
+                .clickable(enabled = !state.isSubmitting, role = Role.Button, onClick = onResend),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.primary
         )

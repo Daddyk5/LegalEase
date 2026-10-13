@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.baselineprofile)
 }
 
 android {
@@ -63,6 +64,8 @@ dependencies {
     implementation(project(":feature:generator"))
     implementation(project(":feature:settings"))
     implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.profileinstaller)
+    baselineProfile(project(":baselineprofile"))
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
@@ -82,6 +85,8 @@ dependencies {
     implementation(libs.androidx.hilt.work)
 
     androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(testFixtures(project(":core:domain")))
+    androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.test.manifest)
