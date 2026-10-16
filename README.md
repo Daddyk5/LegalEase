@@ -153,7 +153,7 @@ LegalEase began as a capstone research project.
 | | |
 |---|---|
 | Institution | _[to be filled in]_ |
-| Researchers | _[to be filled in]_ |
+| Researchers | Kenneth T. Gulmatico, Katrina Cassandra Ibanez, James Michael Micolob, Reynaldo Q. Pagaran Jr. |
 | Adviser and legal reviewer | _[to be filled in]_ |
 | Year | _[to be filled in]_ |
 
