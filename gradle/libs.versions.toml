@@ -38,7 +38,7 @@ kotlinxSerialization = "1.11.0"
 kotlinxCoroutines = "1.11.0"
 
 # Firebase / Google
-firebaseBom = "35.0.0"
+firebaseBom = "35.0.2"
 # Firebase ML is deprecated (shutdown 2027-06-15) and no longer in the BoM; pinned until the
 # classifier model moves to Cloud Storage for Firebase.
 firebaseModelDownloader = "26.1.1"
